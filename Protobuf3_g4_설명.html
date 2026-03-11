@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
@@ -271,6 +271,88 @@
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 3px; }
+
+    /* ── 원본 전문 details ── */
+    .source-details {
+      background: var(--bg-section);
+      border: 1px solid var(--border-section);
+      border-radius: 10px;
+      margin-bottom: 32px;
+      overflow: hidden;
+    }
+    .source-details summary {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 20px;
+      background: rgba(58,123,213,0.10);
+      border-bottom: 1px solid var(--border-section);
+      cursor: pointer;
+      user-select: none;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-heading);
+      list-style: none;
+      outline: none;
+    }
+    .source-details summary::-webkit-details-marker { display: none; }
+    .source-details summary::before {
+      content: '▶';
+      font-size: 11px;
+      color: var(--border-code);
+      transition: transform 0.2s;
+      display: inline-block;
+    }
+    .source-details[open] summary::before {
+      transform: rotate(90deg);
+    }
+    .source-details summary .source-badge {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--text-muted);
+      background: rgba(255,255,255,0.06);
+      padding: 2px 10px;
+      border-radius: 10px;
+      white-space: nowrap;
+    }
+    .source-details .source-body {
+      background: var(--bg-code);
+      border-left: 4px solid var(--border-code);
+      padding: 0;
+      position: relative;
+    }
+    .source-details .source-body::before {
+      content: 'Protobuf3.g4  원본';
+      position: absolute;
+      top: 10px;
+      right: 16px;
+      font-size: 10px;
+      color: var(--label-code);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.7;
+      font-family: 'Cascadia Code', 'Consolas', monospace;
+    }
+    .source-details .source-body pre {
+      font-family: 'Cascadia Code', 'Consolas', 'Fira Code', monospace;
+      font-size: 13px;
+      color: var(--text-code);
+      white-space: pre;
+      overflow-x: auto;
+      line-height: 1.65;
+      padding: 20px 20px 20px 20px;
+      counter-reset: lineno;
+    }
+    .source-details .source-body pre .ln {
+      display: inline-block;
+      width: 3em;
+      color: #555a6e;
+      text-align: right;
+      margin-right: 16px;
+      user-select: none;
+      font-size: 11px;
+    }
   </style>
 </head>
 <body>
@@ -280,6 +362,7 @@
 <nav class="toc">
   <h2>목차</h2>
   <ol>
+    <li><a href="#s0">원본 전문 (Protobuf3.g4)</a></li>
     <li><a href="#s1">1. 헤더 &amp; 옵션</a></li>
     <li><a href="#s2">2. 2-Pass 파싱 진입점</a></li>
     <li><a href="#s3">3. 최상위 파일 구조</a></li>
@@ -314,6 +397,699 @@
 
   <h1>Protobuf3.g4 문법 파일 상세 설명</h1>
   <p class="subtitle"><code>Parsers/Protobuf3.g4</code> 파일의 모든 규칙과 토큰에 대한 한국어 설명 문서</p>
+
+  <!-- ─── 원본 전문 ─── -->
+  <details class="source-details" id="s0">
+    <summary>
+      &#128196; Protobuf3.g4 원본 전문
+      <span class="source-badge">685줄 &middot; 클릭하여 펼치기</span>
+    </summary>
+    <div class="source-body"><pre><span class='ln'>  1</span>// SPDX-License-Identifier: Apache-2.0
+<span class='ln'>  2</span>/**
+<span class='ln'>  3</span> * A Protocol Buffers 3 grammar
+<span class='ln'>  4</span> *
+<span class='ln'>  5</span> * Original source: https://developers.google.com/protocol-buffers/docs/reference/proto3-spec
+<span class='ln'>  6</span> * Original source is published under Apache License 2.0.
+<span class='ln'>  7</span> *
+<span class='ln'>  8</span> * Changes from the source above:
+<span class='ln'>  9</span> * - rewrite to antlr
+<span class='ln'> 10</span> * - extract some group to rule.
+<span class='ln'> 11</span> *
+<span class='ln'> 12</span> * @author anatawa12
+<span class='ln'> 13</span> */
+<span class='ln'> 14</span>
+<span class='ln'> 15</span>// $antlr-format alignTrailingComments true, columnLimit 150, minEmptyLines 1, maxEmptyLinesToKeep 1, reflowComments false, useTab false
+<span class='ln'> 16</span>// $antlr-format allowShortRulesOnASingleLine false, allowShortBlocksOnASingleLine true, alignSemicolons hanging, alignColons hanging
+<span class='ln'> 17</span>
+<span class='ln'> 18</span>grammar Protobuf3;
+<span class='ln'> 19</span>
+<span class='ln'> 20</span>options {
+<span class='ln'> 21</span>    superClass = Protobuf3ParserBase;
+<span class='ln'> 22</span>}
+<span class='ln'> 23</span>
+<span class='ln'> 24</span>// Insert here @header for parser.
+<span class='ln'> 25</span>
+<span class='ln'> 26</span>twoPassParse
+<span class='ln'> 27</span>    : { this.DoRewind(); } proto
+<span class='ln'> 28</span>    ;
+<span class='ln'> 29</span>
+<span class='ln'> 30</span>proto
+<span class='ln'> 31</span>    : syntax (importStatement | packageStatement | optionStatement | topLevelDef | emptyStatement_)* EOF
+<span class='ln'> 32</span>    ;
+<span class='ln'> 33</span>
+<span class='ln'> 34</span>// Syntax
+<span class='ln'> 35</span>
+<span class='ln'> 36</span>syntax
+<span class='ln'> 37</span>    : SYNTAX EQ (PROTO3_LIT_SINGLE | PROTO3_LIT_DOUBLE) SEMI
+<span class='ln'> 38</span>    ;
+<span class='ln'> 39</span>
+<span class='ln'> 40</span>// Import Statement
+<span class='ln'> 41</span>
+<span class='ln'> 42</span>importStatement
+<span class='ln'> 43</span>    : IMPORT (WEAK | PUBLIC)? strLit SEMI { this.DoImportStatement_(); }
+<span class='ln'> 44</span>    ;
+<span class='ln'> 45</span>
+<span class='ln'> 46</span>// Package
+<span class='ln'> 47</span>
+<span class='ln'> 48</span>packageStatement
+<span class='ln'> 49</span>    : PACKAGE fullIdent SEMI
+<span class='ln'> 50</span>    ;
+<span class='ln'> 51</span>
+<span class='ln'> 52</span>// Option
+<span class='ln'> 53</span>
+<span class='ln'> 54</span>optionStatement
+<span class='ln'> 55</span>    : OPTION optionName EQ constant SEMI
+<span class='ln'> 56</span>    ;
+<span class='ln'> 57</span>
+<span class='ln'> 58</span>optionName
+<span class='ln'> 59</span>    : fullIdent
+<span class='ln'> 60</span>    | LP fullIdent RP ( DOT fullIdent)?
+<span class='ln'> 61</span>    ;
+<span class='ln'> 62</span>
+<span class='ln'> 63</span>// Normal Field
+<span class='ln'> 64</span>fieldLabel
+<span class='ln'> 65</span>    : OPTIONAL
+<span class='ln'> 66</span>    | REPEATED
+<span class='ln'> 67</span>    ;
+<span class='ln'> 68</span>
+<span class='ln'> 69</span>field
+<span class='ln'> 70</span>    : fieldLabel? type_ fieldName EQ fieldNumber (LB fieldOptions RB)? SEMI
+<span class='ln'> 71</span>    ;
+<span class='ln'> 72</span>
+<span class='ln'> 73</span>fieldOptions
+<span class='ln'> 74</span>    : fieldOption (COMMA fieldOption)*
+<span class='ln'> 75</span>    ;
+<span class='ln'> 76</span>
+<span class='ln'> 77</span>fieldOption
+<span class='ln'> 78</span>    : optionName EQ constant
+<span class='ln'> 79</span>    ;
+<span class='ln'> 80</span>
+<span class='ln'> 81</span>fieldNumber
+<span class='ln'> 82</span>    : intLit
+<span class='ln'> 83</span>    ;
+<span class='ln'> 84</span>
+<span class='ln'> 85</span>// Oneof and oneof field
+<span class='ln'> 86</span>
+<span class='ln'> 87</span>oneof
+<span class='ln'> 88</span>    : ONEOF oneofName LC (optionStatement | oneofField | emptyStatement_)* RC
+<span class='ln'> 89</span>    ;
+<span class='ln'> 90</span>
+<span class='ln'> 91</span>oneofField
+<span class='ln'> 92</span>    : type_ fieldName EQ fieldNumber (LB fieldOptions RB)? SEMI
+<span class='ln'> 93</span>    ;
+<span class='ln'> 94</span>
+<span class='ln'> 95</span>// Map field
+<span class='ln'> 96</span>
+<span class='ln'> 97</span>mapField
+<span class='ln'> 98</span>    : MAP LT keyType COMMA type_ GT mapName EQ fieldNumber (LB fieldOptions RB)? SEMI
+<span class='ln'> 99</span>    ;
+<span class='ln'>100</span>
+<span class='ln'>101</span>keyType
+<span class='ln'>102</span>    : INT32
+<span class='ln'>103</span>    | INT64
+<span class='ln'>104</span>    | UINT32
+<span class='ln'>105</span>    | UINT64
+<span class='ln'>106</span>    | SINT32
+<span class='ln'>107</span>    | SINT64
+<span class='ln'>108</span>    | FIXED32
+<span class='ln'>109</span>    | FIXED64
+<span class='ln'>110</span>    | SFIXED32
+<span class='ln'>111</span>    | SFIXED64
+<span class='ln'>112</span>    | BOOL
+<span class='ln'>113</span>    | STRING
+<span class='ln'>114</span>    ;
+<span class='ln'>115</span>
+<span class='ln'>116</span>// field types
+<span class='ln'>117</span>
+<span class='ln'>118</span>type_
+<span class='ln'>119</span>    : DOUBLE
+<span class='ln'>120</span>    | FLOAT
+<span class='ln'>121</span>    | INT32
+<span class='ln'>122</span>    | INT64
+<span class='ln'>123</span>    | UINT32
+<span class='ln'>124</span>    | UINT64
+<span class='ln'>125</span>    | SINT32
+<span class='ln'>126</span>    | SINT64
+<span class='ln'>127</span>    | FIXED32
+<span class='ln'>128</span>    | FIXED64
+<span class='ln'>129</span>    | SFIXED32
+<span class='ln'>130</span>    | SFIXED64
+<span class='ln'>131</span>    | BOOL
+<span class='ln'>132</span>    | STRING
+<span class='ln'>133</span>    | BYTES
+<span class='ln'>134</span>    | { this.IsNotKeyword() }? messageType
+<span class='ln'>135</span>    | { this.IsNotKeyword() }? enumType
+<span class='ln'>136</span>    ;
+<span class='ln'>137</span>
+<span class='ln'>138</span>// Reserved
+<span class='ln'>139</span>
+<span class='ln'>140</span>reserved
+<span class='ln'>141</span>    : RESERVED (ranges | reservedFieldNames) SEMI
+<span class='ln'>142</span>    ;
+<span class='ln'>143</span>
+<span class='ln'>144</span>ranges
+<span class='ln'>145</span>    : range_ (COMMA range_)*
+<span class='ln'>146</span>    ;
+<span class='ln'>147</span>
+<span class='ln'>148</span>range_
+<span class='ln'>149</span>    : intLit (TO ( intLit | MAX))?
+<span class='ln'>150</span>    ;
+<span class='ln'>151</span>
+<span class='ln'>152</span>reservedFieldNames
+<span class='ln'>153</span>    : strLit (COMMA strLit)*
+<span class='ln'>154</span>    ;
+<span class='ln'>155</span>
+<span class='ln'>156</span>// Top Level definitions
+<span class='ln'>157</span>
+<span class='ln'>158</span>topLevelDef
+<span class='ln'>159</span>    : messageDef
+<span class='ln'>160</span>    | enumDef
+<span class='ln'>161</span>    | extendDef
+<span class='ln'>162</span>    | serviceDef
+<span class='ln'>163</span>    ;
+<span class='ln'>164</span>
+<span class='ln'>165</span>// enum
+<span class='ln'>166</span>
+<span class='ln'>167</span>enumDef
+<span class='ln'>168</span>    : ENUM enumName doEnumNameDef enumBody
+<span class='ln'>169</span>    ;
+<span class='ln'>170</span>
+<span class='ln'>171</span>enumBody
+<span class='ln'>172</span>    : LC doEnterBlock enumElement* RC doExitBlock
+<span class='ln'>173</span>    ;
+<span class='ln'>174</span>
+<span class='ln'>175</span>enumElement
+<span class='ln'>176</span>    : optionStatement
+<span class='ln'>177</span>    | enumField
+<span class='ln'>178</span>    | reserved
+<span class='ln'>179</span>    | emptyStatement_
+<span class='ln'>180</span>    ;
+<span class='ln'>181</span>
+<span class='ln'>182</span>enumField
+<span class='ln'>183</span>    : ident EQ (MINUS)? intLit enumValueOptions? SEMI
+<span class='ln'>184</span>    ;
+<span class='ln'>185</span>
+<span class='ln'>186</span>enumValueOptions
+<span class='ln'>187</span>    : LB enumValueOption (COMMA enumValueOption)* RB
+<span class='ln'>188</span>    ;
+<span class='ln'>189</span>
+<span class='ln'>190</span>enumValueOption
+<span class='ln'>191</span>    : optionName EQ constant
+<span class='ln'>192</span>    ;
+<span class='ln'>193</span>
+<span class='ln'>194</span>// message
+<span class='ln'>195</span>
+<span class='ln'>196</span>messageDef
+<span class='ln'>197</span>    : MESSAGE messageName doMessageNameDef messageBody
+<span class='ln'>198</span>    ;
+<span class='ln'>199</span>
+<span class='ln'>200</span>messageBody
+<span class='ln'>201</span>    : LC doEnterBlock messageElement* RC doExitBlock
+<span class='ln'>202</span>    ;
+<span class='ln'>203</span>
+<span class='ln'>204</span>
+<span class='ln'>205</span>messageElement
+<span class='ln'>206</span>    : field
+<span class='ln'>207</span>    | enumDef
+<span class='ln'>208</span>    | messageDef
+<span class='ln'>209</span>    | extendDef
+<span class='ln'>210</span>    | optionStatement
+<span class='ln'>211</span>    | oneof
+<span class='ln'>212</span>    | mapField
+<span class='ln'>213</span>    | reserved
+<span class='ln'>214</span>    | emptyStatement_
+<span class='ln'>215</span>    ;
+<span class='ln'>216</span>
+<span class='ln'>217</span>// Extend definition
+<span class='ln'>218</span>//
+<span class='ln'>219</span>// NB: not defined in the spec but supported by protoc and covered by protobuf3 tests
+<span class='ln'>220</span>//     see e.g. php/tests/proto/test_import_descriptor_proto.proto
+<span class='ln'>221</span>//     of https://github.com/protocolbuffers/protobuf
+<span class='ln'>222</span>// it also was discussed here: https://github.com/protocolbuffers/protobuf/issues/4610
+<span class='ln'>223</span>
+<span class='ln'>224</span>extendDef
+<span class='ln'>225</span>    : EXTEND messageType LC (field | emptyStatement_)* RC
+<span class='ln'>226</span>    ;
+<span class='ln'>227</span>
+<span class='ln'>228</span>// service
+<span class='ln'>229</span>
+<span class='ln'>230</span>serviceDef
+<span class='ln'>231</span>    : SERVICE serviceName doServiceNameDef LC doEnterBlock serviceElement* RC doExitBlock
+<span class='ln'>232</span>    ;
+<span class='ln'>233</span>
+<span class='ln'>234</span>serviceElement
+<span class='ln'>235</span>    : optionStatement
+<span class='ln'>236</span>    | rpc
+<span class='ln'>237</span>    | emptyStatement_
+<span class='ln'>238</span>    ;
+<span class='ln'>239</span>
+<span class='ln'>240</span>rpc
+<span class='ln'>241</span>    : RPC rpcName LP (STREAM)? messageType RP RETURNS LP (STREAM)? messageType RP (
+<span class='ln'>242</span>        LC ( optionStatement | emptyStatement_)* RC
+<span class='ln'>243</span>        | SEMI
+<span class='ln'>244</span>    )
+<span class='ln'>245</span>    ;
+<span class='ln'>246</span>
+<span class='ln'>247</span>// lexical
+<span class='ln'>248</span>
+<span class='ln'>249</span>constant
+<span class='ln'>250</span>    : { this.IsNotKeyword() }? fullIdent
+<span class='ln'>251</span>    | (MINUS | PLUS)? intLit
+<span class='ln'>252</span>    | (MINUS | PLUS)? floatLit
+<span class='ln'>253</span>    | strLit
+<span class='ln'>254</span>    | boolLit
+<span class='ln'>255</span>    | blockLit
+<span class='ln'>256</span>    ;
+<span class='ln'>257</span>
+<span class='ln'>258</span>// not specified in specification but used in tests
+<span class='ln'>259</span>blockLit
+<span class='ln'>260</span>    : LC (ident COLON constant)* RC
+<span class='ln'>261</span>    ;
+<span class='ln'>262</span>
+<span class='ln'>263</span>emptyStatement_
+<span class='ln'>264</span>    : SEMI
+<span class='ln'>265</span>    ;
+<span class='ln'>266</span>
+<span class='ln'>267</span>// Lexical elements
+<span class='ln'>268</span>
+<span class='ln'>269</span>ident
+<span class='ln'>270</span>    : IDENTIFIER
+<span class='ln'>271</span>    | keywords
+<span class='ln'>272</span>    ;
+<span class='ln'>273</span>
+<span class='ln'>274</span>fullIdent
+<span class='ln'>275</span>    : ident (DOT ident)*
+<span class='ln'>276</span>    ;
+<span class='ln'>277</span>
+<span class='ln'>278</span>messageName
+<span class='ln'>279</span>    : ident
+<span class='ln'>280</span>    ;
+<span class='ln'>281</span>
+<span class='ln'>282</span>enumName
+<span class='ln'>283</span>    : ident
+<span class='ln'>284</span>    ;
+<span class='ln'>285</span>
+<span class='ln'>286</span>fieldName
+<span class='ln'>287</span>    : ident
+<span class='ln'>288</span>    ;
+<span class='ln'>289</span>
+<span class='ln'>290</span>oneofName
+<span class='ln'>291</span>    : ident
+<span class='ln'>292</span>    ;
+<span class='ln'>293</span>
+<span class='ln'>294</span>mapName
+<span class='ln'>295</span>    : ident
+<span class='ln'>296</span>    ;
+<span class='ln'>297</span>
+<span class='ln'>298</span>serviceName
+<span class='ln'>299</span>    : ident
+<span class='ln'>300</span>    ;
+<span class='ln'>301</span>
+<span class='ln'>302</span>rpcName
+<span class='ln'>303</span>    : ident
+<span class='ln'>304</span>    ;
+<span class='ln'>305</span>
+<span class='ln'>306</span>messageType
+<span class='ln'>307</span>    : { this.IsMessageType_() }? (DOT)? (ident DOT)* messageName
+<span class='ln'>308</span>    ;
+<span class='ln'>309</span>
+<span class='ln'>310</span>enumType
+<span class='ln'>311</span>    : { this.IsEnumType_() }? (DOT)? (ident DOT)* enumName
+<span class='ln'>312</span>    ;
+<span class='ln'>313</span>
+<span class='ln'>314</span>intLit
+<span class='ln'>315</span>    : INT_LIT
+<span class='ln'>316</span>    ;
+<span class='ln'>317</span>
+<span class='ln'>318</span>strLit
+<span class='ln'>319</span>    : STR_LIT
+<span class='ln'>320</span>    | PROTO3_LIT_SINGLE
+<span class='ln'>321</span>    | PROTO3_LIT_DOUBLE
+<span class='ln'>322</span>    ;
+<span class='ln'>323</span>
+<span class='ln'>324</span>boolLit
+<span class='ln'>325</span>    : BOOL_LIT
+<span class='ln'>326</span>    ;
+<span class='ln'>327</span>
+<span class='ln'>328</span>floatLit
+<span class='ln'>329</span>    : FLOAT_LIT
+<span class='ln'>330</span>    ;
+<span class='ln'>331</span>
+<span class='ln'>332</span>// keywords
+<span class='ln'>333</span>
+<span class='ln'>334</span>SYNTAX
+<span class='ln'>335</span>    : 'syntax'
+<span class='ln'>336</span>    ;
+<span class='ln'>337</span>
+<span class='ln'>338</span>IMPORT
+<span class='ln'>339</span>    : 'import'
+<span class='ln'>340</span>    ;
+<span class='ln'>341</span>
+<span class='ln'>342</span>WEAK
+<span class='ln'>343</span>    : 'weak'
+<span class='ln'>344</span>    ;
+<span class='ln'>345</span>
+<span class='ln'>346</span>PUBLIC
+<span class='ln'>347</span>    : 'public'
+<span class='ln'>348</span>    ;
+<span class='ln'>349</span>
+<span class='ln'>350</span>PACKAGE
+<span class='ln'>351</span>    : 'package'
+<span class='ln'>352</span>    ;
+<span class='ln'>353</span>
+<span class='ln'>354</span>OPTION
+<span class='ln'>355</span>    : 'option'
+<span class='ln'>356</span>    ;
+<span class='ln'>357</span>
+<span class='ln'>358</span>OPTIONAL
+<span class='ln'>359</span>    : 'optional'
+<span class='ln'>360</span>    ;
+<span class='ln'>361</span>
+<span class='ln'>362</span>REPEATED
+<span class='ln'>363</span>    : 'repeated'
+<span class='ln'>364</span>    ;
+<span class='ln'>365</span>
+<span class='ln'>366</span>ONEOF
+<span class='ln'>367</span>    : 'oneof'
+<span class='ln'>368</span>    ;
+<span class='ln'>369</span>
+<span class='ln'>370</span>MAP
+<span class='ln'>371</span>    : 'map'
+<span class='ln'>372</span>    ;
+<span class='ln'>373</span>
+<span class='ln'>374</span>INT32
+<span class='ln'>375</span>    : 'int32'
+<span class='ln'>376</span>    ;
+<span class='ln'>377</span>
+<span class='ln'>378</span>INT64
+<span class='ln'>379</span>    : 'int64'
+<span class='ln'>380</span>    ;
+<span class='ln'>381</span>
+<span class='ln'>382</span>UINT32
+<span class='ln'>383</span>    : 'uint32'
+<span class='ln'>384</span>    ;
+<span class='ln'>385</span>
+<span class='ln'>386</span>UINT64
+<span class='ln'>387</span>    : 'uint64'
+<span class='ln'>388</span>    ;
+<span class='ln'>389</span>
+<span class='ln'>390</span>SINT32
+<span class='ln'>391</span>    : 'sint32'
+<span class='ln'>392</span>    ;
+<span class='ln'>393</span>
+<span class='ln'>394</span>SINT64
+<span class='ln'>395</span>    : 'sint64'
+<span class='ln'>396</span>    ;
+<span class='ln'>397</span>
+<span class='ln'>398</span>FIXED32
+<span class='ln'>399</span>    : 'fixed32'
+<span class='ln'>400</span>    ;
+<span class='ln'>401</span>
+<span class='ln'>402</span>FIXED64
+<span class='ln'>403</span>    : 'fixed64'
+<span class='ln'>404</span>    ;
+<span class='ln'>405</span>
+<span class='ln'>406</span>SFIXED32
+<span class='ln'>407</span>    : 'sfixed32'
+<span class='ln'>408</span>    ;
+<span class='ln'>409</span>
+<span class='ln'>410</span>SFIXED64
+<span class='ln'>411</span>    : 'sfixed64'
+<span class='ln'>412</span>    ;
+<span class='ln'>413</span>
+<span class='ln'>414</span>BOOL
+<span class='ln'>415</span>    : 'bool'
+<span class='ln'>416</span>    ;
+<span class='ln'>417</span>
+<span class='ln'>418</span>STRING
+<span class='ln'>419</span>    : 'string'
+<span class='ln'>420</span>    ;
+<span class='ln'>421</span>
+<span class='ln'>422</span>DOUBLE
+<span class='ln'>423</span>    : 'double'
+<span class='ln'>424</span>    ;
+<span class='ln'>425</span>
+<span class='ln'>426</span>FLOAT
+<span class='ln'>427</span>    : 'float'
+<span class='ln'>428</span>    ;
+<span class='ln'>429</span>
+<span class='ln'>430</span>BYTES
+<span class='ln'>431</span>    : 'bytes'
+<span class='ln'>432</span>    ;
+<span class='ln'>433</span>
+<span class='ln'>434</span>RESERVED
+<span class='ln'>435</span>    : 'reserved'
+<span class='ln'>436</span>    ;
+<span class='ln'>437</span>
+<span class='ln'>438</span>TO
+<span class='ln'>439</span>    : 'to'
+<span class='ln'>440</span>    ;
+<span class='ln'>441</span>
+<span class='ln'>442</span>MAX
+<span class='ln'>443</span>    : 'max'
+<span class='ln'>444</span>    ;
+<span class='ln'>445</span>
+<span class='ln'>446</span>ENUM
+<span class='ln'>447</span>    : 'enum'
+<span class='ln'>448</span>    ;
+<span class='ln'>449</span>
+<span class='ln'>450</span>MESSAGE
+<span class='ln'>451</span>    : 'message'
+<span class='ln'>452</span>    ;
+<span class='ln'>453</span>
+<span class='ln'>454</span>SERVICE
+<span class='ln'>455</span>    : 'service'
+<span class='ln'>456</span>    ;
+<span class='ln'>457</span>
+<span class='ln'>458</span>EXTEND
+<span class='ln'>459</span>    : 'extend'
+<span class='ln'>460</span>    ;
+<span class='ln'>461</span>
+<span class='ln'>462</span>RPC
+<span class='ln'>463</span>    : 'rpc'
+<span class='ln'>464</span>    ;
+<span class='ln'>465</span>
+<span class='ln'>466</span>STREAM
+<span class='ln'>467</span>    : 'stream'
+<span class='ln'>468</span>    ;
+<span class='ln'>469</span>
+<span class='ln'>470</span>RETURNS
+<span class='ln'>471</span>    : 'returns'
+<span class='ln'>472</span>    ;
+<span class='ln'>473</span>
+<span class='ln'>474</span>PROTO3_LIT_SINGLE
+<span class='ln'>475</span>    : '"proto3"'
+<span class='ln'>476</span>    ;
+<span class='ln'>477</span>
+<span class='ln'>478</span>PROTO3_LIT_DOUBLE
+<span class='ln'>479</span>    : '\'proto3\''
+<span class='ln'>480</span>    ;
+<span class='ln'>481</span>
+<span class='ln'>482</span>// symbols
+<span class='ln'>483</span>
+<span class='ln'>484</span>SEMI
+<span class='ln'>485</span>    : ';'
+<span class='ln'>486</span>    ;
+<span class='ln'>487</span>
+<span class='ln'>488</span>EQ
+<span class='ln'>489</span>    : '='
+<span class='ln'>490</span>    ;
+<span class='ln'>491</span>
+<span class='ln'>492</span>LP
+<span class='ln'>493</span>    : '('
+<span class='ln'>494</span>    ;
+<span class='ln'>495</span>
+<span class='ln'>496</span>RP
+<span class='ln'>497</span>    : ')'
+<span class='ln'>498</span>    ;
+<span class='ln'>499</span>
+<span class='ln'>500</span>LB
+<span class='ln'>501</span>    : '['
+<span class='ln'>502</span>    ;
+<span class='ln'>503</span>
+<span class='ln'>504</span>RB
+<span class='ln'>505</span>    : ']'
+<span class='ln'>506</span>    ;
+<span class='ln'>507</span>
+<span class='ln'>508</span>LC
+<span class='ln'>509</span>    : '{'
+<span class='ln'>510</span>    ;
+<span class='ln'>511</span>
+<span class='ln'>512</span>RC
+<span class='ln'>513</span>    : '}'
+<span class='ln'>514</span>    ;
+<span class='ln'>515</span>
+<span class='ln'>516</span>LT
+<span class='ln'>517</span>    : '&lt;'
+<span class='ln'>518</span>    ;
+<span class='ln'>519</span>
+<span class='ln'>520</span>GT
+<span class='ln'>521</span>    : '&gt;'
+<span class='ln'>522</span>    ;
+<span class='ln'>523</span>
+<span class='ln'>524</span>DOT
+<span class='ln'>525</span>    : '.'
+<span class='ln'>526</span>    ;
+<span class='ln'>527</span>
+<span class='ln'>528</span>COMMA
+<span class='ln'>529</span>    : ','
+<span class='ln'>530</span>    ;
+<span class='ln'>531</span>
+<span class='ln'>532</span>COLON
+<span class='ln'>533</span>    : ':'
+<span class='ln'>534</span>    ;
+<span class='ln'>535</span>
+<span class='ln'>536</span>PLUS
+<span class='ln'>537</span>    : '+'
+<span class='ln'>538</span>    ;
+<span class='ln'>539</span>
+<span class='ln'>540</span>MINUS
+<span class='ln'>541</span>    : '-'
+<span class='ln'>542</span>    ;
+<span class='ln'>543</span>
+<span class='ln'>544</span>STR_LIT
+<span class='ln'>545</span>    : ('\'' ( CHAR_VALUE)*? '\'')
+<span class='ln'>546</span>    | ( '"' ( CHAR_VALUE)*? '"')
+<span class='ln'>547</span>    ;
+<span class='ln'>548</span>
+<span class='ln'>549</span>fragment CHAR_VALUE
+<span class='ln'>550</span>    : HEX_ESCAPE
+<span class='ln'>551</span>    | OCT_ESCAPE
+<span class='ln'>552</span>    | CHAR_ESCAPE
+<span class='ln'>553</span>    | ~[\u0000\n\\]
+<span class='ln'>554</span>    ;
+<span class='ln'>555</span>
+<span class='ln'>556</span>fragment HEX_ESCAPE
+<span class='ln'>557</span>    : '\\' ('x' | 'X') HEX_DIGIT HEX_DIGIT
+<span class='ln'>558</span>    ;
+<span class='ln'>559</span>
+<span class='ln'>560</span>fragment OCT_ESCAPE
+<span class='ln'>561</span>    : '\\' OCTAL_DIGIT OCTAL_DIGIT OCTAL_DIGIT
+<span class='ln'>562</span>    ;
+<span class='ln'>563</span>
+<span class='ln'>564</span>fragment CHAR_ESCAPE
+<span class='ln'>565</span>    : '\\' ('a' | 'b' | 'f' | 'n' | 'r' | 't' | 'v' | '\\' | '\'' | '"')
+<span class='ln'>566</span>    ;
+<span class='ln'>567</span>
+<span class='ln'>568</span>BOOL_LIT
+<span class='ln'>569</span>    : 'true'
+<span class='ln'>570</span>    | 'false'
+<span class='ln'>571</span>    ;
+<span class='ln'>572</span>
+<span class='ln'>573</span>FLOAT_LIT
+<span class='ln'>574</span>    : (DECIMALS DOT DECIMALS? EXPONENT? | DECIMALS EXPONENT | DOT DECIMALS EXPONENT?)
+<span class='ln'>575</span>    | 'inf'
+<span class='ln'>576</span>    | 'nan'
+<span class='ln'>577</span>    ;
+<span class='ln'>578</span>
+<span class='ln'>579</span>fragment EXPONENT
+<span class='ln'>580</span>    : ('e' | 'E') (PLUS | MINUS)? DECIMALS
+<span class='ln'>581</span>    ;
+<span class='ln'>582</span>
+<span class='ln'>583</span>fragment DECIMALS
+<span class='ln'>584</span>    : DECIMAL_DIGIT+
+<span class='ln'>585</span>    ;
+<span class='ln'>586</span>
+<span class='ln'>587</span>INT_LIT
+<span class='ln'>588</span>    : DECIMAL_LIT
+<span class='ln'>589</span>    | OCTAL_LIT
+<span class='ln'>590</span>    | HEX_LIT
+<span class='ln'>591</span>    ;
+<span class='ln'>592</span>
+<span class='ln'>593</span>fragment DECIMAL_LIT
+<span class='ln'>594</span>    : ([1-9]) DECIMAL_DIGIT*
+<span class='ln'>595</span>    ;
+<span class='ln'>596</span>
+<span class='ln'>597</span>fragment OCTAL_LIT
+<span class='ln'>598</span>    : '0' OCTAL_DIGIT*
+<span class='ln'>599</span>    ;
+<span class='ln'>600</span>
+<span class='ln'>601</span>fragment HEX_LIT
+<span class='ln'>602</span>    : '0' ('x' | 'X') HEX_DIGIT+
+<span class='ln'>603</span>    ;
+<span class='ln'>604</span>
+<span class='ln'>605</span>IDENTIFIER
+<span class='ln'>606</span>    : LETTER (LETTER | DECIMAL_DIGIT)*
+<span class='ln'>607</span>    ;
+<span class='ln'>608</span>
+<span class='ln'>609</span>fragment LETTER
+<span class='ln'>610</span>    : [A-Za-z_]
+<span class='ln'>611</span>    ;
+<span class='ln'>612</span>
+<span class='ln'>613</span>fragment DECIMAL_DIGIT
+<span class='ln'>614</span>    : [0-9]
+<span class='ln'>615</span>    ;
+<span class='ln'>616</span>
+<span class='ln'>617</span>fragment OCTAL_DIGIT
+<span class='ln'>618</span>    : [0-7]
+<span class='ln'>619</span>    ;
+<span class='ln'>620</span>
+<span class='ln'>621</span>fragment HEX_DIGIT
+<span class='ln'>622</span>    : [0-9A-Fa-f]
+<span class='ln'>623</span>    ;
+<span class='ln'>624</span>
+<span class='ln'>625</span>// comments
+<span class='ln'>626</span>WS
+<span class='ln'>627</span>    : [ \t\r\n\u000C]+ -&gt; skip
+<span class='ln'>628</span>    ;
+<span class='ln'>629</span>
+<span class='ln'>630</span>LINE_COMMENT
+<span class='ln'>631</span>    : '//' ~[\r\n]* -&gt; channel(HIDDEN)
+<span class='ln'>632</span>    ;
+<span class='ln'>633</span>
+<span class='ln'>634</span>COMMENT
+<span class='ln'>635</span>    : '/*' .*? '*/' -&gt; channel(HIDDEN)
+<span class='ln'>636</span>    ;
+<span class='ln'>637</span>
+<span class='ln'>638</span>keywords
+<span class='ln'>639</span>    : SYNTAX
+<span class='ln'>640</span>    | IMPORT
+<span class='ln'>641</span>    | WEAK
+<span class='ln'>642</span>    | PUBLIC
+<span class='ln'>643</span>    | PACKAGE
+<span class='ln'>644</span>    | OPTION
+<span class='ln'>645</span>    | OPTIONAL
+<span class='ln'>646</span>    | REPEATED
+<span class='ln'>647</span>    | ONEOF
+<span class='ln'>648</span>    | MAP
+<span class='ln'>649</span>    | INT32
+<span class='ln'>650</span>    | INT64
+<span class='ln'>651</span>    | UINT32
+<span class='ln'>652</span>    | UINT64
+<span class='ln'>653</span>    | SINT32
+<span class='ln'>654</span>    | SINT64
+<span class='ln'>655</span>    | FIXED32
+<span class='ln'>656</span>    | FIXED64
+<span class='ln'>657</span>    | SFIXED32
+<span class='ln'>658</span>    | SFIXED64
+<span class='ln'>659</span>    | BOOL
+<span class='ln'>660</span>    | STRING
+<span class='ln'>661</span>    | DOUBLE
+<span class='ln'>662</span>    | FLOAT
+<span class='ln'>663</span>    | BYTES
+<span class='ln'>664</span>    | RESERVED
+<span class='ln'>665</span>    | TO
+<span class='ln'>666</span>    | MAX
+<span class='ln'>667</span>    | ENUM
+<span class='ln'>668</span>    | MESSAGE
+<span class='ln'>669</span>    | SERVICE
+<span class='ln'>670</span>    | EXTEND
+<span class='ln'>671</span>    | RPC
+<span class='ln'>672</span>    | STREAM
+<span class='ln'>673</span>    | RETURNS
+<span class='ln'>674</span>    | BOOL_LIT
+<span class='ln'>675</span>    ;
+<span class='ln'>676</span>
+<span class='ln'>677</span>doEnterBlock : { this.DoEnterBlock_(); } ;
+<span class='ln'>678</span>
+<span class='ln'>679</span>doEnumNameDef : { this.DoEnumNameDef_(); } ;
+<span class='ln'>680</span>
+<span class='ln'>681</span>doExitBlock : { this.DoExitBlock_(); } ;
+<span class='ln'>682</span>
+<span class='ln'>683</span>doMessageNameDef : { this.DoMessageNameDef_(); } ;
+<span class='ln'>684</span>
+<span class='ln'>685</span>doServiceNameDef : { this.DoServiceNameDef_(); } ;</pre></div>
+  </details>
 
   <!-- ─── 1 ─── -->
   <div class="section" id="s1">

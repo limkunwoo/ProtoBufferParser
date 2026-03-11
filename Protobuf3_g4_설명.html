@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Protobuf3.g4 문법 파일 상세 설명</title>
+  <style>
+    :root {
+      --bg-page:        #1e1e2e;
+      --bg-section:     #252537;
+      --bg-code:        #0d1117;
+      --bg-desc:        #1f3040;
+      --bg-table-head:  #2d4a63;
+      --bg-table-row:   #1a2a38;
+      --bg-table-alt:   #1e3248;
+      --bg-toc:         #1a2535;
+      --border-code:    #3a7bd5;
+      --border-desc:    #27ae60;
+      --border-section: #3d3d5c;
+      --text-main:      #cdd6f4;
+      --text-muted:     #a6adc8;
+      --text-code:      #a9dc76;
+      --text-heading:   #89b4fa;
+      --text-subhead:   #74c7ec;
+      --text-accent:    #f38ba8;
+      --text-inline:    #fab387;
+      --text-table:     #cdd6f4;
+      --label-code:     #3a7bd5;
+      --label-desc:     #27ae60;
+      --scrollbar:      #3d3d5c;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
+      background: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.75;
+      padding: 0;
+    }
+
+    /* ── 레이아웃 ── */
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── 사이드바 TOC ── */
+    .toc {
+      width: 280px;
+      min-width: 280px;
+      background: var(--bg-toc);
+      border-right: 1px solid var(--border-section);
+      padding: 24px 16px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--scrollbar) transparent;
+    }
+    .toc h2 {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-section);
+    }
+    .toc ol {
+      padding-left: 16px;
+    }
+    .toc li {
+      margin: 4px 0;
+    }
+    .toc a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      line-height: 1.5;
+      display: block;
+      padding: 2px 4px;
+      border-radius: 4px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .toc a:hover {
+      background: rgba(137,180,250,0.1);
+      color: var(--text-heading);
+    }
+
+    /* ── 본문 ── */
+    .content {
+      flex: 1;
+      max-width: 900px;
+      padding: 48px 48px 80px 48px;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      font-size: 28px;
+      color: var(--text-heading);
+      margin-bottom: 8px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--border-section);
+    }
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 40px;
+    }
+
+    /* ── 섹션 ── */
+    .section {
+      background: var(--bg-section);
+      border: 1px solid var(--border-section);
+      border-radius: 10px;
+      margin-bottom: 32px;
+      overflow: hidden;
+    }
+    .section-header {
+      padding: 14px 20px;
+      background: rgba(137,180,250,0.07);
+      border-bottom: 1px solid var(--border-section);
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+    .section-header h2 {
+      font-size: 18px;
+      color: var(--text-heading);
+    }
+    .section-header h3 {
+      font-size: 15px;
+      color: var(--text-subhead);
+    }
+    .line-badge {
+      font-size: 11px;
+      color: var(--text-muted);
+      background: rgba(255,255,255,0.06);
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-left: auto;
+      white-space: nowrap;
+    }
+    .section-body {
+      padding: 0;
+    }
+
+    /* ── 코드 블록 ── */
+    .code-block {
+      background: var(--bg-code);
+      border-left: 4px solid var(--border-code);
+      padding: 16px 20px;
+      position: relative;
+    }
+    .code-block::before {
+      content: 'ANTLR4 문법';
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      font-size: 10px;
+      color: var(--label-code);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.7;
+    }
+    .code-block pre {
+      font-family: 'Cascadia Code', 'Consolas', 'Fira Code', monospace;
+      font-size: 13.5px;
+      color: var(--text-code);
+      white-space: pre;
+      overflow-x: auto;
+      line-height: 1.6;
+    }
+
+    /* ── 설명 블록 ── */
+    .desc-block {
+      background: var(--bg-desc);
+      border-left: 4px solid var(--border-desc);
+      padding: 14px 20px;
+      position: relative;
+    }
+    .desc-block::before {
+      content: '설명';
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      font-size: 10px;
+      color: var(--label-desc);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.7;
+    }
+    .desc-block ul {
+      padding-left: 20px;
+    }
+    .desc-block li {
+      margin: 5px 0;
+      color: var(--text-main);
+      font-size: 14px;
+    }
+    .desc-block p {
+      color: var(--text-main);
+      font-size: 14px;
+      margin: 4px 0;
+    }
+    .desc-block ol {
+      padding-left: 22px;
+    }
+    .desc-block ol li {
+      margin: 5px 0;
+    }
+
+    /* ── 인라인 코드 ── */
+    code {
+      font-family: 'Cascadia Code', 'Consolas', monospace;
+      background: rgba(250,179,135,0.12);
+      color: var(--text-inline);
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 13px;
+    }
+    .code-block pre code {
+      background: none;
+      color: inherit;
+      padding: 0;
+    }
+
+    strong {
+      color: #f9e2af;
+    }
+
+    /* ── 테이블 ── */
+    .table-wrap {
+      background: var(--bg-desc);
+      border-left: 4px solid var(--border-desc);
+      padding: 14px 20px;
+    }
+    .table-wrap::before {
+      /* no label on tables */
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+    thead tr {
+      background: var(--bg-table-head);
+    }
+    thead th {
+      padding: 9px 14px;
+      text-align: left;
+      color: var(--text-subhead);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-section);
+    }
+    tbody tr:nth-child(odd)  { background: var(--bg-table-row); }
+    tbody tr:nth-child(even) { background: var(--bg-table-alt); }
+    tbody td {
+      padding: 8px 14px;
+      color: var(--text-table);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    /* ── 구분선 ── */
+    hr { border: none; border-top: 1px solid var(--border-section); margin: 0; }
+
+    /* ── 스크롤바 ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 3px; }
+  </style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ════════════════════════════ 사이드바 TOC ════════════════════════════ -->
+<nav class="toc">
+  <h2>목차</h2>
+  <ol>
+    <li><a href="#s1">1. 헤더 &amp; 옵션</a></li>
+    <li><a href="#s2">2. 2-Pass 파싱 진입점</a></li>
+    <li><a href="#s3">3. 최상위 파일 구조</a></li>
+    <li><a href="#s4">4. syntax 선언</a></li>
+    <li><a href="#s5">5. import 문</a></li>
+    <li><a href="#s6">6. package 선언</a></li>
+    <li><a href="#s7">7. option 문</a></li>
+    <li><a href="#s8">8. 필드 레이블 &amp; 일반 필드</a></li>
+    <li><a href="#s9">9. oneof 블록</a></li>
+    <li><a href="#s10">10. map 필드</a></li>
+    <li><a href="#s11">11. 타입 참조</a></li>
+    <li><a href="#s12">12. reserved 선언</a></li>
+    <li><a href="#s13">13. 최상위 정의 종류</a></li>
+    <li><a href="#s14">14. enum 정의</a></li>
+    <li><a href="#s15">15. message 정의</a></li>
+    <li><a href="#s16">16. extend 정의</a></li>
+    <li><a href="#s17">17. service &amp; rpc 정의</a></li>
+    <li><a href="#s18">18. 리터럴 및 기본 표현식</a></li>
+    <li><a href="#s19">19. 식별자 및 타입 참조</a></li>
+    <li><a href="#s20">20. Lexer — 키워드 토큰</a></li>
+    <li><a href="#s21">21. Lexer — 기호 토큰</a></li>
+    <li><a href="#s22">22. Lexer — 리터럴 토큰</a></li>
+    <li><a href="#s23">23. Lexer — 공백 &amp; 주석</a></li>
+    <li><a href="#s24">24. keywords 파서 규칙</a></li>
+    <li><a href="#s25">25. 시맨틱 액션 전용 규칙</a></li>
+    <li><a href="#s26">26. 전체 흐름 요약</a></li>
+  </ol>
+</nav>
+
+<!-- ════════════════════════════ 본문 ════════════════════════════ -->
+<main class="content">
+
+  <h1>Protobuf3.g4 문법 파일 상세 설명</h1>
+  <p class="subtitle"><code>Parsers/Protobuf3.g4</code> 파일의 모든 규칙과 토큰에 대한 한국어 설명 문서</p>
+
+  <!-- ─── 1 ─── -->
+  <div class="section" id="s1">
+    <div class="section-header">
+      <h2>1. 헤더 &amp; 옵션</h2>
+      <span class="line-badge">줄 1~22</span>
+    </div>
+    <div class="section-body">
+
+      <div class="code-block"><pre>// SPDX-License-Identifier: Apache-2.0</pre></div>
+      <div class="desc-block"><ul><li>오픈소스 라이선스 선언 (Apache 2.0)</li></ul></div>
+      <hr/>
+
+      <div class="code-block"><pre>/**
+ * A Protocol Buffers 3 grammar
+ *
+ * Original source: https://developers.google.com/protocol-buffers/docs/reference/proto3-spec
+ * Original source is published under Apache License 2.0.
+ *
+ * Changes from the source above:
+ * - rewrite to antlr
+ * - extract some group to rule.
+ *
+ * @author anatawa12
+ */</pre></div>
+      <div class="desc-block"><ul>
+        <li>파일 전체에 대한 설명 블록</li>
+        <li>proto3 공식 스펙을 ANTLR4 문법으로 재작성한 파일이며, 원작자는 <strong>anatawa12</strong></li>
+      </ul></div>
+      <hr/>
+
+      <div class="code-block"><pre>// $antlr-format alignTrailingComments true, columnLimit 150, ...
+// $antlr-format allowShortRulesOnASingleLine false, ...</pre></div>
+      <div class="desc-block"><ul>
+        <li>ANTLR4 코드 포맷터(antlr-format)의 설정 지시자</li>
+        <li>생성 코드 정렬 스타일을 제어함. <strong>실제 문법 동작과는 무관</strong></li>
+      </ul></div>
+      <hr/>
+
+      <div class="code-block"><pre>grammar Protobuf3;</pre></div>
+      <div class="desc-block"><ul>
+        <li><strong>문법 이름 선언</strong> — 이 파일이 <code>Protobuf3</code>라는 이름의 combined grammar(Lexer+Parser 통합)임을 선언</li>
+        <li>ANTLR은 이 이름으로 <code>Protobuf3Lexer.cs</code>, <code>Protobuf3Parser.cs</code> 등을 생성함</li>
+      </ul></div>
+      <hr/>
+
+      <div class="code-block"><pre>options {
+    superClass = Protobuf3ParserBase;
+}</pre></div>
+      <div class="desc-block"><ul>
+        <li><strong>파서 옵션</strong> — 생성될 <code>Protobuf3Parser</code> 클래스가 기본 <code>Antlr4.Runtime.Parser</code> 대신 수동 작성된 <code>Protobuf3ParserBase</code>를 상속하도록 지정</li>
+        <li>2-pass 파싱, 심볼 테이블, 시맨틱 프레디킷 메서드를 이 베이스 클래스에서 제공함</li>
+      </ul></div>
+
+    </div>
+  </div>
+
+  <!-- ─── 2 ─── -->
+  <div class="section" id="s2">
+    <div class="section-header">
+      <h2>2. 2-Pass 파싱 진입점</h2>
+      <span class="line-badge">줄 26~28</span>
+    </div>
+    <div class="section-body">
+      <div class="code-block"><pre>twoPassParse
+    : { this.DoRewind(); } proto
+    ;</pre></div>
+      <div class="desc-block"><ul>
+        <li><strong>파싱 최상위 진입 규칙</strong></li>
+        <li><code>{ this.DoRewind(); }</code> — 파싱 시작 전 C# 코드를 실행하는 <strong>시맨틱 액션</strong></li>
+        <li><code>DoRewind()</code>는 <code>Protobuf3ParserBase</code>에서 구현되며:
+          <ol>
+            <li><strong>1st pass:</strong> 별도 파서 인스턴스로 전체를 한번 파싱해 message/enum 이름을 심볼 테이블에 수집</li>
+            <li>토큰 스트림을 위치 0으로 <strong>되감기(rewind)</strong></li>
+            <li><strong>2nd pass:</strong> 심볼 테이블을 활용해 타입을 정확히 구분하며 실제 파싱 수행</li>
+          </ol>
+        </li>
+        <li>그 후 <code>proto</code> 규칙으로 실제 파싱 트리를 구성</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- ─── 3 ─── -->
+  <div class="section" id="s3">
+    <div class="section-header">
+      <h2>3. 최상위 파일 구조</h2>
+      <span class="line-badge">줄 30~31</span>
+    </div>
+    <div class="section-body">
+      <div class="code-block"><pre>proto
+    : syntax (importStatement | packageStatement | optionStatement | topLevelDef | emptyStatement_)* EOF
+    ;</pre></div>
+      <div class="desc-block"><ul>
+        <li><strong>proto 파일 전체 구조 정의</strong></li>
+        <li><code>syntax</code> 선언이 반드시 먼저 오고, 이후 import/package/option/타입정의(message, enum, service) 또는 빈 문장(<code>;</code>)이 0회 이상 반복된 뒤 EOF로 끝남</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- ─── 4 ─── -->
+  <div class="section" id="s4">
+    <div class="section-header">
+      <h2>4. syntax 선언</h2>
+      <span class="line-badge">줄 36~38</span>
+    </div>
+    <div class="section-body">
+      <div class="code-block"><pre>syntax
+    : SYNTAX EQ (PROTO3_LIT_SINGLE | PROTO3_LIT_DOUBLE) SEMI
+    ;</pre></div>
+      <div class="desc-block"><ul>
+        <li><code>syntax = "proto3";</code> 또는 <code>syntax = 'proto3';</code> 구문을 인식</li>
+        <li><code>PROTO3_LIT_SINGLE</code>은 <code>"proto3"</code>, <code>PROTO3_LIT_DOUBLE</code>은 <code>'proto3'</code>에 대응하는 Lexer 토큰</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- ─── 5 ─── -->
+  <div class="section" id="s5">
+    <div class="section-header">
+      <h2>5. import 문</h2>
+      <span class="line-badge">줄 42~44</span>
+    </div>
+    <div class="section-body">
+      <div class="code-block"><pre>importStatement
+    : IMPORT (WEAK | PUBLIC)? strLit SEMI { this.DoImportStatement_(); }
+    ;</pre></div>
+      <div class="desc-block"><ul>
+        <li><code>import "other.proto";</code> / <code>import weak "..."</code> / <code>import public "..."</code> 구문 인식</li>
+        <li>마지막의 <code>{ this.DoImportStatement_(); }</code> 시맨틱 액션은 import된 파일명을 파서 베이스에 기록함</li>
+        <li><code>WEAK</code>/<code>PUBLIC</code> 수식어는 선택 사항 (<code>?</code>)</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- ─── 6 ─── -->
+  <div class="section" id="s6">
+    <div class="section-header">
+      <h2>6. package 선언</h2>
+      <span class="line-badge">줄 48~50</span>
+    </div>
+    <div class="section-body">
+      <div class="code-block"><pre>packageStatement
+    : PACKAGE fullIdent SEMI
+    ;</pre></div>
+      <div class="desc-block"><ul>
+        <li><code>package foo.bar.baz;</code> 형태의 패키지 선언 인식</li>
+        <li><code>fullIdent</code>는 <code>.</code>으로 연결된 식별자 체인 (예: <code>google.protobuf</code>)</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- ─── 7 ─── -->
+  <div class="section" id="s7">
+    <div class="section-header">
+      <h2>7. option 문</h2>
+      <span class="line-badge">줄 54~61</span>
+    </div>
+    <div class="section-body">
+      <div class="code-block"><pre>optionStatement
+    : OPTION optionName EQ constant SEMI
+    ;
+
+optionName
+    : fullIdent
+    | LP fullIdent RP ( DOT fullIdent)?
+    ;</pre></div>
+      <div class="desc-block"><ul>
+        <li><code>option optimize_for = SPEED;</code> 같은 옵션 문 인식</li>
+        <li><code>optionName</code>은 단순 식별자(<code>optimize_for</code>) 또는 확장 옵션(<code>(google.api.http).get</code>) 형태 모두 허용</li>
+        <li><code>LP</code>/<code>RP</code>는 <code>(</code>/<code>)</code></li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- ─── 8 ─── -->
+  <div class="section" id="s8">
+    <div class="section-header">
+      <h2>8. 필드 레이블 &amp; 일반 필드</h2>
+      <span class="line-badge">줄 64~83</span>
+    </div>
+    <div class="section-body">
+      <div class="code-block"><pre>fieldLabel
+    : OPTIONAL
+    | REPEATED
+    ;</pre></div>
+      <div class="desc-block"><ul>
+        <li>필드 앞에 붙는 수식어. <code>optional</code> 또는 <code>repeated</code> (proto3에서는 생략 가능)</li>
+      </ul></div>
+      <hr/>
+      <div class="code-block"><pre>field
+    : fieldLabel? type_ fieldName EQ fieldNumber (LB fieldOptions RB)? SEMI
+    ;</pre></div>
+      <div class="desc-block"><ul>
+        <li>일반 필드 전체 구조</li>
+        <li>예: <code>repeated string name = 1 [json_name = "name"];</code></li>
+        <li><code>LB</code>/<code>RB</code>는 <code>[</code>/<code>]</code> — 필드 옵션을 감싸는 대괄호. 선택 사항</li>
+      </ul></div>
+      <hr/>
+      <div class="code-block"><pre>fieldOptions
+    : fieldOption (COMMA fieldOption)*
+    ;
+
+fieldOption
+    : optionName EQ constant
+    ;
+
+fieldNumber
+    : intLit
+    ;</pre></div>
+      <div class="desc-block"><ul>
+        <li><code>fieldOptions</code>: 필드 옵션 목록 (쉼표로 구분)</li>
+        <li><code>fieldOption</code>: 옵션 이름 = 값 쌍</li>
+        <li><code>fieldNumber</code>: 필드 번호. 정수 리터럴만 허용</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- ─── 9 ─── -->
+  <div class="section" id="s9">
+    <div class="section-header">
+      <h2>9. oneof 블록</h2>
+      <span class="line-badge">줄 87~93</span>
+    </div>
+    <div class="section-body">
+      <div class="code-block"><pre>oneof
+    : ONEOF oneofName LC (optionStatement | oneofField | emptyStatement_)* RC
+    ;
+
+oneofField
+    : type_ fieldName EQ fieldNumber (LB fieldOptions RB)? SEMI
+    ;</pre></div>
+      <div class="desc-block"><ul>
+        <li><code>oneof</code> 블록 인식. 예: <code>oneof payload { string text = 1; bytes blob = 2; }</code></li>
+        <li><code>oneofField</code>는 일반 <code>field</code>와 동일하지만 <code>fieldLabel</code>이 없음 (oneof 내부 필드는 레이블 불가)</li>
+        <li><code>LC</code>/<code>RC</code>는 <code>{</code>/<code>}</code></li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- ─── 10 ─── -->
+  <div class="section" id="s10">
+    <div class="section-header">
+      <h2>10. map 필드</h2>
+      <span class="line-badge">줄 97~114</span>
+    </div>
+    <div class="section-body">
+      <div class="code-block"><pre>mapField
+    : MAP LT keyType COMMA type_ GT mapName EQ fieldNumber (LB fieldOptions RB)? SEMI
+    ;</pre></div>
+      <div class="desc-block"><ul>
+        <li><code>map&lt;string, MyMessage&gt; items = 3;</code> 형태의 map 필드 인식</li>
+        <li><code>LT</code>/<code>GT</code>는 <code>&lt;</code>/<code>&gt;</code>. <code>keyType</code>은 별도 규칙으로 제한됨</li>
+      </ul></div>
+      <hr/>
+      <div class="code-block"><pre>keyType
+    : INT32 | INT64 | UINT32 | UINT64 | SINT32 | SINT64
+    | FIXED32 | FIXED64 | SFIXED32 | SFIXED64
+    | BOOL | STRING
+    ;</pre></div>
+      <div class="desc-block"><ul>
+        <li><strong>map의 키 타입 제한 목록</strong></li>
+        <li>proto3 스펙에 따라 map 키는 정수/bool/string만 허용</li>
+        <li><code>float</code>, <code>double</code>, <code>bytes</code>, message 타입은 map 키로 사용 불가</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- ─── 11 ─── -->
+  <div class="section" id="s11">
+    <div class="section-header">
+      <h2>11. 타입 참조</h2>
+      <span class="line-badge">줄 118~136</span>
+    </div>
+    <div class="section-body">
+      <div class="code-block"><pre>type_
+    : DOUBLE | FLOAT | INT32 | INT64 | UINT32 | UINT64
+    | SINT32 | SINT64 | FIXED32 | FIXED64 | SFIXED32 | SFIXED64
+    | BOOL | STRING | BYTES
+    | { this.IsNotKeyword() }? messageType
+    | { this.IsNotKeyword() }? enumType
+    ;</pre></div>
+      <div class="desc-block"><ul>
+        <li><strong>필드 타입 전체 목록</strong> — 스칼라 타입(14종)과 사용자 정의 타입(message/enum)을 포함</li>
+        <li><code>{ this.IsNotKeyword() }?</code> — <strong>시맨틱 프레디킷</strong>: 현재 식별자가 예약 키워드가 아닐 때만 <code>messageType</code>/<code>enumType</code> 규칙 시도</li>
+        <li>2nd pass에서 <code>IsMessageType_()</code>/<code>IsEnumType_()</code>이 심볼 테이블을 참조해 message인지 enum인지 구분</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- ─── 12 ─── -->
+  <div class="section" id="s12">
+    <div class="section-header">
+      <h2>12. reserved 선언</h2>
+      <span class="line-badge">줄 140~154</span>
+    </div>
+    <div class="section-body">
+      <div class="code-block"><pre>reserved
+    : RESERVED (ranges | reservedFieldNames) SEMI
+    ;
+
+ranges
+    : range_ (COMMA range_)*
+    ;
+
+range_
+    : intLit (TO ( intLit | MAX))?
+    ;
+
+reservedFieldNames
+    : strLit (COMMA strLit)*
+    ;</pre></div>
+      <div class="desc-block"><ul>
+        <li><code>reserved 2, 15, 9 to 11;</code> 또는 <code>reserved "foo", "bar";</code> 구문 인식</li>
+        <li>삭제된 필드 번호/이름을 예약하여 재사용 방지</li>
+        <li><code>range_</code>: 단일 숫자 또는 <code>9 to 11</code> / <code>9 to max</code> 범위 표현</li>
+        <li><code>MAX</code>는 최대 필드 번호 (536870911)를 의미</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- ─── 13 ─── -->
+  <div class="section" id="s13">
+    <div class="section-header">
+      <h2>13. 최상위 정의 종류</h2>
+      <span class="line-badge">줄 158~163</span>
+    </div>
+    <div class="section-body">
+      <div class="code-block"><pre>topLevelDef
+    : messageDef
+    | enumDef
+    | extendDef
+    | serviceDef
+    ;</pre></div>
+      <div class="desc-block"><ul>
+        <li>proto 파일 최상위 레벨에서 정의 가능한 4가지 종류:</li>
+        <li><code>messageDef</code> — message 타입 정의</li>
+        <li><code>enumDef</code> — enum 타입 정의</li>
+        <li><code>extendDef</code> — proto2 호환 extend 정의</li>
+        <li><code>serviceDef</code> — gRPC 서비스 정의</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- ─── 14 ─── -->
+  <div class="section" id="s14">
+    <div class="section-header">
+      <h2>14. enum 정의</h2>
+      <span class="line-badge">줄 167~192</span>
+    </div>
+    <div class="section-body">
+      <div class="code-block"><pre>enumDef
+    : ENUM enumName doEnumNameDef enumBody
+    ;
+
+enumBody
+    : LC doEnterBlock enumElement* RC doExitBlock
+    ;
+
+enumElement
+    : optionStatement
+    | enumField
+    | reserved
+    | emptyStatement_
+    ;
+
+enumField
+    : ident EQ (MINUS)? intLit enumValueOptions? SEMI
+    ;
+
+enumValueOptions
+    : LB enumValueOption (COMMA enumValueOption)* RB
+    ;
+
+enumValueOption
+    : optionName EQ constant
+    ;</pre></div>
+      <div class="desc-block"><ul>
+        <li><strong>enum 전체 구조</strong>. 예: <code>enum Status { UNKNOWN = 0; ACTIVE = 1; }</code></li>
+        <li><code>doEnumNameDef</code> — enum 이름을 심볼 테이블에 등록하는 액션 규칙 (1st pass에서 사용)</li>
+        <li><code>doEnterBlock</code>/<code>doExitBlock</code> — <code>{</code>/<code>}</code> 진입/탈출 시 스코프 스택 관리</li>
+        <li><code>enumField</code>: <code>UNKNOWN = 0;</code> 또는 <code>DISABLED = -1;</code> 형태. 음수값 허용 (<code>MINUS</code>?)</li>
+        <li><code>enumValueOptions</code>: 필드 옵션과 동일한 형태로 enum 값에도 옵션 부여 가능</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- ─── 15 ─── -->
+  <div class="section" id="s15">
+    <div class="section-header">
+      <h2>15. message 정의</h2>
+      <span class="line-badge">줄 196~215</span>
+    </div>
+    <div class="section-body">
+      <div class="code-block"><pre>messageDef
+    : MESSAGE messageName doMessageNameDef messageBody
+    ;
+
+messageBody
+    : LC doEnterBlock messageElement* RC doExitBlock
+    ;
+
+messageElement
+    : field
+    | enumDef
+    | messageDef
+    | extendDef
+    | optionStatement
+    | oneof
+    | mapField
+    | reserved
+    | emptyStatement_
+    ;</pre></div>
+      <div class="desc-block"><ul>
+        <li><strong>message 전체 구조</strong>. 예: <code>message Player { string name = 1; int32 level = 2; }</code></li>
+        <li><code>doMessageNameDef</code> — message 이름을 심볼 테이블에 등록</li>
+        <li><code>messageElement</code>: message 내부에 올 수 있는 요소 (중첩 message/enum 포함)</li>
+        <li>중첩 <code>messageDef</code>/<code>enumDef</code>가 허용되므로 <strong>재귀적(recursive)</strong> 문법 구조</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- ─── 16 ─── -->
+  <div class="section" id="s16">
+    <div class="section-header">
+      <h2>16. extend 정의</h2>
+      <span class="line-badge">줄 224~226</span>
+    </div>
+    <div class="section-body">
+      <div class="code-block"><pre>extendDef
+    : EXTEND messageType LC (field | emptyStatement_)* RC
+    ;</pre></div>
+      <div class="desc-block"><ul>
+        <li>proto2 호환 <code>extend</code> 구문 인식</li>
+        <li>proto3 스펙에는 없지만 <code>protoc</code>가 지원하므로 포함</li>
+        <li>기존 message 타입에 필드를 추가하는 proto2 확장 메커니즘</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- ─── 17 ─── -->
+  <div class="section" id="s17">
+    <div class="section-header">
+      <h2>17. service &amp; rpc 정의</h2>
+      <span class="line-badge">줄 230~245</span>
+    </div>
+    <div class="section-body">
+      <div class="code-block"><pre>serviceDef
+    : SERVICE serviceName doServiceNameDef LC doEnterBlock serviceElement* RC doExitBlock
+    ;
+
+serviceElement
+    : optionStatement
+    | rpc
+    | emptyStatement_
+    ;
+
+rpc
+    : RPC rpcName LP (STREAM)? messageType RP RETURNS LP (STREAM)? messageType RP (
+        LC ( optionStatement | emptyStatement_)* RC
+        | SEMI
+    )
+    ;</pre></div>
+      <div class="desc-block"><ul>
+        <li><strong>gRPC 서비스 정의 구조</strong></li>
+        <li><code>doServiceNameDef</code> — 서비스 이름을 심볼 테이블에 등록</li>
+        <li><code>rpc</code> 예: <code>rpc GetPlayer(PlayerRequest) returns (PlayerResponse);</code></li>
+        <li><code>(STREAM)?</code>: 스트리밍 여부. <code>rpc Chat(stream ChatMsg) returns (stream ChatMsg)</code> 형태도 허용</li>
+        <li>rpc 본문은 <code>{ option ... ; }</code> 형태 또는 단순 <code>;</code>로 끝낼 수 있음</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- ─── 18 ─── -->
+  <div class="section" id="s18">
+    <div class="section-header">
+      <h2>18. 리터럴 및 기본 표현식</h2>
+      <span class="line-badge">줄 249~265</span>
+    </div>
+    <div class="section-body">
+      <div class="code-block"><pre>constant
+    : { this.IsNotKeyword() }? fullIdent
+    | (MINUS | PLUS)? intLit
+    | (MINUS | PLUS)? floatLit
+    | strLit
+    | boolLit
+    | blockLit
+    ;
+
+blockLit
+    : LC (ident COLON constant)* RC
+    ;
+
+emptyStatement_
+    : SEMI
+    ;</pre></div>
+      <div class="desc-block"><ul>
+        <li><code>constant</code>: 옵션 값으로 사용될 수 있는 모든 상수 표현. 식별자/정수/실수/문자열/bool/블록 리터럴</li>
+        <li><code>blockLit</code>: <code>{ key: value }</code> 형태의 구조체 리터럴 (proto 스펙 비표준이지만 테스트에 사용됨)</li>
+        <li><code>emptyStatement_</code>: 단순 <code>;</code> 하나. 빈 줄 대신 허용</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- ─── 19 ─── -->
+  <div class="section" id="s19">
+    <div class="section-header">
+      <h2>19. 식별자 및 타입 참조</h2>
+      <span class="line-badge">줄 269~330</span>
+    </div>
+    <div class="section-body">
+      <div class="code-block"><pre>ident
+    : IDENTIFIER
+    | keywords
+    ;
+
+fullIdent
+    : ident (DOT ident)*
+    ;</pre></div>
+      <div class="desc-block"><ul>
+        <li><code>ident</code>: 일반 식별자. proto에서는 키워드도 필드 이름 등으로 사용 가능하므로 <code>keywords</code> 대안을 포함</li>
+        <li><code>fullIdent</code>: <code>.</code>으로 연결된 복합 식별자. 예: <code>google.protobuf.Timestamp</code></li>
+      </ul></div>
+      <hr/>
+      <div class="code-block"><pre>messageName : ident ;
+enumName    : ident ;
+fieldName   : ident ;
+oneofName   : ident ;
+mapName     : ident ;
+serviceName : ident ;
+rpcName     : ident ;</pre></div>
+      <div class="desc-block"><ul>
+        <li>각 문맥에서 이름 역할을 하는 규칙들. 모두 <code>ident</code>의 별칭</li>
+        <li><strong>파스 트리에서 의미적으로 구분</strong>되도록 별도 규칙으로 정의함 (컨텍스트 클래스가 별도 생성됨)</li>
+      </ul></div>
+      <hr/>
+      <div class="code-block"><pre>messageType
+    : { this.IsMessageType_() }? (DOT)? (ident DOT)* messageName
+    ;
+
+enumType
+    : { this.IsEnumType_() }? (DOT)? (ident DOT)* enumName
+    ;</pre></div>
+      <div class="desc-block"><ul>
+        <li><code>messageType</code>: 2nd pass에서 <code>IsMessageType_()</code> 프레디킷이 true일 때만 매칭</li>
+        <li>심볼 테이블에 등록된 message 이름인지 검사. 앞에 <code>.</code>(절대 경로) 또는 패키지 경로 형태도 허용</li>
+        <li><code>enumType</code>: 동일하지만 enum 심볼 테이블 검사</li>
+      </ul></div>
+      <hr/>
+      <div class="code-block"><pre>intLit   : INT_LIT ;
+strLit   : STR_LIT | PROTO3_LIT_SINGLE | PROTO3_LIT_DOUBLE ;
+boolLit  : BOOL_LIT ;
+floatLit : FLOAT_LIT ;</pre></div>
+      <div class="desc-block"><ul>
+        <li>각 리터럴 타입을 Lexer 토큰으로 매핑하는 Parser 규칙</li>
+        <li><code>strLit</code>은 일반 문자열뿐 아니라 <code>"proto3"</code>/<code>'proto3'</code> 특수 리터럴 토큰도 포함</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- ─── 20 ─── -->
+  <div class="section" id="s20">
+    <div class="section-header">
+      <h2>20. Lexer 규칙 — 키워드 토큰</h2>
+      <span class="line-badge">줄 334~480</span>
+    </div>
+    <div class="section-body">
+      <div class="code-block"><pre>SYNTAX   : 'syntax'   ;    IMPORT   : 'import'   ;
+WEAK     : 'weak'     ;    PUBLIC   : 'public'   ;
+PACKAGE  : 'package'  ;    OPTION   : 'option'   ;
+OPTIONAL : 'optional' ;    REPEATED : 'repeated' ;
+ONEOF    : 'oneof'    ;    MAP      : 'map'      ;</pre></div>
+      <div class="desc-block">
+        <p>proto3 <strong>구조적 키워드</strong> 토큰 정의. 문자열 리터럴과 정확히 일치해야 토큰으로 인식됨</p>
+      </div>
+      <hr/>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>토큰</th><th>리터럴</th><th>설명</th></tr></thead>
+          <tbody>
+            <tr><td><code>INT32</code></td><td><code>'int32'</code></td><td>32비트 부호 있는 정수 (가변 길이 인코딩)</td></tr>
+            <tr><td><code>INT64</code></td><td><code>'int64'</code></td><td>64비트 부호 있는 정수 (가변 길이 인코딩)</td></tr>
+            <tr><td><code>UINT32</code></td><td><code>'uint32'</code></td><td>32비트 부호 없는 정수</td></tr>
+            <tr><td><code>UINT64</code></td><td><code>'uint64'</code></td><td>64비트 부호 없는 정수</td></tr>
+            <tr><td><code>SINT32</code></td><td><code>'sint32'</code></td><td>32비트 (ZigZag 인코딩, 음수에 효율적)</td></tr>
+            <tr><td><code>SINT64</code></td><td><code>'sint64'</code></td><td>64비트 (ZigZag 인코딩)</td></tr>
+            <tr><td><code>FIXED32</code></td><td><code>'fixed32'</code></td><td>항상 4바이트 부호 없는 정수</td></tr>
+            <tr><td><code>FIXED64</code></td><td><code>'fixed64'</code></td><td>항상 8바이트 부호 없는 정수</td></tr>
+            <tr><td><code>SFIXED32</code></td><td><code>'sfixed32'</code></td><td>항상 4바이트 부호 있는 정수</td></tr>
+            <tr><td><code>SFIXED64</code></td><td><code>'sfixed64'</code></td><td>항상 8바이트 부호 있는 정수</td></tr>
+            <tr><td><code>BOOL</code></td><td><code>'bool'</code></td><td>불리언 (true/false)</td></tr>
+            <tr><td><code>STRING</code></td><td><code>'string'</code></td><td>UTF-8 문자열</td></tr>
+            <tr><td><code>DOUBLE</code></td><td><code>'double'</code></td><td>64비트 부동소수점</td></tr>
+            <tr><td><code>FLOAT</code></td><td><code>'float'</code></td><td>32비트 부동소수점</td></tr>
+            <tr><td><code>BYTES</code></td><td><code>'bytes'</code></td><td>임의 바이트 시퀀스</td></tr>
+            <tr><td><code>RESERVED</code></td><td><code>'reserved'</code></td><td>필드 번호/이름 예약</td></tr>
+            <tr><td><code>TO</code></td><td><code>'to'</code></td><td>reserved 범위 키워드</td></tr>
+            <tr><td><code>MAX</code></td><td><code>'max'</code></td><td>최대 필드 번호 (536870911)</td></tr>
+            <tr><td><code>ENUM</code></td><td><code>'enum'</code></td><td>enum 타입 정의 키워드</td></tr>
+            <tr><td><code>MESSAGE</code></td><td><code>'message'</code></td><td>message 타입 정의 키워드</td></tr>
+            <tr><td><code>SERVICE</code></td><td><code>'service'</code></td><td>gRPC 서비스 정의 키워드</td></tr>
+            <tr><td><code>EXTEND</code></td><td><code>'extend'</code></td><td>proto2 호환 확장 키워드</td></tr>
+            <tr><td><code>RPC</code></td><td><code>'rpc'</code></td><td>RPC 메서드 정의 키워드</td></tr>
+            <tr><td><code>STREAM</code></td><td><code>'stream'</code></td><td>스트리밍 RPC 수식어</td></tr>
+            <tr><td><code>RETURNS</code></td><td><code>'returns'</code></td><td>RPC 반환 타입 키워드</td></tr>
+            <tr><td><code>PROTO3_LIT_SINGLE</code></td><td><code>'"proto3"'</code></td><td>syntax 선언 전용 (큰따옴표)</td></tr>
+            <tr><td><code>PROTO3_LIT_DOUBLE</code></td><td><code>'\'proto3\''</code></td><td>syntax 선언 전용 (작은따옴표)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── 21 ─── -->
+  <div class="section" id="s21">
+    <div class="section-header">
+      <h2>21. Lexer 규칙 — 기호 토큰</h2>
+      <span class="line-badge">줄 484~542</span>
+    </div>
+    <div class="section-body">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>토큰</th><th>문자</th><th>용도</th></tr></thead>
+          <tbody>
+            <tr><td><code>SEMI</code></td><td><code>;</code></td><td>문장 종료</td></tr>
+            <tr><td><code>EQ</code></td><td><code>=</code></td><td>대입 (필드 번호, 옵션 값)</td></tr>
+            <tr><td><code>LP</code></td><td><code>(</code></td><td>확장 옵션, rpc 파라미터 시작</td></tr>
+            <tr><td><code>RP</code></td><td><code>)</code></td><td>확장 옵션, rpc 파라미터 끝</td></tr>
+            <tr><td><code>LB</code></td><td><code>[</code></td><td>필드 옵션 시작</td></tr>
+            <tr><td><code>RB</code></td><td><code>]</code></td><td>필드 옵션 끝</td></tr>
+            <tr><td><code>LC</code></td><td><code>{</code></td><td>블록(message/enum/service 본문) 시작</td></tr>
+            <tr><td><code>RC</code></td><td><code>}</code></td><td>블록 끝</td></tr>
+            <tr><td><code>LT</code></td><td><code>&lt;</code></td><td>map 타입 꺾쇠 시작</td></tr>
+            <tr><td><code>GT</code></td><td><code>&gt;</code></td><td>map 타입 꺾쇠 끝</td></tr>
+            <tr><td><code>DOT</code></td><td><code>.</code></td><td>패키지 경로 구분자</td></tr>
+            <tr><td><code>COMMA</code></td><td><code>,</code></td><td>옵션/범위 구분자</td></tr>
+            <tr><td><code>COLON</code></td><td><code>:</code></td><td>blockLit의 key:value 구분</td></tr>
+            <tr><td><code>PLUS</code></td><td><code>+</code></td><td>양수 부호</td></tr>
+            <tr><td><code>MINUS</code></td><td><code>-</code></td><td>음수 부호</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── 22 ─── -->
+  <div class="section" id="s22">
+    <div class="section-header">
+      <h2>22. Lexer 규칙 — 리터럴 토큰</h2>
+      <span class="line-badge">줄 544~623</span>
+    </div>
+    <div class="section-body">
+      <div class="code-block"><pre>STR_LIT
+    : ('\'' ( CHAR_VALUE)*? '\'')
+    | ( '"' ( CHAR_VALUE)*? '"')
+    ;</pre></div>
+      <div class="desc-block"><ul>
+        <li>작은따옴표 또는 큰따옴표로 감싼 문자열</li>
+        <li><code>*?</code> = 비탐욕적(non-greedy) 매칭으로 가장 짧게 일치</li>
+      </ul></div>
+      <hr/>
+      <div class="code-block"><pre>fragment CHAR_VALUE
+    : HEX_ESCAPE       // 16진수 이스케이프 (\xHH)
+    | OCT_ESCAPE       // 8진수 이스케이프 (\OOO)
+    | CHAR_ESCAPE      // 문자 이스케이프 (\n, \t 등)
+    | ~[\u0000\n\\]    // null, 줄바꿈, 백슬래시를 제외한 일반 문자
+    ;
+
+fragment HEX_ESCAPE  : '\\' ('x' | 'X') HEX_DIGIT HEX_DIGIT ;
+fragment OCT_ESCAPE  : '\\' OCTAL_DIGIT OCTAL_DIGIT OCTAL_DIGIT ;
+fragment CHAR_ESCAPE : '\\' ('a'|'b'|'f'|'n'|'r'|'t'|'v'|'\\'|'\''|'"') ;</pre></div>
+      <div class="desc-block">
+        <p><strong>이스케이프 시퀀스 fragment 규칙들</strong></p>
+        <ul>
+          <li><code>HEX_ESCAPE</code>: <code>\x1F</code> 형태 — <code>\\</code> + <code>x</code>/<code>X</code> + 16진수 2자리</li>
+          <li><code>OCT_ESCAPE</code>: <code>\077</code> 형태 — <code>\\</code> + 8진수 3자리</li>
+          <li><code>CHAR_ESCAPE</code>: <code>\n</code>, <code>\t</code>, <code>\\</code>, <code>\'</code>, <code>\"</code> 등 C 스타일 이스케이프</li>
+        </ul>
+      </div>
+      <hr/>
+      <div class="code-block"><pre>BOOL_LIT : 'true' | 'false' ;</pre></div>
+      <div class="desc-block"><ul><li>bool 리터럴 토큰. <code>true</code> 또는 <code>false</code></li></ul></div>
+      <hr/>
+      <div class="code-block"><pre>FLOAT_LIT
+    : (DECIMALS DOT DECIMALS? EXPONENT? | DECIMALS EXPONENT | DOT DECIMALS EXPONENT?)
+    | 'inf'
+    | 'nan'
+    ;
+
+fragment EXPONENT : ('e' | 'E') (PLUS | MINUS)? DECIMALS ;
+fragment DECIMALS : DECIMAL_DIGIT+ ;</pre></div>
+      <div class="desc-block"><ul>
+        <li><code>1.0</code>, <code>.5e10</code>, <code>3.14E-2</code>, <code>inf</code>, <code>nan</code> 등을 인식</li>
+        <li><code>EXPONENT</code>: <code>e+10</code>, <code>E-3</code> 형태의 지수부</li>
+        <li><code>DECIMALS</code>: 1개 이상의 십진수 숫자</li>
+      </ul></div>
+      <hr/>
+      <div class="code-block"><pre>INT_LIT
+    : DECIMAL_LIT
+    | OCTAL_LIT
+    | HEX_LIT
+    ;
+
+fragment DECIMAL_LIT : ([1-9]) DECIMAL_DIGIT* ;    // 10진수 (123)
+fragment OCTAL_LIT   : '0' OCTAL_DIGIT* ;          // 8진수 (0755)
+fragment HEX_LIT     : '0' ('x' | 'X') HEX_DIGIT+ ; // 16진수 (0xFF)</pre></div>
+      <div class="desc-block"><ul>
+        <li><strong>정수 리터럴</strong> — 10진수, 8진수, 16진수 모두 지원</li>
+        <li><code>DECIMAL_LIT</code>: 1~9로 시작 (0 단독은 <code>OCTAL_LIT</code>의 <code>'0'</code>으로 커버됨)</li>
+      </ul></div>
+      <hr/>
+      <div class="code-block"><pre>IDENTIFIER : LETTER (LETTER | DECIMAL_DIGIT)* ;
+
+fragment LETTER        : [A-Za-z_] ;
+fragment DECIMAL_DIGIT : [0-9] ;
+fragment OCTAL_DIGIT   : [0-7] ;
+fragment HEX_DIGIT     : [0-9A-Fa-f] ;</pre></div>
+      <div class="desc-block"><ul>
+        <li><code>IDENTIFIER</code>: 영문자/언더스코어로 시작하고 영숫자/언더스코어가 이어지는 이름</li>
+        <li><code>fragment</code> 규칙들은 독립 토큰이 되지 않고 다른 Lexer 규칙의 부품으로만 사용됨</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- ─── 23 ─── -->
+  <div class="section" id="s23">
+    <div class="section-header">
+      <h2>23. Lexer 규칙 — 공백 &amp; 주석</h2>
+      <span class="line-badge">줄 626~636</span>
+    </div>
+    <div class="section-body">
+      <div class="code-block"><pre>WS : [ \t\r\n\u000C]+ -> skip ;</pre></div>
+      <div class="desc-block"><ul>
+        <li><strong>공백 처리</strong> — 스페이스, 탭, CR, LF, Form Feed를 토큰 스트림에서 <strong>완전히 제거(skip)</strong></li>
+        <li>파서는 공백을 전혀 보지 못함</li>
+      </ul></div>
+      <hr/>
+      <div class="code-block"><pre>LINE_COMMENT : '//' ~[\r\n]* -> channel(HIDDEN) ;
+COMMENT      : '/*' .*? '*/' -> channel(HIDDEN) ;</pre></div>
+      <div class="desc-block"><ul>
+        <li><strong>주석 처리</strong> — 한 줄 주석(<code>//</code>)과 블록 주석(<code>/* */</code>) 모두 <strong>HIDDEN 채널</strong>로 전송</li>
+        <li>파서에는 노출되지 않지만 토큰 스트림에는 보존됨 (필요 시 코드에서 접근 가능)</li>
+      </ul></div>
+      <hr/>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>지시자</th><th>동작</th><th>접근 가능 여부</th></tr></thead>
+          <tbody>
+            <tr><td><code>skip</code></td><td>토큰 스트림에서 완전 제거</td><td>불가</td></tr>
+            <tr><td><code>channel(HIDDEN)</code></td><td>파서에 안 보이지만 스트림에 보존</td><td>코드에서 접근 가능</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── 24 ─── -->
+  <div class="section" id="s24">
+    <div class="section-header">
+      <h2>24. keywords 파서 규칙</h2>
+      <span class="line-badge">줄 638~675</span>
+    </div>
+    <div class="section-body">
+      <div class="code-block"><pre>keywords
+    : SYNTAX | IMPORT | WEAK | PUBLIC | PACKAGE | OPTION
+    | OPTIONAL | REPEATED | ONEOF | MAP
+    | INT32 | INT64 | UINT32 | UINT64 | SINT32 | SINT64
+    | FIXED32 | FIXED64 | SFIXED32 | SFIXED64
+    | BOOL | STRING | DOUBLE | FLOAT | BYTES
+    | RESERVED | TO | MAX | ENUM | MESSAGE
+    | SERVICE | EXTEND | RPC | STREAM | RETURNS
+    | BOOL_LIT
+    ;</pre></div>
+      <div class="desc-block"><ul>
+        <li><strong>모든 예약 키워드의 목록을 파서 규칙으로 묶은 것</strong></li>
+        <li><code>ident</code> 규칙에서 <code>IDENTIFIER | keywords</code>를 허용하는 이유: proto3에서는 <code>message</code>, <code>string</code> 같은 키워드도 필드 이름으로 사용 가능하기 때문</li>
+        <li><code>IsNotKeyword()</code> 프레디킷이 타입 매칭 시 이 keywords 규칙을 참조하여 키워드를 식별자로 오인하지 않도록 방지</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- ─── 25 ─── -->
+  <div class="section" id="s25">
+    <div class="section-header">
+      <h2>25. 시맨틱 액션 전용 규칙</h2>
+      <span class="line-badge">줄 677~685</span>
+    </div>
+    <div class="section-body">
+      <div class="desc-block"><p>이 규칙들은 모두 <strong>빈 파서 규칙에 C# 코드를 삽입</strong>하는 ANTLR4 시맨틱 액션 패턴입니다.</p></div>
+      <hr/>
+      <div class="code-block"><pre>doEnterBlock     : { this.DoEnterBlock_(); } ;</pre></div>
+      <div class="desc-block"><ul><li><code>{</code> 진입 시 스코프 스택에 현재 컨텍스트 push. 중첩 타입 이름 추적에 사용</li></ul></div>
+      <hr/>
+      <div class="code-block"><pre>doEnumNameDef    : { this.DoEnumNameDef_(); } ;</pre></div>
+      <div class="desc-block"><ul>
+        <li>enum 이름 토큰 직후 호출</li>
+        <li>1st pass에서 enum 이름을 <code>_enumTypes</code> 심볼 테이블에 등록</li>
+      </ul></div>
+      <hr/>
+      <div class="code-block"><pre>doExitBlock      : { this.DoExitBlock_(); } ;</pre></div>
+      <div class="desc-block"><ul><li><code>}</code> 탈출 시 스코프 스택에서 pop. 중첩 스코프 복원</li></ul></div>
+      <hr/>
+      <div class="code-block"><pre>doMessageNameDef : { this.DoMessageNameDef_(); } ;</pre></div>
+      <div class="desc-block"><ul>
+        <li>message 이름 토큰 직후 호출</li>
+        <li>1st pass에서 message 이름을 <code>_messageTypes</code> 심볼 테이블에 등록</li>
+      </ul></div>
+      <hr/>
+      <div class="code-block"><pre>doServiceNameDef : { this.DoServiceNameDef_(); } ;</pre></div>
+      <div class="desc-block"><ul>
+        <li>service 이름 토큰 직후 호출</li>
+        <li>1st pass에서 service 이름을 심볼 테이블에 등록</li>
+      </ul></div>
+      <hr/>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>액션 규칙</th><th>호출 위치</th><th>역할</th></tr></thead>
+          <tbody>
+            <tr><td><code>doMessageNameDef</code></td><td><code>messageDef</code> 내 이름 뒤</td><td>message 이름 등록</td></tr>
+            <tr><td><code>doEnumNameDef</code></td><td><code>enumDef</code> 내 이름 뒤</td><td>enum 이름 등록</td></tr>
+            <tr><td><code>doServiceNameDef</code></td><td><code>serviceDef</code> 내 이름 뒤</td><td>service 이름 등록</td></tr>
+            <tr><td><code>doEnterBlock</code></td><td><code>enumBody</code>, <code>messageBody</code>, <code>serviceDef</code> 내 <code>{</code> 뒤</td><td>스코프 push</td></tr>
+            <tr><td><code>doExitBlock</code></td><td><code>enumBody</code>, <code>messageBody</code>, <code>serviceDef</code> 내 <code>}</code> 뒤</td><td>스코프 pop</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── 26 ─── -->
+  <div class="section" id="s26">
+    <div class="section-header">
+      <h2>26. 전체 흐름 요약</h2>
+    </div>
+    <div class="section-body">
+      <div class="code-block"><pre>Protobuf3.g4
+│
+├── grammar Protobuf3             ← 이름 선언
+├── options { superClass = ... }  ← 커스텀 베이스 클래스 지정
+│
+├── [Parser 규칙 - 소문자]
+│   ├── twoPassParse              ← 진입점, DoRewind() 호출
+│   ├── proto                     ← 파일 최상위 구조
+│   ├── syntax/import/package/option  ← 헤더 선언들
+│   ├── field/oneof/mapField      ← 필드 종류들
+│   ├── enumDef/messageDef        ← 타입 정의 (재귀 포함)
+│   ├── serviceDef/rpc            ← gRPC 서비스
+│   ├── type_/messageType/enumType ← 타입 참조 (시맨틱 프레디킷)
+│   └── ident/fullIdent/리터럴    ← 기본 표현식
+│
+├── [Lexer 규칙 - 대문자]
+│   ├── 키워드: MESSAGE, ENUM, REPEATED ...
+│   ├── 기호: SEMI, EQ, LC, RC ...
+│   ├── 리터럴: INT_LIT, STR_LIT, FLOAT_LIT, BOOL_LIT
+│   ├── IDENTIFIER
+│   ├── fragment: 보조 규칙 (독립 토큰 불가)
+│   └── WS(skip) / COMMENT(HIDDEN)
+│
+└── [시맨틱 액션 규칙]
+    ├── doEnterBlock / doExitBlock     ← 스코프 스택 관리
+    └── doMessageNameDef / doEnumNameDef / doServiceNameDef  ← 심볼 테이블 등록</pre></div>
+    </div>
+  </div>
+
+</main>
+</div>
+</body>
+</html>

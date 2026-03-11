@@ -1,0 +1,101 @@
+// ====================================================
+// 5. combat.proto - 전투 시스템 (package: game)
+// 복잡한 oneof, repeated, map, 크로스파일 참조
+// ====================================================
+syntax = "proto3";
+
+package game;
+
+import "core_types.proto";
+import "enums.proto";
+import "character.proto";
+
+// 대미지 정보
+message DamageInfo {
+    int64 source_id = 1;
+    int64 target_id = 2;
+    float amount = 3;
+    ElementType element = 4;
+    bool is_critical = 5;
+    bool is_blocked = 6;
+    Vec3 hit_position = 7;
+    Vec3 hit_normal = 8;
+    Timestamp timestamp = 9;
+
+    message DamageModifier {
+        string modifier_name = 1;
+        float multiplier = 2;
+        bool is_additive = 3;
+    }
+
+    repeated DamageModifier modifiers = 10;
+}
+
+// 스킬 시전 이벤트
+message SkillCastEvent {
+    int64 caster_id = 1;
+    int32 skill_id = 2;
+    Vec3 cast_position = 3;
+    Vec3 target_position = 4;
+    repeated int64 target_ids = 5;
+    float cast_time = 6;
+    Timestamp cast_timestamp = 7;
+}
+
+// 전투 로그 엔트리
+message CombatLogEntry {
+    int64 entry_id = 1;
+    Timestamp timestamp = 2;
+
+    // oneof: 로그 타입에 따라 다른 데이터
+    oneof event {
+        DamageInfo damage = 3;
+        SkillCastEvent skill_cast = 4;
+        HealInfo heal = 5;
+        DeathEvent death = 6;
+    }
+
+    string description = 10;
+}
+
+// 힐 정보
+message HealInfo {
+    int64 healer_id = 1;
+    int64 target_id = 2;
+    float amount = 3;
+    int32 skill_id = 4;
+    bool is_over_time = 5;
+}
+
+// 사망 이벤트
+message DeathEvent {
+    int64 victim_id = 1;
+    int64 killer_id = 2;
+    DamageInfo killing_blow = 3;
+    Vec3 death_position = 4;
+}
+
+// 전투 세션 요약
+message CombatSession {
+    int64 session_id = 1;
+    Timestamp start_time = 2;
+    Timestamp end_time = 3;
+    repeated CombatLogEntry log_entries = 4;
+
+    // 참가자별 통계
+    message ParticipantStats {
+        int64 character_id = 1;
+        float total_damage_dealt = 2;
+        float total_damage_taken = 3;
+        float total_healing = 4;
+        int32 kills = 5;
+        int32 deaths = 6;
+        int32 assists = 7;
+
+        map<int32, int32> skill_usage_count = 8;
+    }
+
+    repeated ParticipantStats participants = 5;
+
+    map<int64, ParticipantStats> participant_map = 6;
+}

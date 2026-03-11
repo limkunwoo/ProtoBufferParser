@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <!-- Exclude test project folder from main project compilation -->
+  <ItemGroup>
+    <Compile Remove="ProtoBufferParser.Tests\**" />
+    <None Remove="ProtoBufferParser.Tests\**" />
+    <Content Remove="ProtoBufferParser.Tests\**" />
+    <EmbeddedResource Remove="ProtoBufferParser.Tests\**" />
+  </ItemGroup>
+
+  <!-- ANTLR4 parser files are manually managed in Parsers/ folder -->
+  <ItemGroup>
+    <None Include="Parsers\Protobuf3.g4" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Antlr4.Runtime" Version="4.6.6" />
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+  </ItemGroup>
+
+</Project>

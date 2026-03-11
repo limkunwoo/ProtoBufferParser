@@ -1,0 +1,97 @@
+// ====================================================
+// 6. world.proto - 월드/매치 시스템 (package: game)
+// 모든 것을 조합한 최상위 복합 구조
+// ====================================================
+syntax = "proto3";
+
+package game;
+
+import "core_types.proto";
+import "enums.proto";
+import "character.proto";
+import "combat.proto";
+
+// 월드 오브젝트
+message WorldObject {
+    int64 object_id = 1;
+    string object_name = 2;
+    Vec3 position = 3;
+    Vec4 rotation = 4;
+    Vec3 scale = 5;
+    bool is_active = 6;
+
+    message InteractionData {
+        string interaction_type = 1;
+        float interaction_range = 2;
+        map<string, string> parameters = 3;
+    }
+
+    InteractionData interaction = 7;
+}
+
+// 스폰 포인트
+message SpawnPoint {
+    int32 spawn_id = 1;
+    Vec3 position = 2;
+    Vec4 rotation = 3;
+    CharacterClass allowed_class = 4;
+    int32 max_occupancy = 5;
+}
+
+// 매치 정보
+message MatchInfo {
+    int64 match_id = 1;
+    string map_name = 2;
+    MatchState state = 3;
+    Timestamp created_at = 4;
+    Timestamp started_at = 5;
+    int32 max_players = 6;
+    int32 current_players = 7;
+
+    // 팀 정보
+    message Team {
+        int32 team_id = 1;
+        string team_name = 2;
+        Color team_color = 3;
+        repeated int64 member_ids = 4;
+        int32 score = 5;
+    }
+
+    repeated Team teams = 8;
+    repeated SpawnPoint spawn_points = 9;
+    repeated WorldObject world_objects = 10;
+
+    // 매치 설정
+    map<string, string> settings = 11;
+    map<string, float> modifiers = 12;
+}
+
+// 전체 게임 월드 스냅샷
+message WorldSnapshot {
+    int64 snapshot_id = 1;
+    Timestamp timestamp = 2;
+    MatchInfo match_info = 3;
+    repeated Character characters = 4;
+    CombatSession active_combat = 5;
+
+    // 월드 상태
+    message WeatherState {
+        string weather_type = 1;
+        float intensity = 2;
+        Vec3 wind_direction = 3;
+        float temperature = 4;
+    }
+
+    WeatherState weather = 6;
+
+    // 서버 성능 메트릭
+    message ServerMetrics {
+        float tick_rate = 1;
+        float avg_latency = 2;
+        int32 entity_count = 3;
+        float memory_usage_mb = 4;
+        bytes diagnostic_data = 5;
+    }
+
+    ServerMetrics metrics = 7;
+}

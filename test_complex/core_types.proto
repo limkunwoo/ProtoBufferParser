@@ -1,0 +1,37 @@
+// ====================================================
+// 1. core_types.proto - 기본 공용 타입 (package: game)
+// 벡터, 색상, 타임스탬프 등 원시적 공용 구조체
+// ====================================================
+syntax = "proto3";
+
+package game;
+
+message Vec2 {
+    float x = 1;
+    float y = 2;
+}
+
+message Vec3 {
+    float x = 1;
+    float y = 2;
+    float z = 3;
+}
+
+message Vec4 {
+    float x = 1;
+    float y = 2;
+    float z = 3;
+    float w = 4;
+}
+
+message Color {
+    float r = 1;
+    float g = 2;
+    float b = 3;
+    float a = 4;
+}
+
+message Timestamp {
+    int64 seconds = 1;
+    int32 nanos = 2;
+}

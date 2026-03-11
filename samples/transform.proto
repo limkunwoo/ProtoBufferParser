@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+import "common.proto";
+
+message Transform {
+    Vector3 position = 1;
+    Quaternion rotation = 2;
+    Vector3 scale = 3;
+}

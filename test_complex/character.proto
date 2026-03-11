@@ -1,0 +1,110 @@
+// ====================================================
+// 4. character.proto - 캐릭터 시스템 (package: game)
+// 깊은 중첩 (3단계), optional, repeated message, 크로스파일 참조
+// ====================================================
+syntax = "proto3";
+
+package game;
+
+import "core_types.proto";
+import "enums.proto";
+import "items.proto";
+
+message Character {
+    int64 character_id = 1;
+    string character_name = 2;
+    CharacterClass character_class = 3;
+    int32 level = 4;
+    int64 experience = 5;
+
+    // 중첩 1단계: 능력치
+    message Stats {
+        int32 strength = 1;
+        int32 dexterity = 2;
+        int32 intelligence = 3;
+        int32 vitality = 4;
+        float health = 5;
+        float max_health = 6;
+        float mana = 7;
+        float max_mana = 8;
+
+        // 중첩 2단계: 저항
+        message Resistances {
+            float fire_resist = 1;
+            float water_resist = 2;
+            float earth_resist = 3;
+            float wind_resist = 4;
+            float light_resist = 5;
+            float dark_resist = 6;
+        }
+
+        Resistances resistances = 9;
+    }
+
+    Stats stats = 6;
+
+    // 위치/변환 정보 (크로스파일)
+    Vec3 position = 7;
+    Vec4 rotation = 8;
+
+    // 장착 장비 (크로스파일, map<string, message>)
+    map<string, Equipment> equipped_items = 9;
+
+    // 인벤토리 (크로스파일)
+    Inventory inventory = 10;
+
+    // 스킬 목록
+    message Skill {
+        int32 skill_id = 1;
+        string skill_name = 2;
+        int32 skill_level = 3;
+        float cooldown = 4;
+        ElementType element = 5;
+        repeated StatusEffect applied_effects = 6;
+    }
+
+    repeated Skill skills = 11;
+
+    // 활성 버프/디버프
+    message ActiveBuff {
+        int32 buff_id = 1;
+        string buff_name = 2;
+        float remaining_duration = 3;
+        float total_duration = 4;
+        int32 stack_count = 5;
+        StatusEffect effect_type = 6;
+    }
+
+    repeated ActiveBuff active_buffs = 12;
+
+    // 외형 커스터마이징
+    message Appearance {
+        int32 face_id = 1;
+        int32 hair_id = 2;
+        Color hair_color = 3;
+        Color skin_color = 4;
+        float height = 5;
+
+        // 중첩 2단계: 착용 코스튬
+        message Costume {
+            int32 costume_id = 1;
+            string costume_name = 2;
+            Color primary_color = 3;
+            Color secondary_color = 4;
+        }
+
+        Costume current_costume = 6;
+    }
+
+    Appearance appearance = 13;
+
+    // 업적 진행 상태
+    map<int32, float> achievement_progress = 14;
+
+    // 최근 접속
+    Timestamp last_login = 15;
+
+    // optional 필드
+    optional string guild_name = 16;
+    optional int32 party_id = 17;
+}

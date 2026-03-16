@@ -1,0 +1,45 @@
+{
+  "1": {
+    "svg": "pipeline.svg",
+    "png": null,
+    "svgCaption": "파싱 파이프라인 전체 흐름",
+    "title": "파싱 파이프라인 전체 흐름"
+  },
+  "2": {
+    "svg": "cst_vs_ast.svg",
+    "png": null,
+    "svgCaption": "CST vs AST 구조 비교",
+    "title": "CST란 무엇인가"
+  },
+  "3": {
+    "svg": null,
+    "png": null,
+    "svgCaption": null,
+    "title": "AST란 무엇인가"
+  },
+  "4": {
+    "svg": "visitor_pattern.svg",
+    "png": null,
+    "svgCaption": "Visitor 패턴 동작 구조",
+    "title": "Visitor 패턴으로 CST 순회하기"
+  },
+  "5": {
+    "svg": null,
+    "png": null,
+    "svgCaption": null,
+    "title": "변환 과정 단계별 추적",
+    "canvas2d": "cst_ast_stepper"
+  },
+  "6": {
+    "svg": "two_pass.svg",
+    "png": null,
+    "svgCaption": "2-Pass 파싱 타입 판별",
+    "title": "타입 판별 — 시맨틱 프레디킷의 역할"
+  },
+  "7": {
+    "svg": "codegen.svg",
+    "png": null,
+    "svgCaption": "AST → Unreal Engine C++ 코드 생성",
+    "title": "AST에서 Unreal Engine C++ 코드 생성"
+  }
+}

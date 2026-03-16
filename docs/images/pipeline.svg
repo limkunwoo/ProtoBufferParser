@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 140">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto">
+      <polygon points="0 0, 8 3.5, 0 7" fill="#5ba3d9"/>
+    </marker>
+  </defs>
+
+  <rect width="860" height="140" fill="#1e1e2e" rx="10"/>
+
+  <!-- boxes -->
+  <!-- 1: Source -->
+  <rect x="10" y="44" width="110" height="52" rx="7" fill="#2c3e50" stroke="#5ba3d9" stroke-width="1.5"/>
+  <text x="65" y="65" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#a9dc76">소스 텍스트</text>
+  <text x="65" y="83" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#7ec8e3">repeated string</text>
+  <text x="65" y="96" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#7ec8e3">name = 1;</text>
+
+  <!-- arrow 1→2 -->
+  <line x1="120" y1="70" x2="152" y2="70" stroke="#5ba3d9" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="136" y="62" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9" fill="#888">Lexer</text>
+
+  <!-- 2: Tokens -->
+  <rect x="154" y="44" width="145" height="52" rx="7" fill="#2c3e50" stroke="#5ba3d9" stroke-width="1.5"/>
+  <text x="226" y="64" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#a9dc76">토큰 스트림</text>
+  <text x="226" y="80" text-anchor="middle" font-family="'Consolas',monospace" font-size="9.5" fill="#7ec8e3">REPEATED STRING</text>
+  <text x="226" y="93" text-anchor="middle" font-family="'Consolas',monospace" font-size="9.5" fill="#7ec8e3">IDENTIFIER EQ INT_LIT SEMI</text>
+
+  <!-- arrow 2→3 -->
+  <line x1="299" y1="70" x2="331" y2="70" stroke="#5ba3d9" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="315" y="62" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9" fill="#888">Parser</text>
+
+  <!-- 3: CST -->
+  <rect x="333" y="30" width="120" height="80" rx="7" fill="#1a3a4a" stroke="#f38ba8" stroke-width="2"/>
+  <text x="393" y="52" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="12" font-weight="bold" fill="#f38ba8">CST</text>
+  <text x="393" y="68" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9.5" fill="#cdd6f4">Parse Tree</text>
+  <text x="393" y="82" text-anchor="middle" font-family="'Consolas',monospace" font-size="9" fill="#888">field→type_→STRING</text>
+  <text x="393" y="96" text-anchor="middle" font-family="'Consolas',monospace" font-size="9" fill="#888">fieldName→ident→ID</text>
+  <text x="393" y="110" text-anchor="middle" font-family="'Consolas',monospace" font-size="9" fill="#666">EQ INT_LIT SEMI …</text>
+
+  <!-- arrow 3→4 -->
+  <line x1="453" y1="70" x2="485" y2="70" stroke="#5ba3d9" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="469" y="60" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9" fill="#888">Visitor</text>
+
+  <!-- 4: AST -->
+  <rect x="487" y="30" width="120" height="80" rx="7" fill="#1a3a2a" stroke="#a9dc76" stroke-width="2"/>
+  <text x="547" y="52" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="12" font-weight="bold" fill="#a9dc76">AST</text>
+  <text x="547" y="68" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9.5" fill="#cdd6f4">추상 구문 트리</text>
+  <text x="547" y="84" text-anchor="middle" font-family="'Consolas',monospace" font-size="9" fill="#a9dc76">FieldNode {</text>
+  <text x="547" y="97" text-anchor="middle" font-family="'Consolas',monospace" font-size="9" fill="#7ec8e3">  type:"string"</text>
+  <text x="547" y="110" text-anchor="middle" font-family="'Consolas',monospace" font-size="9" fill="#7ec8e3">  name:"name"  1 }</text>
+
+  <!-- arrow 4→5 -->
+  <line x1="607" y1="70" x2="639" y2="70" stroke="#5ba3d9" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="623" y="60" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9" fill="#888">CodeGen</text>
+
+  <!-- 5: C++ -->
+  <rect x="641" y="30" width="205" height="80" rx="7" fill="#2c2a1e" stroke="#f9e2af" stroke-width="2"/>
+  <text x="743" y="52" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="12" font-weight="bold" fill="#f9e2af">Unreal C++</text>
+  <text x="743" y="68" text-anchor="middle" font-family="'Consolas',monospace" font-size="9" fill="#cdd6f4">UPROPERTY(BlueprintReadWrite)</text>
+  <text x="743" y="82" text-anchor="middle" font-family="'Consolas',monospace" font-size="9" fill="#f9e2af">FString Name;</text>
+
+  <!-- label bottom -->
+  <text x="393" y="130" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9" fill="#f38ba8">ANTLR 자동 생성</text>
+  <text x="547" y="130" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9" fill="#a9dc76">개발자 설계</text>
+</svg>

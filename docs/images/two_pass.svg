@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 260">
+  <rect width="820" height="260" fill="#1e1e2e" rx="10"/>
+  <defs>
+    <marker id="a" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <polygon points="0 0,7 3.5,0 7" fill="#5ba3d9"/>
+    </marker>
+  </defs>
+
+  <text x="410" y="24" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="14" font-weight="bold" fill="#89b4fa">2-Pass 파싱 — 타입 판별</text>
+
+  <!-- 1st pass box -->
+  <rect x="20" y="42" width="240" height="110" rx="8" fill="#1a2535" stroke="#f38ba8" stroke-width="1.5"/>
+  <text x="140" y="62" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="12" font-weight="bold" fill="#f38ba8">1st Pass — 심볼 수집</text>
+
+  <rect x="34" y="72" width="212" height="22" rx="4" fill="#2c3e50" stroke="#555" stroke-width="1"/>
+  <text x="140" y="87" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#a9dc76">doMessageNameDef 액션 호출</text>
+  <rect x="34" y="100" width="212" height="22" rx="4" fill="#2c3e50" stroke="#555" stroke-width="1"/>
+  <text x="140" y="115" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#a9dc76">doEnumNameDef 액션 호출</text>
+
+  <text x="140" y="144" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#7ec8e3">_messageTypes = { "Player","Item" }</text>
+
+  <!-- arrow 1→rewind -->
+  <line x1="260" y1="97" x2="308" y2="97" stroke="#5ba3d9" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <!-- rewind -->
+  <rect x="310" y="72" width="100" height="50" rx="8" fill="#2c2a1e" stroke="#f9e2af" stroke-width="1.5"/>
+  <text x="360" y="92" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="11" fill="#f9e2af">DoRewind()</text>
+  <text x="360" y="108" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9" fill="#888">토큰 스트림</text>
+  <text x="360" y="119" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9" fill="#888">위치 0으로</text>
+
+  <!-- arrow rewind → 2nd pass -->
+  <line x1="410" y1="97" x2="458" y2="97" stroke="#5ba3d9" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <!-- 2nd pass box -->
+  <rect x="460" y="42" width="340" height="160" rx="8" fill="#1a2535" stroke="#a9dc76" stroke-width="1.5"/>
+  <text x="630" y="62" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="12" font-weight="bold" fill="#a9dc76">2nd Pass — 타입 판별</text>
+
+  <text x="630" y="84" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#cdd6f4">Status status = 1;</text>
+
+  <!-- predicate check -->
+  <rect x="474" y="92" width="312" height="50" rx="5" fill="#1a3a2a" stroke="#a9dc76" stroke-width="1"/>
+  <text x="630" y="110" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#a9dc76">IsEnumType_("Status")  →  true</text>
+  <text x="630" y="126" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#7ec8e3">→ enumType 규칙 선택</text>
+  <text x="630" y="138" text-anchor="middle" font-family="'Consolas',monospace" font-size="9" fill="#888">(IsMessageType_도 false → 충돌 없음)</text>
+
+  <!-- result -->
+  <rect x="474" y="150" width="312" height="40" rx="5" fill="#2c3e50" stroke="#5ba3d9" stroke-width="1"/>
+  <text x="630" y="166" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#7ec8e3">AST: TypeRef { kind: ENUM, name: "Status" }</text>
+  <text x="630" y="180" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#7ec8e3">vs MessageRef { kind: MESSAGE, … }</text>
+
+  <!-- symbol table bottom -->
+  <text x="140" y="175" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="10" fill="#888">심볼 테이블</text>
+  <rect x="34" y="182" width="212" height="52" rx="5" fill="#2c3e50" stroke="#3d3d5c" stroke-width="1"/>
+  <text x="140" y="200" text-anchor="middle" font-family="'Consolas',monospace" font-size="9.5" fill="#f38ba8">_messageTypes: Player, Item, …</text>
+  <text x="140" y="216" text-anchor="middle" font-family="'Consolas',monospace" font-size="9.5" fill="#a9dc76">_enumTypes:    Status, Rarity, …</text>
+  <text x="140" y="230" text-anchor="middle" font-family="'Consolas',monospace" font-size="9.5" fill="#888">_serviceTypes: PlayerService, …</text>
+
+  <!-- note -->
+  <text x="410" y="248" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="10" fill="#666">※ 1st Pass는 심볼 테이블만 채우고 AST를 만들지 않음. 2nd Pass에서만 Visitor(AstBuilder)가 동작함.</text>
+</svg>

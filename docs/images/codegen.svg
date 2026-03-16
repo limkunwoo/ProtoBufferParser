@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 300">
+  <rect width="780" height="300" fill="#1e1e2e" rx="10"/>
+  <defs>
+    <marker id="a" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <polygon points="0 0,7 3.5,0 7" fill="#f9e2af"/>
+    </marker>
+  </defs>
+
+  <text x="390" y="24" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="14" font-weight="bold" fill="#89b4fa">AST → Unreal Engine C++ 코드 생성</text>
+
+  <!-- AST (left) -->
+  <rect x="20" y="44" width="200" height="220" rx="8" fill="#1a3a2a" stroke="#a9dc76" stroke-width="1.5"/>
+  <text x="120" y="64" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="11" font-weight="bold" fill="#a9dc76">AST</text>
+
+  <rect x="32" y="72" width="176" height="26" rx="4" fill="#2c3e50" stroke="#a9dc76" stroke-width="1"/>
+  <text x="120" y="90" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#a9dc76">MessageNode("Player")</text>
+
+  <rect x="44" y="106" width="152" height="22" rx="4" fill="#1a3a2a" stroke="#5ba3d9" stroke-width="1"/>
+  <text x="120" y="121" text-anchor="middle" font-family="'Consolas',monospace" font-size="9.5" fill="#7ec8e3">FieldNode(null,string,name,1)</text>
+
+  <rect x="44" y="132" width="152" height="22" rx="4" fill="#1a3a2a" stroke="#5ba3d9" stroke-width="1"/>
+  <text x="120" y="147" text-anchor="middle" font-family="'Consolas',monospace" font-size="9.5" fill="#7ec8e3">FieldNode(null,int32,level,2)</text>
+
+  <rect x="44" y="158" width="152" height="22" rx="4" fill="#1a3a2a" stroke="#5ba3d9" stroke-width="1"/>
+  <text x="120" y="173" text-anchor="middle" font-family="'Consolas',monospace" font-size="9.5" fill="#7ec8e3">FieldNode(rep,string,items,3)</text>
+
+  <!-- type mapping table -->
+  <rect x="220" y="44" width="210" height="220" rx="8" fill="#1a2535" stroke="#89b4fa" stroke-width="1.5"/>
+  <text x="325" y="64" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="11" font-weight="bold" fill="#89b4fa">타입 매핑</text>
+
+  <!-- header -->
+  <rect x="230" y="70" width="90" height="18" rx="3" fill="#2d4a63"/>
+  <text x="275" y="83" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9" fill="#74c7ec">proto3</text>
+  <rect x="322" y="70" width="100" height="18" rx="3" fill="#2d4a63"/>
+  <text x="372" y="83" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9" fill="#74c7ec">Unreal C++</text>
+
+  <!-- rows -->
+  <text x="275" y="104" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#cdd6f4">string</text>
+  <text x="372" y="104" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#f9e2af">FString</text>
+  <line x1="230" y1="108" x2="420" y2="108" stroke="#2d3250" stroke-width="0.8"/>
+
+  <text x="275" y="122" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#cdd6f4">int32</text>
+  <text x="372" y="122" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#f9e2af">int32</text>
+  <line x1="230" y1="126" x2="420" y2="126" stroke="#2d3250" stroke-width="0.8"/>
+
+  <text x="275" y="140" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#cdd6f4">bool</text>
+  <text x="372" y="140" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#f9e2af">bool</text>
+  <line x1="230" y1="144" x2="420" y2="144" stroke="#2d3250" stroke-width="0.8"/>
+
+  <text x="275" y="158" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#cdd6f4">bytes</text>
+  <text x="372" y="158" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#f9e2af">TArray&lt;uint8&gt;</text>
+  <line x1="230" y1="162" x2="420" y2="162" stroke="#2d3250" stroke-width="0.8"/>
+
+  <text x="275" y="176" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#cdd6f4">repeated T</text>
+  <text x="372" y="176" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#f9e2af">TArray&lt;T&gt;</text>
+  <line x1="230" y1="180" x2="420" y2="180" stroke="#2d3250" stroke-width="0.8"/>
+
+  <text x="275" y="194" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#cdd6f4">map&lt;K,V&gt;</text>
+  <text x="372" y="194" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#f9e2af">TMap&lt;K,V&gt;</text>
+  <line x1="230" y1="198" x2="420" y2="198" stroke="#2d3250" stroke-width="0.8"/>
+
+  <text x="275" y="212" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#cdd6f4">Message</text>
+  <text x="372" y="212" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#f9e2af">F{Name}</text>
+  <line x1="230" y1="216" x2="420" y2="216" stroke="#2d3250" stroke-width="0.8"/>
+
+  <text x="275" y="230" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#cdd6f4">enum</text>
+  <text x="372" y="230" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#f9e2af">E{Name}</text>
+  <line x1="230" y1="234" x2="420" y2="234" stroke="#2d3250" stroke-width="0.8"/>
+
+  <!-- arrows -->
+  <line x1="220" y1="154" x2="433" y2="154" stroke="#f9e2af" stroke-width="1.8" marker-end="url(#a)"/>
+
+  <!-- C++ output (right) -->
+  <rect x="435" y="44" width="330" height="220" rx="8" fill="#2c2a1e" stroke="#f9e2af" stroke-width="1.5"/>
+  <text x="600" y="64" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="11" font-weight="bold" fill="#f9e2af">Unreal Engine C++</text>
+
+  <text x="450" y="86" font-family="'Consolas',monospace" font-size="10" fill="#74c7ec">USTRUCT(BlueprintType)</text>
+  <text x="450" y="101" font-family="'Consolas',monospace" font-size="10" fill="#f9e2af">struct FPlayer {</text>
+  <text x="450" y="116" font-family="'Consolas',monospace" font-size="10" fill="#888">    GENERATED_BODY()</text>
+  <text x="450" y="136" font-family="'Consolas',monospace" font-size="10" fill="#74c7ec">    UPROPERTY(BlueprintReadWrite)</text>
+  <text x="450" y="151" font-family="'Consolas',monospace" font-size="10" fill="#cdd6f4">    <tspan fill="#f9e2af">FString</tspan> Name;</text>
+  <text x="450" y="171" font-family="'Consolas',monospace" font-size="10" fill="#74c7ec">    UPROPERTY(BlueprintReadWrite)</text>
+  <text x="450" y="186" font-family="'Consolas',monospace" font-size="10" fill="#cdd6f4">    <tspan fill="#f9e2af">int32</tspan> Level;</text>
+  <text x="450" y="206" font-family="'Consolas',monospace" font-size="10" fill="#74c7ec">    UPROPERTY(BlueprintReadWrite)</text>
+  <text x="450" y="221" font-family="'Consolas',monospace" font-size="10" fill="#cdd6f4">    <tspan fill="#f9e2af">TArray&lt;FString&gt;</tspan> Items;</text>
+  <text x="450" y="241" font-family="'Consolas',monospace" font-size="10" fill="#f9e2af">};</text>
+
+  <!-- bottom label -->
+  <text x="390" y="285" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="10" fill="#555">CodeGenerator가 MessageNode를 순회하며 각 FieldNode를 C++ 프로퍼티로 변환</text>
+</svg>

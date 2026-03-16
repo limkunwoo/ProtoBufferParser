@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 420">
-  <rect width="820" height="420" fill="#1e1e2e" rx="10"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 460">
+  <rect width="900" height="460" fill="#1e1e2e" rx="10"/>
 
   <defs>
     <marker id="e" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
@@ -11,119 +11,109 @@
   </defs>
 
   <!-- ── LEFT: CST ── -->
-  <text x="200" y="28" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="15" font-weight="bold" fill="#f38ba8">CST  (Parse Tree)</text>
-  <text x="200" y="46" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="10" fill="#888">ANTLR이 자동 생성 — 문법 규칙 구조 그대로</text>
+  <text x="220" y="28" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="15" font-weight="bold" fill="#f38ba8">CST  (Parse Tree)</text>
+  <text x="220" y="46" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="10" fill="#888">ANTLR이 자동 생성 — 문법 규칙 구조 그대로</text>
 
-  <!-- node helper: cx, cy, label, color -->
-  <!-- field (root) -->
-  <rect x="148" y="58" width="104" height="28" rx="5" fill="#2c3e50" stroke="#f38ba8" stroke-width="1.5"/>
-  <text x="200" y="77" text-anchor="middle" font-family="'Consolas',monospace" font-size="12" fill="#f38ba8">field</text>
+  <!-- field (root) — 가운데 x=220 -->
+  <rect x="162" y="58" width="116" height="28" rx="5" fill="#2c3e50" stroke="#f38ba8" stroke-width="1.5"/>
+  <text x="220" y="77" text-anchor="middle" font-family="'Consolas',monospace" font-size="12" fill="#f38ba8">field</text>
 
+  <!-- 자식 4개: fieldLabel(x=60), type_(x=160), fieldName(x=270), fieldNumber(x=370) -->
+  <!-- arrow → fieldLabel -->
+  <line x1="195" y1="86" x2="80" y2="120" stroke="#f38ba8" stroke-width="1.2" marker-end="url(#e)"/>
   <!-- fieldLabel -->
-  <line x1="170" y1="86" x2="90" y2="118" stroke="#f38ba8" stroke-width="1.2" marker-end="url(#e)"/>
-  <rect x="45" y="118" width="90" height="26" rx="5" fill="#2c3e50" stroke="#f38ba8" stroke-width="1.2"/>
-  <text x="90" y="136" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#f38ba8">fieldLabel</text>
-
+  <rect x="32" y="120" width="96" height="26" rx="5" fill="#2c3e50" stroke="#f38ba8" stroke-width="1.2"/>
+  <text x="80" y="138" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#f38ba8">fieldLabel</text>
   <!-- REPEATED leaf -->
-  <line x1="90" y1="144" x2="90" y2="176" stroke="#f38ba8" stroke-width="1.2" marker-end="url(#e)"/>
-  <rect x="38" y="176" width="104" height="26" rx="5" fill="#1a2a3a" stroke="#5ba3d9" stroke-width="1.2"/>
-  <text x="90" y="194" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#7ec8e3">REPEATED</text>
+  <line x1="80" y1="146" x2="80" y2="178" stroke="#f38ba8" stroke-width="1.2" marker-end="url(#e)"/>
+  <rect x="28" y="178" width="104" height="26" rx="5" fill="#1a2a3a" stroke="#5ba3d9" stroke-width="1.2"/>
+  <text x="80" y="196" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#7ec8e3">REPEATED</text>
 
+  <!-- arrow → type_ -->
+  <line x1="208" y1="86" x2="165" y2="120" stroke="#f38ba8" stroke-width="1.2" marker-end="url(#e)"/>
   <!-- type_ -->
-  <line x1="188" y1="86" x2="200" y2="118" stroke="#f38ba8" stroke-width="1.2" marker-end="url(#e)"/>
-  <rect x="152" y="118" width="96" height="26" rx="5" fill="#2c3e50" stroke="#f38ba8" stroke-width="1.2"/>
-  <text x="200" y="136" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#f38ba8">type_</text>
-
+  <rect x="117" y="120" width="96" height="26" rx="5" fill="#2c3e50" stroke="#f38ba8" stroke-width="1.2"/>
+  <text x="165" y="138" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#f38ba8">type_</text>
   <!-- STRING leaf -->
-  <line x1="200" y1="144" x2="200" y2="176" stroke="#f38ba8" stroke-width="1.2" marker-end="url(#e)"/>
-  <rect x="152" y="176" width="96" height="26" rx="5" fill="#1a2a3a" stroke="#5ba3d9" stroke-width="1.2"/>
-  <text x="200" y="194" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#7ec8e3">STRING</text>
+  <line x1="165" y1="146" x2="165" y2="178" stroke="#f38ba8" stroke-width="1.2" marker-end="url(#e)"/>
+  <rect x="117" y="178" width="96" height="26" rx="5" fill="#1a2a3a" stroke="#5ba3d9" stroke-width="1.2"/>
+  <text x="165" y="196" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#7ec8e3">STRING</text>
 
+  <!-- arrow → fieldName -->
+  <line x1="232" y1="86" x2="270" y2="120" stroke="#f38ba8" stroke-width="1.2" marker-end="url(#e)"/>
   <!-- fieldName -->
-  <line x1="215" y1="86" x2="310" y2="118" stroke="#f38ba8" stroke-width="1.2" marker-end="url(#e)"/>
-  <rect x="262" y="118" width="96" height="26" rx="5" fill="#2c3e50" stroke="#f38ba8" stroke-width="1.2"/>
-  <text x="310" y="136" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#f38ba8">fieldName</text>
+  <rect x="222" y="120" width="96" height="26" rx="5" fill="#2c3e50" stroke="#f38ba8" stroke-width="1.2"/>
+  <text x="270" y="138" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#f38ba8">fieldName</text>
+  <!-- ident -->
+  <line x1="270" y1="146" x2="270" y2="178" stroke="#f38ba8" stroke-width="1.2" marker-end="url(#e)"/>
+  <rect x="222" y="178" width="96" height="26" rx="5" fill="#2c3e50" stroke="#f38ba8" stroke-width="1.2"/>
+  <text x="270" y="196" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#f38ba8">ident</text>
+  <!-- ID("name") leaf -->
+  <line x1="270" y1="204" x2="270" y2="236" stroke="#f38ba8" stroke-width="1.2" marker-end="url(#e)"/>
+  <rect x="212" y="236" width="116" height="26" rx="5" fill="#1a2a3a" stroke="#5ba3d9" stroke-width="1.2"/>
+  <text x="270" y="254" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#7ec8e3">ID("name")</text>
 
-  <!-- ident (under fieldName) -->
-  <line x1="310" y1="144" x2="310" y2="176" stroke="#f38ba8" stroke-width="1.2" marker-end="url(#e)"/>
-  <rect x="262" y="176" width="96" height="26" rx="5" fill="#2c3e50" stroke="#f38ba8" stroke-width="1.2"/>
-  <text x="310" y="194" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#f38ba8">ident</text>
-
-  <!-- IDENTIFIER leaf -->
-  <line x1="310" y1="202" x2="310" y2="234" stroke="#f38ba8" stroke-width="1.2" marker-end="url(#e)"/>
-  <rect x="248" y="234" width="124" height="26" rx="5" fill="#1a2a3a" stroke="#5ba3d9" stroke-width="1.2"/>
-  <text x="310" y="252" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#7ec8e3">ID("name")</text>
-
-  <!-- EQ leaf (directly from field) -->
-  <line x1="222" y1="86" x2="180" y2="280" stroke="#555" stroke-width="1.1" stroke-dasharray="4,3" marker-end="url(#e)"/>
-  <rect x="140" y="280" width="80" height="26" rx="5" fill="#1a1a2a" stroke="#555" stroke-width="1"/>
-  <text x="180" y="298" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#555">EQ</text>
-
+  <!-- arrow → fieldNumber -->
+  <line x1="244" y1="86" x2="370" y2="120" stroke="#f38ba8" stroke-width="1.2" marker-end="url(#e)"/>
   <!-- fieldNumber -->
-  <line x1="225" y1="86" x2="360" y2="176" stroke="#f38ba8" stroke-width="1.2" marker-end="url(#e)"/>
-  <!-- shift fieldNumber box a bit right -->
-  <rect x="314" y="234" width="104" height="26" rx="5" fill="#2c3e50" stroke="#f38ba8" stroke-width="1.2"/>
-  <text x="366" y="252" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#f38ba8">fieldNumber</text>
-
-  <line x1="380" y1="176" x2="366" y2="234" stroke="#f38ba8" stroke-width="1.2" marker-end="url(#e)"/>
-  <rect x="318" y="176" width="124" height="26" rx="5" fill="#2c3e50" stroke="#f38ba8" stroke-width="1.2"/>
-  <text x="380" y="194" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#f38ba8">fieldNumber</text>
-
+  <rect x="318" y="120" width="104" height="26" rx="5" fill="#2c3e50" stroke="#f38ba8" stroke-width="1.2"/>
+  <text x="370" y="138" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#f38ba8">fieldNumber</text>
   <!-- intLit -->
-  <line x1="366" y1="260" x2="366" y2="292" stroke="#f38ba8" stroke-width="1.2" marker-end="url(#e)"/>
-  <rect x="322" y="292" width="88" height="26" rx="5" fill="#2c3e50" stroke="#f38ba8" stroke-width="1.2"/>
-  <text x="366" y="310" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#f38ba8">intLit</text>
-
+  <line x1="370" y1="146" x2="370" y2="178" stroke="#f38ba8" stroke-width="1.2" marker-end="url(#e)"/>
+  <rect x="326" y="178" width="88" height="26" rx="5" fill="#2c3e50" stroke="#f38ba8" stroke-width="1.2"/>
+  <text x="370" y="196" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#f38ba8">intLit</text>
   <!-- INT_LIT leaf -->
-  <line x1="366" y1="318" x2="366" y2="350" stroke="#f38ba8" stroke-width="1.2" marker-end="url(#e)"/>
-  <rect x="318" y="350" width="96" height="26" rx="5" fill="#1a2a3a" stroke="#5ba3d9" stroke-width="1.2"/>
-  <text x="366" y="368" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#7ec8e3">INT_LIT("1")</text>
+  <line x1="370" y1="204" x2="370" y2="236" stroke="#f38ba8" stroke-width="1.2" marker-end="url(#e)"/>
+  <rect x="322" y="236" width="96" height="26" rx="5" fill="#1a2a3a" stroke="#5ba3d9" stroke-width="1.2"/>
+  <text x="370" y="254" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#7ec8e3">INT_LIT("1")</text>
 
-  <!-- SEMI leaf -->
-  <line x1="228" y1="86" x2="80" y2="280" stroke="#555" stroke-width="1.1" stroke-dasharray="4,3" marker-end="url(#e)"/>
-  <rect x="40" y="280" width="80" height="26" rx="5" fill="#1a1a2a" stroke="#555" stroke-width="1"/>
-  <text x="80" y="298" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#555">SEMI</text>
+  <!-- EQ leaf — 구두점 (field에서 직접, 아래로 내림) -->
+  <line x1="220" y1="86" x2="145" y2="300" stroke="#555" stroke-width="1.1" stroke-dasharray="4,3" marker-end="url(#e)"/>
+  <rect x="105" y="300" width="80" height="26" rx="5" fill="#1a1a2a" stroke="#555" stroke-width="1"/>
+  <text x="145" y="318" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#555">EQ</text>
 
-  <!-- dashed = punctuation note -->
-  <rect x="20" y="390" width="14" height="2" fill="none" stroke="#555" stroke-width="1.5" stroke-dasharray="4,3"/>
-  <text x="40" y="394" font-family="'Segoe UI',sans-serif" font-size="10" fill="#666">구두점 토큰 (의미 없음)</text>
-  <rect x="165" y="388" width="14" height="8" rx="2" fill="#1a2a3a" stroke="#5ba3d9" stroke-width="1"/>
-  <text x="185" y="394" font-family="'Segoe UI',sans-serif" font-size="10" fill="#7ec8e3">터미널(리프) 토큰</text>
-  <rect x="310" y="388" width="14" height="8" rx="2" fill="#2c3e50" stroke="#f38ba8" stroke-width="1"/>
-  <text x="330" y="394" font-family="'Segoe UI',sans-serif" font-size="10" fill="#f38ba8">규칙 노드 (중간)</text>
+  <!-- SEMI leaf — 구두점 -->
+  <line x1="225" y1="86" x2="55" y2="300" stroke="#555" stroke-width="1.1" stroke-dasharray="4,3" marker-end="url(#e)"/>
+  <rect x="15" y="300" width="80" height="26" rx="5" fill="#1a1a2a" stroke="#555" stroke-width="1"/>
+  <text x="55" y="318" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#555">SEMI</text>
+
+  <!-- legend -->
+  <rect x="10" y="415" width="14" height="2" fill="none" stroke="#555" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="30" y="420" font-family="'Segoe UI',sans-serif" font-size="10" fill="#666">구두점 토큰 (의미 없음)</text>
+  <rect x="175" y="413" width="14" height="8" rx="2" fill="#1a2a3a" stroke="#5ba3d9" stroke-width="1"/>
+  <text x="195" y="420" font-family="'Segoe UI',sans-serif" font-size="10" fill="#7ec8e3">터미널(리프) 토큰</text>
+  <rect x="330" y="413" width="14" height="8" rx="2" fill="#2c3e50" stroke="#f38ba8" stroke-width="1"/>
+  <text x="350" y="420" font-family="'Segoe UI',sans-serif" font-size="10" fill="#f38ba8">규칙 노드 (중간)</text>
 
   <!-- ── RIGHT: AST ── -->
-  <text x="650" y="28" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="15" font-weight="bold" fill="#a9dc76">AST  (Abstract Syntax Tree)</text>
-  <text x="650" y="46" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="10" fill="#888">Visitor가 직접 구축 — 의미 있는 노드만</text>
+  <text x="700" y="28" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="15" font-weight="bold" fill="#a9dc76">AST  (Abstract Syntax Tree)</text>
+  <text x="700" y="46" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="10" fill="#888">Visitor가 직접 구축 — 의미 있는 노드만</text>
 
   <!-- FieldNode (root) -->
-  <rect x="578" y="58" width="144" height="28" rx="5" fill="#1a3a2a" stroke="#a9dc76" stroke-width="2"/>
-  <text x="650" y="77" text-anchor="middle" font-family="'Consolas',monospace" font-size="12" fill="#a9dc76">FieldNode</text>
+  <rect x="622" y="58" width="156" height="28" rx="5" fill="#1a3a2a" stroke="#a9dc76" stroke-width="2"/>
+  <text x="700" y="77" text-anchor="middle" font-family="'Consolas',monospace" font-size="12" fill="#a9dc76">FieldNode</text>
 
-  <!-- label -->
-  <line x1="610" y1="86" x2="540" y2="138" stroke="#a9dc76" stroke-width="1.5" marker-end="url(#g)"/>
-  <rect x="480" y="138" width="120" height="26" rx="5" fill="#1a3a2a" stroke="#a9dc76" stroke-width="1.2"/>
-  <text x="540" y="156" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#7ec8e3">label: REPEATED</text>
+  <!-- 4 children: label(x=580), type(x=660), name(x=740), number(x=820) -->
+  <line x1="664" y1="86" x2="590" y2="140" stroke="#a9dc76" stroke-width="1.5" marker-end="url(#g)"/>
+  <rect x="530" y="140" width="120" height="26" rx="5" fill="#1a3a2a" stroke="#a9dc76" stroke-width="1.2"/>
+  <text x="590" y="158" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#7ec8e3">label:REPEATED</text>
 
-  <!-- type -->
-  <line x1="635" y1="86" x2="610" y2="138" stroke="#a9dc76" stroke-width="1.5" marker-end="url(#g)"/>
-  <rect x="556" y="138" width="108" height="26" rx="5" fill="#1a3a2a" stroke="#a9dc76" stroke-width="1.2"/>
-  <text x="610" y="156" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#7ec8e3">type: "string"</text>
+  <line x1="685" y1="86" x2="660" y2="140" stroke="#a9dc76" stroke-width="1.5" marker-end="url(#g)"/>
+  <rect x="606" y="140" width="108" height="26" rx="5" fill="#1a3a2a" stroke="#a9dc76" stroke-width="1.2"/>
+  <text x="660" y="158" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#7ec8e3">type:"string"</text>
 
-  <!-- name -->
-  <line x1="660" y1="86" x2="690" y2="138" stroke="#a9dc76" stroke-width="1.5" marker-end="url(#g)"/>
-  <rect x="638" y="138" width="104" height="26" rx="5" fill="#1a3a2a" stroke="#a9dc76" stroke-width="1.2"/>
-  <text x="690" y="156" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#7ec8e3">name: "name"</text>
+  <line x1="715" y1="86" x2="740" y2="140" stroke="#a9dc76" stroke-width="1.5" marker-end="url(#g)"/>
+  <rect x="686" y="140" width="108" height="26" rx="5" fill="#1a3a2a" stroke="#a9dc76" stroke-width="1.2"/>
+  <text x="740" y="158" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#7ec8e3">name:"name"</text>
 
-  <!-- number -->
-  <line x1="685" y1="86" x2="760" y2="138" stroke="#a9dc76" stroke-width="1.5" marker-end="url(#g)"/>
-  <rect x="710" y="138" width="104" height="26" rx="5" fill="#1a3a2a" stroke="#a9dc76" stroke-width="1.2"/>
-  <text x="762" y="156" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#7ec8e3">number: 1</text>
+  <line x1="736" y1="86" x2="820" y2="140" stroke="#a9dc76" stroke-width="1.5" marker-end="url(#g)"/>
+  <rect x="768" y="140" width="108" height="26" rx="5" fill="#1a3a2a" stroke="#a9dc76" stroke-width="1.2"/>
+  <text x="822" y="158" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#7ec8e3">number:1</text>
 
   <!-- node count labels -->
-  <text x="200" y="405" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="11" fill="#f38ba8">노드 수: ~14개</text>
-  <text x="650" y="405" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="11" fill="#a9dc76">노드 수: 5개 ✓</text>
+  <text x="220" y="450" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="11" fill="#f38ba8">노드 수: ~14개</text>
+  <text x="700" y="450" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="11" fill="#a9dc76">노드 수: 5개 ✓</text>
 
   <!-- divider -->
-  <line x1="460" y1="10" x2="460" y2="415" stroke="#3d3d5c" stroke-width="1" stroke-dasharray="6,4"/>
+  <line x1="500" y1="10" x2="500" y2="445" stroke="#3d3d5c" stroke-width="1" stroke-dasharray="6,4"/>
 </svg>

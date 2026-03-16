@@ -6,10 +6,11 @@
     "title": "파싱 파이프라인 전체 흐름"
   },
   "2": {
-    "svg": "cst_vs_ast.svg",
+    "svg": null,
     "png": null,
     "svgCaption": "CST vs AST 구조 비교",
-    "title": "CST란 무엇인가"
+    "title": "CST란 무엇인가",
+    "d3tree": "cst_ast_tree"
   },
   "3": {
     "svg": null,

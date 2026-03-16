@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tree Visualization Tool Comparison</title>
+<style>
+  :root {
+    --bg: #1e1e2e;
+    --surface: #282840;
+    --border: #3a3a5c;
+    --text: #e0e0e0;
+    --text-dim: #999;
+    --accent: #6c8eef;
+    --rule-bg: #e8f0fd; --rule-border: #2c5aa0;
+    --token-bg: #fef9e7; --token-border: #b07d00;
+    --punct-bg: #f0f0f0; --punct-border: #999;
+    --ast-bg: #fde8e8; --ast-border: #8b1a1a;
+    --ast-leaf-bg: #fff5e6; --ast-leaf-border: #7a5200;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.6; padding: 2rem;
+  }
+  h1 { text-align: center; margin-bottom: 0.5rem; font-size: 1.8rem; }
+  .subtitle { text-align: center; color: var(--text-dim); margin-bottom: 2rem; }
+  .tool-section {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; margin-bottom: 2rem; padding: 1.5rem;
+  }
+  .tool-header {
+    display: flex; align-items: baseline; gap: 1rem;
+    margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;
+  }
+  .tool-header h2 { font-size: 1.3rem; }
+  .tool-header .badge {
+    font-size: 0.75rem; padding: 2px 8px; border-radius: 4px;
+    background: var(--accent); color: #fff;
+  }
+  .tool-header .size { color: var(--text-dim); font-size: 0.85rem; }
+  .tree-pair {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+  }
+  .tree-panel { text-align: center; }
+  .tree-panel h3 {
+    font-size: 1rem; margin-bottom: 0.5rem; color: var(--accent);
+  }
+  .tree-container {
+    background: #fff; border-radius: 8px; min-height: 350px;
+    position: relative; overflow: hidden; cursor: grab;
+  }
+  .tree-container:active { cursor: grabbing; }
+  .tree-container svg { display: block; }
+  .tree-container canvas { display: block; }
+
+  /* Zoom hint */
+  .zoom-hint {
+    position: absolute; bottom: 6px; right: 10px;
+    font-size: 11px; color: #999; pointer-events: none;
+    background: rgba(255,255,255,0.85); padding: 2px 6px; border-radius: 4px;
+  }
+
+  /* Node info tooltip */
+  .node-tooltip {
+    position: absolute; top: 8px; left: 10px;
+    font-size: 12px; color: #333; pointer-events: none;
+    background: rgba(255,255,255,0.95); padding: 4px 10px; border-radius: 6px;
+    border: 1px solid #ccc; display: none; z-index: 10;
+    font-family: 'Consolas', monospace; white-space: nowrap;
+  }
+  .node-tooltip.visible { display: block; }
+
+  /* Comparison table */
+  .comparison-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+  .comparison-table th, .comparison-table td {
+    padding: 0.6rem 1rem; border: 1px solid var(--border); text-align: center;
+  }
+  .comparison-table th { background: var(--surface); color: var(--accent); }
+  .comparison-table td { background: #222238; }
+  .good { color: #4ade80; }
+  .ok { color: #facc15; }
+  .bad { color: #f87171; }
+
+  .mermaid-wrap .tree-container { padding: 0; }
+
+  /* D3 node hover */
+  .d3-node rect { transition: filter 0.15s, stroke-width 0.15s; }
+  .d3-node:hover rect {
+    filter: drop-shadow(0 0 6px rgba(0,0,0,0.35));
+    stroke-width: 3;
+  }
+  .d3-node { cursor: pointer; }
+
+  /* Graphviz / Mermaid node hover */
+  .tree-container svg .node polygon,
+  .tree-container svg .node ellipse,
+  .tree-container svg .node rect,
+  .tree-container svg .node path {
+    transition: filter 0.15s, stroke-width 0.15s;
+  }
+  .tree-container svg .node:hover polygon,
+  .tree-container svg .node:hover ellipse,
+  .tree-container svg .node:hover rect,
+  .tree-container svg .node:hover path {
+    filter: drop-shadow(0 0 6px rgba(0,0,0,0.35));
+    stroke-width: 3;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<h1>Tree Visualization Tool Comparison</h1>
+<p class="subtitle">
+  <code>repeated string name = 1;</code> field &mdash; CST vs AST tree rendering<br>
+  같은 데이터를 4가지 도구로 렌더링하여 비교합니다. 마우스 휠로 줌, 드래그로 이동, 노드에 호버하면 정보가 표시됩니다.
+</p>
+
+<!-- 1. D3.js -->
+<div class="tool-section" id="section-d3">
+  <div class="tool-header">
+    <h2>1. D3.js <code>d3.tree()</code></h2>
+    <span class="badge">Reingold-Tilford</span>
+    <span class="size">~240 KB (CDN)</span>
+  </div>
+  <div class="tree-pair">
+    <div class="tree-panel">
+      <h3>CST (Concrete Syntax Tree)</h3>
+      <div class="tree-container" id="d3-cst">
+        <div class="node-tooltip" id="d3-cst-tip"></div>
+        <div class="zoom-hint">Scroll to zoom / Drag to pan</div>
+      </div>
+    </div>
+    <div class="tree-panel">
+      <h3>AST (Abstract Syntax Tree)</h3>
+      <div class="tree-container" id="d3-ast">
+        <div class="node-tooltip" id="d3-ast-tip"></div>
+        <div class="zoom-hint">Scroll to zoom / Drag to pan</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 2. Canvas2D -->
+<div class="tool-section" id="section-canvas">
+  <div class="tool-header">
+    <h2>2. Canvas2D (Pure JS)</h2>
+    <span class="badge">Custom Layout</span>
+    <span class="size">0 KB (no library)</span>
+  </div>
+  <div class="tree-pair">
+    <div class="tree-panel">
+      <h3>CST (Concrete Syntax Tree)</h3>
+      <div class="tree-container" id="canvas-cst-wrap">
+        <canvas id="canvas-cst" width="600" height="420"></canvas>
+        <div class="node-tooltip" id="canvas-cst-tip"></div>
+        <div class="zoom-hint">Scroll to zoom / Drag to pan</div>
+      </div>
+    </div>
+    <div class="tree-panel">
+      <h3>AST (Abstract Syntax Tree)</h3>
+      <div class="tree-container" id="canvas-ast-wrap">
+        <canvas id="canvas-ast" width="500" height="320"></canvas>
+        <div class="node-tooltip" id="canvas-ast-tip"></div>
+        <div class="zoom-hint">Scroll to zoom / Drag to pan</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3. Graphviz -->
+<div class="tool-section" id="section-graphviz">
+  <div class="tool-header">
+    <h2>3. Graphviz (viz.js v3)</h2>
+    <span class="badge">DOT &rarr; SVG</span>
+    <span class="size">~3 MB (WASM)</span>
+  </div>
+  <div class="tree-pair">
+    <div class="tree-panel">
+      <h3>CST (Concrete Syntax Tree)</h3>
+      <div class="tree-container" id="graphviz-cst">
+        <em style="color:#999">Loading Graphviz WASM...</em>
+        <div class="node-tooltip" id="gv-cst-tip"></div>
+        <div class="zoom-hint">Scroll to zoom / Drag to pan</div>
+      </div>
+    </div>
+    <div class="tree-panel">
+      <h3>AST (Abstract Syntax Tree)</h3>
+      <div class="tree-container" id="graphviz-ast">
+        <em style="color:#999">Loading Graphviz WASM...</em>
+        <div class="node-tooltip" id="gv-ast-tip"></div>
+        <div class="zoom-hint">Scroll to zoom / Drag to pan</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 4. Mermaid -->
+<div class="tool-section mermaid-wrap" id="section-mermaid">
+  <div class="tool-header">
+    <h2>4. Mermaid</h2>
+    <span class="badge">Declarative Markdown</span>
+    <span class="size">~1 MB (CDN)</span>
+  </div>
+  <div class="tree-pair">
+    <div class="tree-panel">
+      <h3>CST (Concrete Syntax Tree)</h3>
+      <div class="tree-container" id="mermaid-cst-container">
+        <pre class="mermaid" id="mermaid-cst">
+graph TD
+  field["field"]:::rule
+  fieldLabel["fieldLabel"]:::rule
+  REPEATED["REPEATED"]:::token
+  type_["type_"]:::rule
+  STRING["STRING"]:::token
+  fieldName["fieldName"]:::rule
+  ident["ident"]:::rule
+  ID["ID(name)"]:::token
+  fieldNumber["fieldNumber"]:::rule
+  intLit["intLit"]:::rule
+  INT_LIT["INT_LIT(1)"]:::token
+  EQ["EQ"]:::punct
+  SEMI["SEMI"]:::punct
+
+  field --> fieldLabel
+  field --> type_
+  field --> fieldName
+  field --> fieldNumber
+  field --> EQ
+  field --> SEMI
+  fieldLabel --> REPEATED
+  type_ --> STRING
+  fieldName --> ident
+  ident --> ID
+  fieldNumber --> intLit
+  intLit --> INT_LIT
+
+  classDef rule fill:#e8f0fd,stroke:#2c5aa0,stroke-width:2px,color:#1a1a2e
+  classDef token fill:#fef9e7,stroke:#b07d00,stroke-width:2px,color:#1a1a2e
+  classDef punct fill:#f0f0f0,stroke:#999,stroke-width:1px,stroke-dasharray:5 5,color:#666
+        </pre>
+        <div class="node-tooltip" id="mm-cst-tip"></div>
+        <div class="zoom-hint">Scroll to zoom / Drag to pan</div>
+      </div>
+    </div>
+    <div class="tree-panel">
+      <h3>AST (Abstract Syntax Tree)</h3>
+      <div class="tree-container" id="mermaid-ast-container">
+        <pre class="mermaid" id="mermaid-ast">
+graph TD
+  FieldNode["FieldNode"]:::astnode
+  label["label: REPEATED"]:::astleaf
+  typefield["type: string"]:::astleaf
+  namefield["name: name"]:::astleaf
+  number["number: 1"]:::astleaf
+
+  FieldNode --> label
+  FieldNode --> typefield
+  FieldNode --> namefield
+  FieldNode --> number
+
+  classDef astnode fill:#fde8e8,stroke:#8b1a1a,stroke-width:2px,color:#1a1a2e
+  classDef astleaf fill:#fff5e6,stroke:#7a5200,stroke-width:2px,color:#1a1a2e
+        </pre>
+        <div class="node-tooltip" id="mm-ast-tip"></div>
+        <div class="zoom-hint">Scroll to zoom / Drag to pan</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Comparison Table -->
+<div class="tool-section">
+  <div class="tool-header">
+    <h2>Comparison Summary</h2>
+  </div>
+  <table class="comparison-table">
+    <thead>
+      <tr>
+        <th>Criteria</th>
+        <th>D3.js</th>
+        <th>Canvas2D</th>
+        <th>Graphviz</th>
+        <th>Mermaid</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Bundle Size</td>
+        <td class="ok">~240 KB</td>
+        <td class="good">0 KB</td>
+        <td class="bad">~3 MB</td>
+        <td class="bad">~1 MB</td>
+      </tr>
+      <tr>
+        <td>Auto Layout</td>
+        <td class="good">Reingold-Tilford</td>
+        <td class="ok">Custom (manual)</td>
+        <td class="good">Graphviz engine</td>
+        <td class="good">dagre.js</td>
+      </tr>
+      <tr>
+        <td>Output Format</td>
+        <td>SVG</td>
+        <td>Canvas bitmap</td>
+        <td>SVG</td>
+        <td>SVG</td>
+      </tr>
+      <tr>
+        <td>Node Styling</td>
+        <td class="good">Full CSS/SVG control</td>
+        <td class="good">Full JS control</td>
+        <td class="ok">DOT attributes</td>
+        <td class="ok">classDef limited</td>
+      </tr>
+      <tr>
+        <td>Pan/Zoom</td>
+        <td class="good">d3-zoom built-in</td>
+        <td class="ok">Custom impl needed</td>
+        <td class="ok">Wrap in pan/zoom</td>
+        <td class="ok">Wrap in pan/zoom</td>
+      </tr>
+      <tr>
+        <td>Integration Effort</td>
+        <td class="ok">Medium</td>
+        <td class="ok">Medium (already done)</td>
+        <td class="ok">Medium</td>
+        <td class="good">Easy (markdown)</td>
+      </tr>
+      <tr>
+        <td>Overlap-Free</td>
+        <td class="good">Guaranteed</td>
+        <td class="ok">Depends on impl</td>
+        <td class="good">Guaranteed</td>
+        <td class="good">Guaranteed</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- CDN Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src="https://unpkg.com/@viz-js/viz@3.2.4/lib/viz-standalone.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+<script>
+// ====================================================================
+// Shared tree data
+// ====================================================================
+const CST_DATA = {
+  name: "field", type: "rule",
+  children: [
+    { name: "fieldLabel", type: "rule", children: [
+      { name: "REPEATED", type: "token" }
+    ]},
+    { name: "type_", type: "rule", children: [
+      { name: "STRING", type: "token" }
+    ]},
+    { name: "fieldName", type: "rule", children: [
+      { name: "ident", type: "rule", children: [
+        { name: 'ID("name")', type: "token" }
+      ]}
+    ]},
+    { name: "fieldNumber", type: "rule", children: [
+      { name: "intLit", type: "rule", children: [
+        { name: 'INT_LIT("1")', type: "token" }
+      ]}
+    ]},
+    { name: "EQ", type: "punct" },
+    { name: "SEMI", type: "punct" }
+  ]
+};
+
+const AST_DATA = {
+  name: "FieldNode", type: "ast",
+  children: [
+    { name: "label: REPEATED", type: "ast-leaf" },
+    { name: 'type: "string"', type: "ast-leaf" },
+    { name: 'name: "name"', type: "ast-leaf" },
+    { name: "number: 1", type: "ast-leaf" }
+  ]
+};
+
+const COLORS = {
+  rule:       { bg: "#e8f0fd", border: "#2c5aa0", label: "Rule (non-terminal)" },
+  token:      { bg: "#fef9e7", border: "#b07d00", label: "Token (terminal)" },
+  punct:      { bg: "#f0f0f0", border: "#999",    label: "Punctuation" },
+  ast:        { bg: "#fde8e8", border: "#8b1a1a", label: "AST Node" },
+  "ast-leaf": { bg: "#fff5e6", border: "#7a5200", label: "AST Leaf" }
+};
+
+const TYPE_LABELS = {
+  rule: "Rule (non-terminal)",
+  token: "Token (terminal)",
+  punct: "Punctuation (dimmed)",
+  ast: "AST Node",
+  "ast-leaf": "AST Leaf (value)"
+};
+
+function getTextWidth(text) { return text.length * 7.2; }
+
+// ====================================================================
+// 1. D3.js d3.tree() — with d3.zoom() pan/zoom + hover tooltip
+// ====================================================================
+function renderD3Tree(containerId, data, tipId) {
+  const container = document.getElementById(containerId);
+  const tip = document.getElementById(tipId);
+  const margin = { top: 30, right: 30, bottom: 30, left: 30 };
+
+  const root = d3.hierarchy(data);
+  const treeLayout = d3.tree()
+    .nodeSize([130, 80])
+    .separation((a, b) => a.parent === b.parent ? 1 : 1.2);
+  treeLayout(root);
+
+  let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+  root.each(d => {
+    if (d.x < x0) x0 = d.x;
+    if (d.x > x1) x1 = d.x;
+    if (d.y < y0) y0 = d.y;
+    if (d.y > y1) y1 = d.y;
+  });
+
+  const nodeW = 120, nodeH = 32;
+  const svgW = (x1 - x0) + nodeW + margin.left + margin.right;
+  const svgH = (y1 - y0) + nodeH + margin.top + margin.bottom + 20;
+
+  const svg = d3.select(container).append("svg")
+    .attr("width", "100%").attr("height", svgH)
+    .attr("viewBox", `0 0 ${svgW} ${svgH}`)
+    .style("cursor", "grab");
+
+  // Zoom layer
+  const zoomG = svg.append("g");
+  const contentG = zoomG.append("g")
+    .attr("transform", `translate(${margin.left + (-x0) + nodeW/2}, ${margin.top + 10})`);
+
+  const zoom = d3.zoom()
+    .scaleExtent([0.3, 4])
+    .on("zoom", (event) => {
+      zoomG.attr("transform", event.transform);
+    })
+    .on("start", () => svg.style("cursor", "grabbing"))
+    .on("end", () => svg.style("cursor", "grab"));
+
+  svg.call(zoom);
+
+  // Double-click to reset
+  svg.on("dblclick.zoom", () => {
+    svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity);
+  });
+
+  // Links (bezier curves)
+  contentG.selectAll(".link")
+    .data(root.links())
+    .join("path")
+    .attr("class", "link")
+    .attr("fill", "none")
+    .attr("stroke", "#888")
+    .attr("stroke-width", 1.5)
+    .attr("d", d => {
+      return `M${d.source.x},${d.source.y + nodeH}
+              C${d.source.x},${(d.source.y + d.target.y + nodeH) / 2}
+               ${d.target.x},${(d.source.y + d.target.y + nodeH) / 2}
+               ${d.target.x},${d.target.y}`;
+    });
+
+  // Nodes
+  const node = contentG.selectAll(".d3-node")
+    .data(root.descendants())
+    .join("g")
+    .attr("class", "d3-node")
+    .attr("transform", d => `translate(${d.x}, ${d.y})`);
+
+  node.append("rect")
+    .attr("x", d => -getTextWidth(d.data.name) / 2 - 12)
+    .attr("y", 0)
+    .attr("width", d => getTextWidth(d.data.name) + 24)
+    .attr("height", nodeH)
+    .attr("rx", 6)
+    .attr("fill", d => COLORS[d.data.type].bg)
+    .attr("stroke", d => COLORS[d.data.type].border)
+    .attr("stroke-width", 2)
+    .attr("stroke-dasharray", d => d.data.type === "punct" ? "5,3" : "none");
+
+  node.append("text")
+    .attr("x", 0).attr("y", nodeH / 2 + 1)
+    .attr("text-anchor", "middle")
+    .attr("dominant-baseline", "middle")
+    .attr("fill", "#1a1a2e")
+    .attr("font-size", "12px")
+    .attr("font-family", "'Consolas', monospace")
+    .text(d => d.data.name);
+
+  // Hover tooltip
+  node.on("mouseenter", (event, d) => {
+    tip.textContent = `${d.data.name}  [${TYPE_LABELS[d.data.type]}]  depth=${d.depth}`;
+    tip.classList.add("visible");
+  }).on("mouseleave", () => {
+    tip.classList.remove("visible");
+  });
+}
+
+renderD3Tree("d3-cst", CST_DATA, "d3-cst-tip");
+renderD3Tree("d3-ast", AST_DATA, "d3-ast-tip");
+
+// ====================================================================
+// 2. Canvas2D — with pan/zoom + hover hit-test
+// ====================================================================
+function renderCanvasTree(canvasId, wrapId, tipId, data) {
+  const canvas = document.getElementById(canvasId);
+  const wrap = document.getElementById(wrapId);
+  const tip = document.getElementById(tipId);
+  const ctx = canvas.getContext("2d");
+
+  const nodeH = 30, hGap = 20, vGap = 55, padX = 14, fontSize = 12;
+  ctx.font = `${fontSize}px Consolas, Monaco, monospace`;
+
+  // Deep-copy data so we can mutate layout props
+  const tree = JSON.parse(JSON.stringify(data));
+
+  // Measure
+  function measureNode(n) {
+    const tw = ctx.measureText(n.name).width;
+    n._w = tw + padX * 2; n._h = nodeH;
+    if (n.children) n.children.forEach(measureNode);
+  }
+  measureNode(tree);
+
+  function computeSubtreeWidth(n) {
+    if (!n.children || !n.children.length) { n._subtreeW = n._w; return n._subtreeW; }
+    let total = 0;
+    n.children.forEach(c => { total += computeSubtreeWidth(c); });
+    total += (n.children.length - 1) * hGap;
+    n._subtreeW = Math.max(n._w, total);
+    return n._subtreeW;
+  }
+  computeSubtreeWidth(tree);
+
+  function positionNode(n, cx, y) {
+    n._x = cx - n._w / 2; n._y = y;
+    if (!n.children || !n.children.length) return;
+    const childTotalW = n.children.reduce((s, c) => s + c._subtreeW, 0) + (n.children.length - 1) * hGap;
+    let startX = cx - childTotalW / 2;
+    n.children.forEach(c => {
+      positionNode(c, startX + c._subtreeW / 2, y + nodeH + vGap);
+      startX += c._subtreeW + hGap;
+    });
+  }
+  positionNode(tree, canvas.width / 2, 20);
+
+  // Collect all nodes flat for hit-test
+  const allNodes = [];
+  function collectNodes(n) { allNodes.push(n); if (n.children) n.children.forEach(collectNodes); }
+  collectNodes(tree);
+
+  // Pan/zoom state
+  let scale = 1, panX = 0, panY = 0;
+  let isDragging = false, lastMX = 0, lastMY = 0;
+  let hoveredNode = null;
+
+  // DPR setup
+  const dpr = window.devicePixelRatio || 1;
+  const cssW = canvas.width, cssH = canvas.height;
+  canvas.style.width = cssW + "px";
+  canvas.style.height = cssH + "px";
+  canvas.width = cssW * dpr;
+  canvas.height = cssH * dpr;
+
+  function draw() {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, cssW, cssH);
+
+    ctx.save();
+    ctx.translate(panX, panY);
+    ctx.scale(scale, scale);
+
+    drawLinks(tree);
+    drawNodes(tree);
+    ctx.restore();
+  }
+
+  function drawLinks(n) {
+    if (!n.children) return;
+    n.children.forEach(c => {
+      ctx.beginPath();
+      ctx.moveTo(n._x + n._w / 2, n._y + nodeH);
+      ctx.bezierCurveTo(
+        n._x + n._w / 2, n._y + nodeH + vGap * 0.4,
+        c._x + c._w / 2, c._y - vGap * 0.4,
+        c._x + c._w / 2, c._y
+      );
+      ctx.strokeStyle = "#888"; ctx.lineWidth = 1.5; ctx.stroke();
+      drawLinks(c);
+    });
+  }
+
+  function drawNodes(n) {
+    const col = COLORS[n.type];
+    const x = n._x, y = n._y, w = n._w, h = n._h, r = 6;
+    const isHovered = (n === hoveredNode);
+
+    // Shadow for hovered node
+    if (isHovered) {
+      ctx.save();
+      ctx.shadowColor = "rgba(0,0,0,0.4)";
+      ctx.shadowBlur = 10;
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y); ctx.arcTo(x + w, y, x + w, y + r, r);
+    ctx.lineTo(x + w, y + h - r); ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+    ctx.lineTo(x + r, y + h); ctx.arcTo(x, y + h, x, y + h - r, r);
+    ctx.lineTo(x, y + r); ctx.arcTo(x, y, x + r, y, r);
+    ctx.closePath();
+    ctx.fillStyle = col.bg; ctx.fill();
+    ctx.strokeStyle = col.border;
+    ctx.lineWidth = isHovered ? 3 : 2;
+    if (n.type === "punct") ctx.setLineDash([5, 3]); else ctx.setLineDash([]);
+    ctx.stroke(); ctx.setLineDash([]);
+
+    if (isHovered) ctx.restore();
+
+    ctx.fillStyle = "#1a1a2e";
+    ctx.font = `${fontSize}px Consolas, Monaco, monospace`;
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(n.name, x + w / 2, y + h / 2 + 1);
+
+    if (n.children) n.children.forEach(drawNodes);
+  }
+
+  // Hit test: convert mouse coords to tree coords
+  function hitTest(mx, my) {
+    const tx = (mx - panX) / scale;
+    const ty = (my - panY) / scale;
+    for (const n of allNodes) {
+      if (tx >= n._x && tx <= n._x + n._w && ty >= n._y && ty <= n._y + n._h) return n;
+    }
+    return null;
+  }
+
+  // Mouse events
+  canvas.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    const factor = e.deltaY < 0 ? 1.15 : 1 / 1.15;
+    const newScale = Math.max(0.2, Math.min(5, scale * factor));
+    panX = mx - (mx - panX) * (newScale / scale);
+    panY = my - (my - panY) * (newScale / scale);
+    scale = newScale;
+    draw();
+  }, { passive: false });
+
+  canvas.addEventListener("mousedown", (e) => {
+    isDragging = true;
+    lastMX = e.clientX; lastMY = e.clientY;
+    canvas.style.cursor = "grabbing";
+  });
+  window.addEventListener("mousemove", (e) => {
+    if (isDragging) {
+      panX += e.clientX - lastMX;
+      panY += e.clientY - lastMY;
+      lastMX = e.clientX; lastMY = e.clientY;
+      draw();
+    }
+  });
+  window.addEventListener("mouseup", () => {
+    isDragging = false;
+    canvas.style.cursor = "grab";
+  });
+
+  // Hover
+  canvas.addEventListener("mousemove", (e) => {
+    if (isDragging) return;
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    const hit = hitTest(mx, my);
+    if (hit !== hoveredNode) {
+      hoveredNode = hit;
+      draw();
+      if (hit) {
+        canvas.style.cursor = "pointer";
+        tip.textContent = `${hit.name}  [${TYPE_LABELS[hit.type]}]`;
+        tip.classList.add("visible");
+      } else {
+        canvas.style.cursor = "grab";
+        tip.classList.remove("visible");
+      }
+    }
+  });
+
+  canvas.style.cursor = "grab";
+  draw();
+}
+
+renderCanvasTree("canvas-cst", "canvas-cst-wrap", "canvas-cst-tip", CST_DATA);
+renderCanvasTree("canvas-ast", "canvas-ast-wrap", "canvas-ast-tip", AST_DATA);
+
+// ====================================================================
+// Generic SVG Pan/Zoom (for Graphviz & Mermaid output)
+// ====================================================================
+function addSvgPanZoom(container, svgEl) {
+  let scale = 1, panX = 0, panY = 0;
+  let isDragging = false, lastX = 0, lastY = 0;
+
+  // Remove any width/height constraints and ensure SVG fills container
+  svgEl.style.transformOrigin = "0 0";
+  svgEl.style.transition = "none";
+
+  function applyTransform() {
+    svgEl.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+  }
+
+  container.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    const rect = container.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    const factor = e.deltaY < 0 ? 1.15 : 1 / 1.15;
+    const newScale = Math.max(0.2, Math.min(5, scale * factor));
+    panX = mx - (mx - panX) * (newScale / scale);
+    panY = my - (my - panY) * (newScale / scale);
+    scale = newScale;
+    applyTransform();
+  }, { passive: false });
+
+  container.addEventListener("mousedown", (e) => {
+    isDragging = true; lastX = e.clientX; lastY = e.clientY;
+    container.style.cursor = "grabbing";
+  });
+  window.addEventListener("mousemove", (e) => {
+    if (!isDragging) return;
+    panX += e.clientX - lastX; panY += e.clientY - lastY;
+    lastX = e.clientX; lastY = e.clientY;
+    applyTransform();
+  });
+  window.addEventListener("mouseup", () => {
+    if (isDragging) { isDragging = false; container.style.cursor = "grab"; }
+  });
+
+  // Double-click to reset
+  container.addEventListener("dblclick", () => {
+    scale = 1; panX = 0; panY = 0;
+    applyTransform();
+  });
+
+  container.style.cursor = "grab";
+  applyTransform();
+}
+
+// ====================================================================
+// 3. Graphviz — render + attach pan/zoom + node hover tooltip
+// ====================================================================
+function buildDot(data, prefix) {
+  const lines = [
+    "digraph G {",
+    "  rankdir=TB;",
+    '  node [shape=box, style="filled,rounded", fontname="Consolas", fontsize=12];',
+    '  edge [color="#888"];'
+  ];
+  let id = 0;
+  function walk(node, parentId) {
+    const myId = prefix + "_n" + (id++);
+    const c = COLORS[node.type];
+    const style = node.type === "punct"
+      ? 'style="filled,dashed,rounded"'
+      : 'style="filled,rounded"';
+    const label = node.name.replace(/"/g, '\\"');
+    lines.push(`  ${myId} [label="${label}", fillcolor="${c.bg}", color="${c.border}", penwidth=2, ${style}, tooltip="${label} [${TYPE_LABELS[node.type]}]"];`);
+    if (parentId !== null) lines.push(`  ${parentId} -> ${myId};`);
+    if (node.children) node.children.forEach(child => walk(child, myId));
+  }
+  walk(data, null);
+  lines.push("}");
+  return lines.join("\n");
+}
+
+async function renderGraphviz() {
+  try {
+    const viz = await Viz.instance();
+
+    // CST
+    const cstSvg = viz.renderSVGElement(buildDot(CST_DATA, "cst"));
+    const cstC = document.getElementById("graphviz-cst");
+    const cstTip = document.getElementById("gv-cst-tip");
+    const cstHint = cstC.querySelector(".zoom-hint");
+    cstC.innerHTML = "";
+    cstC.appendChild(cstSvg);
+    cstC.appendChild(cstTip);
+    cstC.appendChild(cstHint);
+    addSvgPanZoom(cstC, cstSvg);
+    attachSvgNodeHover(cstC, cstTip);
+
+    // AST
+    const astSvg = viz.renderSVGElement(buildDot(AST_DATA, "ast"));
+    const astC = document.getElementById("graphviz-ast");
+    const astTip = document.getElementById("gv-ast-tip");
+    const astHint = astC.querySelector(".zoom-hint");
+    astC.innerHTML = "";
+    astC.appendChild(astSvg);
+    astC.appendChild(astTip);
+    astC.appendChild(astHint);
+    addSvgPanZoom(astC, astSvg);
+    attachSvgNodeHover(astC, astTip);
+  } catch (e) {
+    document.getElementById("graphviz-cst").innerHTML = '<em style="color:red">Graphviz failed: ' + e.message + '</em>';
+    document.getElementById("graphviz-ast").innerHTML = '<em style="color:red">Graphviz failed: ' + e.message + '</em>';
+  }
+}
+
+function attachSvgNodeHover(container, tipEl) {
+  const nodes = container.querySelectorAll("svg .node");
+  nodes.forEach(node => {
+    node.style.cursor = "pointer";
+    node.addEventListener("mouseenter", () => {
+      // Extract text from the <title> or <text> element
+      const titleEl = node.querySelector("title");
+      const textEl = node.querySelector("text");
+      const label = (textEl ? textEl.textContent : (titleEl ? titleEl.textContent : "?"));
+      tipEl.textContent = label;
+      tipEl.classList.add("visible");
+    });
+    node.addEventListener("mouseleave", () => {
+      tipEl.classList.remove("visible");
+    });
+  });
+}
+
+renderGraphviz();
+
+// ====================================================================
+// 4. Mermaid — init + attach pan/zoom after render
+// ====================================================================
+mermaid.initialize({
+  startOnLoad: false,
+  theme: "default",
+  flowchart: { curve: "basis", useMaxWidth: false }
+});
+
+async function renderMermaid() {
+  await mermaid.run({ querySelector: ".mermaid" });
+
+  // Attach pan/zoom to Mermaid SVGs
+  setTimeout(() => {
+    const pairs = [
+      ["mermaid-cst-container", "mm-cst-tip"],
+      ["mermaid-ast-container", "mm-ast-tip"]
+    ];
+    pairs.forEach(([cId, tId]) => {
+      const container = document.getElementById(cId);
+      const tip = document.getElementById(tId);
+      const svg = container.querySelector("svg");
+      if (svg) {
+        addSvgPanZoom(container, svg);
+        // Mermaid uses .node class for nodes
+        const nodes = svg.querySelectorAll(".node");
+        nodes.forEach(node => {
+          node.style.cursor = "pointer";
+          node.addEventListener("mouseenter", () => {
+            const span = node.querySelector("span") || node.querySelector("text") || node.querySelector("foreignObject");
+            const label = span ? span.textContent.trim() : "?";
+            tip.textContent = label;
+            tip.classList.add("visible");
+          });
+          node.addEventListener("mouseleave", () => {
+            tip.classList.remove("visible");
+          });
+        });
+      }
+    });
+  }, 300);
+}
+
+renderMermaid();
+</script>
+
+</body>
+</html>

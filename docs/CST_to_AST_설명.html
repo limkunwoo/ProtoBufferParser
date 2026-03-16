@@ -78,6 +78,15 @@ tr:nth-child(even) { background: #fafafa; }
   border: 1px solid #e0e0e0; border-radius: 8px; padding: 1em;
 }
 .diagram svg { max-width: 100%; height: auto; }
+
+/* ---- SVG pan/zoom wrapper ---- */
+.svg-pz-wrap {
+  overflow: hidden; position: relative;
+  cursor: grab; border-radius: 4px;
+  user-select: none; -webkit-user-select: none;
+}
+.svg-pz-wrap:active { cursor: grabbing; }
+.svg-pz-wrap svg { display: block; max-width: 100%; transition: none; }
 figcaption {
   font-size: 0.9em; color: #666;
   margin-top: 0.5em; font-style: italic;
@@ -220,6 +229,23 @@ strong { color: #1a3a6e; }
 }
 .extra-analysis-body p { margin: 0.5em 0; }
 .extra-analysis-body table { font-size: 0.93em; }
+
+/* ---- Stepper buttons (prev / next) ---- */
+.stepper-controls {
+  display: flex; align-items: center; justify-content: center;
+  gap: 1em; margin: 0.6em 0 0.8em;
+}
+.stepper-btn {
+  background: #2c5aa0; color: white; border: none;
+  border-radius: 6px; padding: 0.45em 1.4em; cursor: pointer;
+  font-size: 1em; font-weight: bold; transition: background 0.2s;
+}
+.stepper-btn:hover:not(:disabled) { background: #1a3a6e; }
+.stepper-btn:disabled { background: #aaa; cursor: not-allowed; }
+.stepper-label {
+  display: inline-block; min-width: 9em; text-align: center;
+  font-weight: bold; color: #2c5aa0; font-size: 1.05em;
+}
 
 /* ---- Responsive ---- */
 @media (max-width: 640px) {
@@ -1411,6 +1437,7 @@ window.QNA3D = {
 <div class="question">소스 코드 한 줄이 최종 코드 생성까지 어떤 단계를 거치는가?</div>
 <h3>답변</h3>
 <div class="diagram">
+<div class="svg-pz-wrap" id="svg-pz-1">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 140">
   <defs>
     <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto">
@@ -1476,8 +1503,69 @@ window.QNA3D = {
   <text x="547" y="130" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9" fill="#a9dc76">개발자 설계</text>
 </svg>
 
+</div>
 <figcaption>그림 1: 파싱 파이프라인 전체 흐름</figcaption>
 </div>
+<script>
+(function() {
+  var wrap = document.getElementById('svg-pz-1');
+  if (!wrap) return;
+  var svg = wrap.querySelector('svg');
+  if (!svg) return;
+
+  // Ensure SVG fills the wrapper but stays bounded
+  svg.style.display = 'block';
+  svg.style.maxWidth = '100%';
+  svg.style.cursor = 'grab';
+
+  // State
+  var scale = 1, panX = 0, panY = 0;
+  var dragging = false, startX = 0, startY = 0, startPanX = 0, startPanY = 0;
+
+  function applyTransform() {
+    svg.style.transform = 'translate(' + panX + 'px,' + panY + 'px) scale(' + scale + ')';
+    svg.style.transformOrigin = '0 0';
+  }
+
+  // Wheel zoom (centred on cursor position relative to wrapper)
+  wrap.addEventListener('wheel', function(e) {
+    e.preventDefault();
+    var rect = wrap.getBoundingClientRect();
+    var mx = e.clientX - rect.left - panX;
+    var my = e.clientY - rect.top  - panY;
+    var delta = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+    var newScale = Math.min(Math.max(scale * delta, 0.3), 8);
+    panX -= mx * (newScale - scale);
+    panY -= my * (newScale - scale);
+    scale = newScale;
+    applyTransform();
+  }, { passive: false });
+
+  // Drag pan
+  wrap.addEventListener('mousedown', function(e) {
+    if (e.button !== 0) return;
+    dragging = true;
+    startX = e.clientX; startY = e.clientY;
+    startPanX = panX; startPanY = panY;
+    svg.style.cursor = 'grabbing';
+  });
+  window.addEventListener('mousemove', function(e) {
+    if (!dragging) return;
+    panX = startPanX + (e.clientX - startX);
+    panY = startPanY + (e.clientY - startY);
+    applyTransform();
+  });
+  window.addEventListener('mouseup', function() {
+    if (dragging) { dragging = false; svg.style.cursor = 'grab'; }
+  });
+
+  // Double-click to reset
+  wrap.addEventListener('dblclick', function() {
+    scale = 1; panX = 0; panY = 0;
+    applyTransform();
+  });
+})();
+</script>
 
 <div class="answer">
 <p>파싱 파이프라인은 다음 5단계로 구성됩니다.</p>
@@ -1503,6 +1591,7 @@ window.QNA3D = {
 <div class="question">ANTLR이 생성하는 Parse Tree(CST)는 정확히 어떤 구조인가?</div>
 <h3>답변</h3>
 <div class="diagram">
+<div class="svg-pz-wrap" id="svg-pz-2">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 460">
   <rect width="900" height="460" fill="#1e1e2e" rx="10"/>
 
@@ -1623,8 +1712,69 @@ window.QNA3D = {
   <line x1="500" y1="10" x2="500" y2="445" stroke="#3d3d5c" stroke-width="1" stroke-dasharray="6,4"/>
 </svg>
 
+</div>
 <figcaption>그림 2: CST vs AST 구조 비교</figcaption>
 </div>
+<script>
+(function() {
+  var wrap = document.getElementById('svg-pz-2');
+  if (!wrap) return;
+  var svg = wrap.querySelector('svg');
+  if (!svg) return;
+
+  // Ensure SVG fills the wrapper but stays bounded
+  svg.style.display = 'block';
+  svg.style.maxWidth = '100%';
+  svg.style.cursor = 'grab';
+
+  // State
+  var scale = 1, panX = 0, panY = 0;
+  var dragging = false, startX = 0, startY = 0, startPanX = 0, startPanY = 0;
+
+  function applyTransform() {
+    svg.style.transform = 'translate(' + panX + 'px,' + panY + 'px) scale(' + scale + ')';
+    svg.style.transformOrigin = '0 0';
+  }
+
+  // Wheel zoom (centred on cursor position relative to wrapper)
+  wrap.addEventListener('wheel', function(e) {
+    e.preventDefault();
+    var rect = wrap.getBoundingClientRect();
+    var mx = e.clientX - rect.left - panX;
+    var my = e.clientY - rect.top  - panY;
+    var delta = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+    var newScale = Math.min(Math.max(scale * delta, 0.3), 8);
+    panX -= mx * (newScale - scale);
+    panY -= my * (newScale - scale);
+    scale = newScale;
+    applyTransform();
+  }, { passive: false });
+
+  // Drag pan
+  wrap.addEventListener('mousedown', function(e) {
+    if (e.button !== 0) return;
+    dragging = true;
+    startX = e.clientX; startY = e.clientY;
+    startPanX = panX; startPanY = panY;
+    svg.style.cursor = 'grabbing';
+  });
+  window.addEventListener('mousemove', function(e) {
+    if (!dragging) return;
+    panX = startPanX + (e.clientX - startX);
+    panY = startPanY + (e.clientY - startY);
+    applyTransform();
+  });
+  window.addEventListener('mouseup', function() {
+    if (dragging) { dragging = false; svg.style.cursor = 'grab'; }
+  });
+
+  // Double-click to reset
+  wrap.addEventListener('dblclick', function() {
+    scale = 1; panX = 0; panY = 0;
+    applyTransform();
+  });
+})();
+</script>
 
 <div class="answer">
 <p>CST(Concrete Syntax Tree)는 <strong>문법 규칙 하나하나가 모두 노드</strong>로 표현된 트리입니다.</p>
@@ -1689,6 +1839,7 @@ ANTLR은 <code>.g4</code> 파일의 규칙 구조를 <strong>기계적으로</st
 <div class="question">CST를 어떻게 순회해서 AST를 만드는가? Visitor 패턴이란?</div>
 <h3>답변</h3>
 <div class="diagram">
+<div class="svg-pz-wrap" id="svg-pz-4">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 360">
   <rect width="820" height="360" fill="#1e1e2e" rx="10"/>
   <defs>
@@ -1803,8 +1954,69 @@ ANTLR은 <code>.g4</code> 파일의 규칙 구조를 <strong>기계적으로</st
   <text x="558" y="202" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9" fill="#a9dc76" transform="rotate(-63,558,202)">AST 노드 반환</text>
 </svg>
 
+</div>
 <figcaption>그림 4: Visitor 패턴 동작 구조</figcaption>
 </div>
+<script>
+(function() {
+  var wrap = document.getElementById('svg-pz-4');
+  if (!wrap) return;
+  var svg = wrap.querySelector('svg');
+  if (!svg) return;
+
+  // Ensure SVG fills the wrapper but stays bounded
+  svg.style.display = 'block';
+  svg.style.maxWidth = '100%';
+  svg.style.cursor = 'grab';
+
+  // State
+  var scale = 1, panX = 0, panY = 0;
+  var dragging = false, startX = 0, startY = 0, startPanX = 0, startPanY = 0;
+
+  function applyTransform() {
+    svg.style.transform = 'translate(' + panX + 'px,' + panY + 'px) scale(' + scale + ')';
+    svg.style.transformOrigin = '0 0';
+  }
+
+  // Wheel zoom (centred on cursor position relative to wrapper)
+  wrap.addEventListener('wheel', function(e) {
+    e.preventDefault();
+    var rect = wrap.getBoundingClientRect();
+    var mx = e.clientX - rect.left - panX;
+    var my = e.clientY - rect.top  - panY;
+    var delta = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+    var newScale = Math.min(Math.max(scale * delta, 0.3), 8);
+    panX -= mx * (newScale - scale);
+    panY -= my * (newScale - scale);
+    scale = newScale;
+    applyTransform();
+  }, { passive: false });
+
+  // Drag pan
+  wrap.addEventListener('mousedown', function(e) {
+    if (e.button !== 0) return;
+    dragging = true;
+    startX = e.clientX; startY = e.clientY;
+    startPanX = panX; startPanY = panY;
+    svg.style.cursor = 'grabbing';
+  });
+  window.addEventListener('mousemove', function(e) {
+    if (!dragging) return;
+    panX = startPanX + (e.clientX - startX);
+    panY = startPanY + (e.clientY - startY);
+    applyTransform();
+  });
+  window.addEventListener('mouseup', function() {
+    if (dragging) { dragging = false; svg.style.cursor = 'grab'; }
+  });
+
+  // Double-click to reset
+  wrap.addEventListener('dblclick', function() {
+    scale = 1; panX = 0; panY = 0;
+    applyTransform();
+  });
+})();
+</script>
 
 <div class="answer">
 <p>ANTLR은 <code>Protobuf3BaseVisitor&lt;T&gt;</code> 클래스를 자동 생성합니다. 이를 상속받아 각 규칙 노드에 대한 처리 메서드를 구현하면 됩니다.</p>
@@ -1861,11 +2073,11 @@ ANTLR은 <code>.g4</code> 파일의 규칙 구조를 <strong>기계적으로</st
 <div class="question">message 블록 전체가 CST에서 AST로 변환되는 과정을 단계별로 추적하면?</div>
 <h3>답변</h3>
 <div class="canvas2d-wrapper">
-  <div class="canvas2d-label">슬라이더: 단계 선택 | 토큰스트림 → CST → AST 단계별 변환 애니메이션</div>
-  <div class="canvas2d-controls">
-    <label>단계</label>
-    <input type="range" id="canvas2d-slider-5" min="0" max="3" value="0" step="1">
-    <span class="canvas2d-angle" id="canvas2d-val-5">소스 코드</span>
+  <div class="canvas2d-label">단계별 변환 애니메이션 — 버튼으로 다음/이전 단계를 확인하세요</div>
+  <div class="canvas2d-controls stepper-controls">
+    <button id="stepper-prev-5" class="stepper-btn" disabled>❮ 이전</button>
+    <span class="stepper-label" id="canvas2d-val-5">소스 코드</span>
+    <button id="stepper-next-5" class="stepper-btn">다음 ❯</button>
   </div>
   <canvas id="canvas2d-5" class="canvas2d-canvas"></canvas>
   <div class="canvas2d-info" id="canvas2d-info-5"></div>
@@ -2076,62 +2288,72 @@ ANTLR은 <code>.g4</code> 파일의 규칙 구조를 <strong>기계적으로</st
       arrow(x0, y0, x1, y1, '#aaa', 1);
     }
 
-    // Layout: manually placed for clarity
-    // Row Y positions
-    var r0 = 45,  r1 = 90,  r2 = 135, r3 = 180, r4 = 225, r5 = 268, r6 = 310;
+    // Layout: two independent sub-trees side by side for clarity
+    // Left sub-tree: messageName chain  Right sub-tree: messageBody chain
+    // Row Y positions (generous vertical spacing)
+    var r0 = 40, r1 = 95, r2 = 148, r3 = 200, r4 = 252, r5 = 304;
 
-    // messageDef
-    var n_md = node('messageDef', W/2, r0, ruleC);
+    // ── root: messageDef ──
+    node('messageDef', W/2, r0, ruleC);
 
-    // Children of messageDef
-    var n_msg_kw = node('MESSAGE', W*0.12, r1, tokC);
-    var n_mname  = node('messageName', W*0.30, r1, ruleC);
-    var n_sem1   = node('doMessageNameDef', W*0.54, r1, semC);
-    var n_mbody  = node('messageBody', W*0.80, r1, ruleC);
+    // ── Level-1 children: spread evenly across canvas width ──
+    // MESSAGE(left), messageName, doMsgNameDef(center), messageBody(right)
+    var x_kw   = W * 0.09;
+    var x_mn   = W * 0.28;
+    var x_sem  = W * 0.50;
+    var x_mb   = W * 0.78;
 
-    conn(W/2, r0+12, W*0.12, r1-12);
-    conn(W/2, r0+12, W*0.30, r1-12);
-    conn(W/2, r0+12, W*0.54, r1-12);
-    conn(W/2, r0+12, W*0.80, r1-12);
+    node('MESSAGE',         x_kw,  r1, tokC);
+    node('messageName',     x_mn,  r1, ruleC);
+    node('doMsgNameDef',    x_sem, r1, semC);
+    node('messageBody',     x_mb,  r1, ruleC);
 
-    // messageName → ident → IDENTIFIER("Player")
-    var n_ident1 = node('ident', W*0.30, r2, ruleC);
-    conn(W*0.30, r1+12, W*0.30, r2-12);
-    var n_pid = node('ID("Player")', W*0.30, r3, tokC);
-    conn(W*0.30, r2+12, W*0.30, r3-12);
+    conn(W/2, r0+12, x_kw,  r1-12);
+    conn(W/2, r0+12, x_mn,  r1-12);
+    conn(W/2, r0+12, x_sem, r1-12);
+    conn(W/2, r0+12, x_mb,  r1-12);
 
-    // messageBody children
-    var n_lc   = node('LC', W*0.56, r2, tokC);
-    var n_sem2 = node('doEnterBlock', W*0.69, r2, semC);
-    var n_me0  = node('messageElement[0]', W*0.82, r2, ruleC);
-    var n_me1  = node('messageElement[1]', W*0.93, r2, ruleC);
-    var n_rc   = node('RC', W*0.99, r3, tokC);
+    // ── messageName → ident → ID("Player") ──
+    node('ident',        x_mn, r2, ruleC);
+    conn(x_mn, r1+12,   x_mn, r2-12);
+    node('ID("Player")', x_mn, r3, tokC);
+    conn(x_mn, r2+12,   x_mn, r3-12);
 
-    conn(W*0.80, r1+12, W*0.56, r2-12);
-    conn(W*0.80, r1+12, W*0.69, r2-12);
-    conn(W*0.80, r1+12, W*0.82, r2-12);
-    conn(W*0.80, r1+12, W*0.93, r2-12);
-    conn(W*0.80, r1+12, W*0.99, r3-12);
+    // ── messageBody children: LC, doEnterBlock, field[0], field[1], RC ──
+    // Spread within right half [0.55 .. 0.99]
+    var x_lc   = W * 0.55;
+    var x_de   = W * 0.64;
+    var x_me0  = W * 0.75;
+    var x_me1  = W * 0.88;
+    var x_rc   = W * 0.98;
 
-    // messageElement[0] → field → (type_, fieldName, EQ, fieldNumber, SEMI)
-    var n_f0 = node('field', W*0.82, r3, ruleC);
-    conn(W*0.82, r2+12, W*0.82, r3-12);
+    node('LC',               x_lc,  r2, tokC);
+    node('doEnterBlock',     x_de,  r2, semC);
+    node('messageElement[0]',x_me0, r2, ruleC);
+    node('messageElement[1]',x_me1, r2, ruleC);
+    node('RC',               x_rc,  r3, tokC);
 
-    var n_t0  = node('STRING', W*0.56, r4, tokC);
-    var n_fn0 = node('ID("name")', W*0.68, r4, tokC);
-    var n_eq0 = node('EQ', W*0.78, r4, tokC);
-    var n_fnum0 = node('INT("1")', W*0.88, r4, tokC);
-    var n_semi0 = node('SEMI', W*0.97, r4, tokC);
+    conn(x_mb, r1+12, x_lc,  r2-12);
+    conn(x_mb, r1+12, x_de,  r2-12);
+    conn(x_mb, r1+12, x_me0, r2-12);
+    conn(x_mb, r1+12, x_me1, r2-12);
+    conn(x_mb, r1+12, x_rc,  r3-12);
 
-    conn(W*0.82, r3+12, W*0.56, r4-12);
-    conn(W*0.82, r3+12, W*0.68, r4-12);
-    conn(W*0.82, r3+12, W*0.78, r4-12);
-    conn(W*0.82, r3+12, W*0.88, r4-12);
-    conn(W*0.82, r3+12, W*0.97, r4-12);
+    // ── field[0]: type_(STRING) fieldLabel fieldName EQ INT SEMI ──
+    // Anchored under x_me0; leaf tokens spread from 0.50 to 0.86
+    node('field', x_me0, r3, ruleC);
+    conn(x_me0, r2+12, x_me0, r3-12);
 
-    // messageElement[1] (simplified — "..." label)
-    var n_f1 = node('field (...level...)', W*0.93, r3, ruleC);
-    conn(W*0.93, r2+12, W*0.93, r3-12);
+    var fx = [W*0.50, W*0.60, W*0.68, W*0.77, W*0.86];
+    var fl = ['STRING', 'ID("name")', 'EQ', 'INT("1")', 'SEMI'];
+    fl.forEach(function(lbl, i) {
+      node(lbl, fx[i], r4, tokC);
+      conn(x_me0, r3+12, fx[i], r4-12);
+    });
+
+    // ── field[1]: simplified ──
+    node('field(…level…)', x_me1, r3, ruleC);
+    conn(x_me1, r2+12, x_me1, r3-12);
 
     // Note
     ctx.fillStyle = '#999'; ctx.font = '10px sans-serif';
@@ -2220,18 +2442,28 @@ ANTLR은 <code>.g4</code> 파일의 규칙 구조를 <strong>기계적으로</st
     if (infoEl) infoEl.innerHTML = '<div style="padding:6px 10px; font-size:0.92em; color:#444;">' + descs[step] + '</div>';
   }
 
-  // Slider event
-  var slider = document.getElementById('canvas2d-slider-5');
-  var valSpan = document.getElementById('canvas2d-val-5');
+  // Button event (prev / next)
+  var prevBtn = document.getElementById('stepper-prev-5');
+  var nextBtn = document.getElementById('stepper-next-5');
+  var labelEl = document.getElementById('canvas2d-val-5');
   var stepNames = ['소스 코드', '토큰 스트림', 'CST', 'AST'];
-  slider.addEventListener('input', function() {
-    var s = parseInt(this.value, 10);
-    valSpan.textContent = stepNames[s];
-    draw(s);
+  var TOTAL = 4;
+
+  function updateButtons() {
+    prevBtn.disabled = currentStep === 0;
+    nextBtn.disabled = currentStep === TOTAL - 1;
+    labelEl.textContent = stepNames[currentStep];
+  }
+
+  prevBtn.addEventListener('click', function() {
+    if (currentStep > 0) { draw(currentStep - 1); updateButtons(); }
+  });
+  nextBtn.addEventListener('click', function() {
+    if (currentStep < TOTAL - 1) { draw(currentStep + 1); updateButtons(); }
   });
 
   // Initial
-  valSpan.textContent = stepNames[0];
+  updateButtons();
   draw(0);
 
 })();
@@ -2300,6 +2532,7 @@ RC  EOF</pre></div>
 <div class="question"><code>messageType</code>과 <code>enumType</code>은 어떻게 구분하는가? 2-Pass 파싱이란?</div>
 <h3>답변</h3>
 <div class="diagram">
+<div class="svg-pz-wrap" id="svg-pz-6">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 260">
   <rect width="820" height="260" fill="#1e1e2e" rx="10"/>
   <defs>
@@ -2361,8 +2594,69 @@ RC  EOF</pre></div>
   <text x="410" y="248" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="10" fill="#666">※ 1st Pass는 심볼 테이블만 채우고 AST를 만들지 않음. 2nd Pass에서만 Visitor(AstBuilder)가 동작함.</text>
 </svg>
 
+</div>
 <figcaption>그림 6: 2-Pass 파싱 타입 판별</figcaption>
 </div>
+<script>
+(function() {
+  var wrap = document.getElementById('svg-pz-6');
+  if (!wrap) return;
+  var svg = wrap.querySelector('svg');
+  if (!svg) return;
+
+  // Ensure SVG fills the wrapper but stays bounded
+  svg.style.display = 'block';
+  svg.style.maxWidth = '100%';
+  svg.style.cursor = 'grab';
+
+  // State
+  var scale = 1, panX = 0, panY = 0;
+  var dragging = false, startX = 0, startY = 0, startPanX = 0, startPanY = 0;
+
+  function applyTransform() {
+    svg.style.transform = 'translate(' + panX + 'px,' + panY + 'px) scale(' + scale + ')';
+    svg.style.transformOrigin = '0 0';
+  }
+
+  // Wheel zoom (centred on cursor position relative to wrapper)
+  wrap.addEventListener('wheel', function(e) {
+    e.preventDefault();
+    var rect = wrap.getBoundingClientRect();
+    var mx = e.clientX - rect.left - panX;
+    var my = e.clientY - rect.top  - panY;
+    var delta = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+    var newScale = Math.min(Math.max(scale * delta, 0.3), 8);
+    panX -= mx * (newScale - scale);
+    panY -= my * (newScale - scale);
+    scale = newScale;
+    applyTransform();
+  }, { passive: false });
+
+  // Drag pan
+  wrap.addEventListener('mousedown', function(e) {
+    if (e.button !== 0) return;
+    dragging = true;
+    startX = e.clientX; startY = e.clientY;
+    startPanX = panX; startPanY = panY;
+    svg.style.cursor = 'grabbing';
+  });
+  window.addEventListener('mousemove', function(e) {
+    if (!dragging) return;
+    panX = startPanX + (e.clientX - startX);
+    panY = startPanY + (e.clientY - startY);
+    applyTransform();
+  });
+  window.addEventListener('mouseup', function() {
+    if (dragging) { dragging = false; svg.style.cursor = 'grab'; }
+  });
+
+  // Double-click to reset
+  wrap.addEventListener('dblclick', function() {
+    scale = 1; panX = 0; panY = 0;
+    applyTransform();
+  });
+})();
+</script>
 
 <div class="answer">
 <p>proto3에서 사용자 정의 타입(<code>MyMessage</code>, <code>MyEnum</code>)은 Lexer 단계에서 키워드와 식별자를 구분할 수 없습니다. 이를 해결하기 위해 <strong>2-Pass 파싱</strong>을 사용합니다.</p>
@@ -2397,6 +2691,7 @@ FieldNode.type = TypeRef { kind: MESSAGE, name: "Player" }</pre></div>
 <div class="question">완성된 AST를 어떻게 Unreal Engine C++ 코드로 변환하는가?</div>
 <h3>답변</h3>
 <div class="diagram">
+<div class="svg-pz-wrap" id="svg-pz-7">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 300">
   <rect width="780" height="300" fill="#1e1e2e" rx="10"/>
   <defs>
@@ -2488,8 +2783,69 @@ FieldNode.type = TypeRef { kind: MESSAGE, name: "Player" }</pre></div>
   <text x="390" y="285" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="10" fill="#555">CodeGenerator가 MessageNode를 순회하며 각 FieldNode를 C++ 프로퍼티로 변환</text>
 </svg>
 
+</div>
 <figcaption>그림 7: AST → Unreal Engine C++ 코드 생성</figcaption>
 </div>
+<script>
+(function() {
+  var wrap = document.getElementById('svg-pz-7');
+  if (!wrap) return;
+  var svg = wrap.querySelector('svg');
+  if (!svg) return;
+
+  // Ensure SVG fills the wrapper but stays bounded
+  svg.style.display = 'block';
+  svg.style.maxWidth = '100%';
+  svg.style.cursor = 'grab';
+
+  // State
+  var scale = 1, panX = 0, panY = 0;
+  var dragging = false, startX = 0, startY = 0, startPanX = 0, startPanY = 0;
+
+  function applyTransform() {
+    svg.style.transform = 'translate(' + panX + 'px,' + panY + 'px) scale(' + scale + ')';
+    svg.style.transformOrigin = '0 0';
+  }
+
+  // Wheel zoom (centred on cursor position relative to wrapper)
+  wrap.addEventListener('wheel', function(e) {
+    e.preventDefault();
+    var rect = wrap.getBoundingClientRect();
+    var mx = e.clientX - rect.left - panX;
+    var my = e.clientY - rect.top  - panY;
+    var delta = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+    var newScale = Math.min(Math.max(scale * delta, 0.3), 8);
+    panX -= mx * (newScale - scale);
+    panY -= my * (newScale - scale);
+    scale = newScale;
+    applyTransform();
+  }, { passive: false });
+
+  // Drag pan
+  wrap.addEventListener('mousedown', function(e) {
+    if (e.button !== 0) return;
+    dragging = true;
+    startX = e.clientX; startY = e.clientY;
+    startPanX = panX; startPanY = panY;
+    svg.style.cursor = 'grabbing';
+  });
+  window.addEventListener('mousemove', function(e) {
+    if (!dragging) return;
+    panX = startPanX + (e.clientX - startX);
+    panY = startPanY + (e.clientY - startY);
+    applyTransform();
+  });
+  window.addEventListener('mouseup', function() {
+    if (dragging) { dragging = false; svg.style.cursor = 'grab'; }
+  });
+
+  // Double-click to reset
+  wrap.addEventListener('dblclick', function() {
+    scale = 1; panX = 0; panY = 0;
+    applyTransform();
+  });
+})();
+</script>
 
 <div class="answer">
 <p>AST 노드를 순회하는 별도 <code>CodeGenerator</code> 클래스가 각 노드 타입에 맞는 C++ 코드를 출력합니다.</p>

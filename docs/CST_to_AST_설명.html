@@ -1502,12 +1502,18 @@ window.D3Tree = {
     x0 -= pad; y0 -= pad; x1 += pad; y1 += pad;
     var vw = x1 - x0, vh = y1 - y0;
 
+    // When the tree is wide relative to tall, a tight max-height shrinks
+    // everything.  Scale max-height to the aspect ratio so that single-panel
+    // (wide) trees are not squashed.
+    var aspect = vw > 0 ? vh / vw : 1;
+    var maxH = Math.max(420, Math.round(900 * aspect));
+
     var svg = d3.select(container).append('svg')
       .attr('viewBox', x0 + ' ' + y0 + ' ' + vw + ' ' + vh)
       .style('width', '100%')
       .style('height', 'auto')
       .style('min-height', '180px')
-      .style('max-height', '420px')
+      .style('max-height', maxH + 'px')
       .style('cursor', 'grab');
 
     var g = svg.append('g');
@@ -2170,6 +2176,99 @@ ANTLR은 <code>.g4</code> 파일의 규칙 구조를 <strong>기계적으로</st
 <h3>질문</h3>
 <div class="question">message 블록 전체가 CST에서 AST로 변환되는 과정을 단계별로 추적하면?</div>
 <h3>답변</h3>
+<div class="canvas2d-wrapper">
+<div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:12px;"><div style="flex:1 1 420px;min-width:320px;max-width:100%;"><div style="font-weight:bold;text-align:center;color:#2c5aa0;margin-bottom:6px;font-size:0.9em;">CST (Parse Tree) — 20개 노드</div><div style="background:#f8f9fa;border:1px solid #e0e0e0;border-radius:6px;padding:8px 10px;font-family:Consolas,'Courier New',monospace;font-size:0.76em;line-height:1.45;"><div id="canvas2d-5-c0" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">messageDef</div>
+<div id="canvas2d-5-c1" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;"> ├─ MESSAGE</div>
+<div id="canvas2d-5-c2" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;"> ├─ messageName</div>
+<div id="canvas2d-5-c3" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;"> │   └─ ident</div>
+<div id="canvas2d-5-c4" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;"> │       └─ ID("Player")</div>
+<div id="canvas2d-5-c5" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;"> └─ messageBody</div>
+<div id="canvas2d-5-c6" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">     ├─ LC</div>
+<div id="canvas2d-5-c7" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">     ├─ field[0]</div>
+<div id="canvas2d-5-c8" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">     │   ├─ type_ → STRING</div>
+<div id="canvas2d-5-c9" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">     │   ├─ fieldName → ID("name")</div>
+<div id="canvas2d-5-c10" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">     │   ├─ EQ</div>
+<div id="canvas2d-5-c11" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">     │   ├─ fieldNumber → INT_LIT("1")</div>
+<div id="canvas2d-5-c12" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">     │   └─ SEMI</div>
+<div id="canvas2d-5-c13" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">     ├─ field[1]</div>
+<div id="canvas2d-5-c14" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">     │   ├─ type_ → INT32</div>
+<div id="canvas2d-5-c15" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">     │   ├─ fieldName → ID("level")</div>
+<div id="canvas2d-5-c16" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">     │   ├─ EQ</div>
+<div id="canvas2d-5-c17" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">     │   ├─ fieldNumber → INT_LIT("2")</div>
+<div id="canvas2d-5-c18" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">     │   └─ SEMI</div>
+<div id="canvas2d-5-c19" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">     └─ RC</div></div></div><div style="flex:1 1 300px;min-width:250px;max-width:100%;"><div style="font-weight:bold;text-align:center;color:#8b1a1a;margin-bottom:6px;font-size:0.9em;">AST — 3개 노드</div><div id="canvas2d-5-ast-box" style="background:#fdf8f8;border:1px solid #e0d0d0;border-radius:6px;padding:8px 10px;font-family:Consolas,'Courier New',monospace;font-size:0.8em;line-height:1.45;min-height:120px;"><div id="canvas2d-5-a0" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;opacity:0;max-height:0;overflow:hidden;transition:all 0.4s;">MessageNode</div>
+<div id="canvas2d-5-a1" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;opacity:0;max-height:0;overflow:hidden;transition:all 0.4s;"> ├─ name: "Player"</div>
+<div id="canvas2d-5-a2" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;opacity:0;max-height:0;overflow:hidden;transition:all 0.4s;"> └─ fields</div>
+<div id="canvas2d-5-a3" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;opacity:0;max-height:0;overflow:hidden;transition:all 0.4s;">     ├─ FieldNode</div>
+<div id="canvas2d-5-a4" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;opacity:0;max-height:0;overflow:hidden;transition:all 0.4s;">     │   ├─ type: "string"</div>
+<div id="canvas2d-5-a5" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;opacity:0;max-height:0;overflow:hidden;transition:all 0.4s;">     │   ├─ name: "name"</div>
+<div id="canvas2d-5-a6" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;opacity:0;max-height:0;overflow:hidden;transition:all 0.4s;">     │   └─ number: 1</div>
+<div id="canvas2d-5-a7" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;opacity:0;max-height:0;overflow:hidden;transition:all 0.4s;">     └─ FieldNode</div>
+<div id="canvas2d-5-a8" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;opacity:0;max-height:0;overflow:hidden;transition:all 0.4s;">         ├─ type: "int32"</div>
+<div id="canvas2d-5-a9" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;opacity:0;max-height:0;overflow:hidden;transition:all 0.4s;">         ├─ name: "level"</div>
+<div id="canvas2d-5-a10" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;opacity:0;max-height:0;overflow:hidden;transition:all 0.4s;">         └─ number: 2</div></div></div></div><div id="canvas2d-info-5" style="text-align:center;padding:10px 16px;background:#e8f4fd;border-left:4px solid #5ba3d9;border-radius:0 6px 6px 0;margin-bottom:10px;font-size:0.92em;color:#333;min-height:2.5em;display:flex;align-items:center;justify-content:center;">초기 상태 — CST 전체 구조가 표시됩니다</div><div class="stepper-controls"><button class="stepper-btn" id="stepper-prev-5" disabled>← 이전</button><span class="stepper-label" id="canvas2d-val-5">단계 0 / 8</span><button class="stepper-btn" id="stepper-next-5">다음 →</button></div><div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;font-size:0.78em;color:#555;margin-top:8px;padding-top:8px;border-top:1px solid #eee;"><span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#cce5ff;border:1px solid #004085;vertical-align:middle;margin-right:3px;"></span>방문 중</span><span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#d4edda;border:1px solid #155724;vertical-align:middle;margin-right:3px;"></span>값 추출</span><span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#f0f0f0;border:1px solid #ccc;vertical-align:middle;margin-right:3px;"></span>처리 완료</span><span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#fff;border:1px solid #ddd;vertical-align:middle;margin-right:3px;opacity:0.4;"></span>무시/폐기</span></div>
+  <figcaption>인터랙티브 2D 뷰 — CST → AST 변환 과정 스테퍼</figcaption>
+</div>
+<script>
+(function() {
+var P="canvas2d-5";
+var CI=["c0","c1","c2","c3","c4","c5","c6","c7","c8","c9","c10","c11","c12","c13","c14","c15","c16","c17","c18","c19"];
+var AI=["a0","a1","a2","a3","a4","a5","a6","a7","a8","a9","a10"];
+var S={"N":{"bg":"transparent","c":"#333","o":"1"},"A":{"bg":"#cce5ff","c":"#004085","o":"1"},"E":{"bg":"#d4edda","c":"#155724","o":"1"},"F":{"bg":"transparent","c":"#ccc","o":"0.4"},"D":{"bg":"#f0f0f0","c":"#888","o":"0.7"},"S":{"bg":"#fde8e8","c":"#8b1a1a","o":"1"},"G":{"bg":"#d4edda","c":"#155724","o":"1"}};
+var steps=[{"d":"초기 상태 — CST(Parse Tree) 전체 구조가 표시됩니다.","c":{},"a":{}},{"d":"VisitMessageDef(ctx) 호출 — 최상위 규칙 노드 방문을 시작합니다.","c":{"c0":"A"},"a":{}},{"d":"ctx.messageName().GetText() → \"Player\" 추출. 래퍼 규칙(messageName → ident)을 통과하여 값을 얻습니다.","c":{"c0":"A","c1":"F","c2":"E","c3":"E","c4":"E"},"a":{"a0":"G","a1":"G"}},{"d":"messageBody 진입. LC({)와 RC(}) 구두점 토큰은 구조 정보가 없으므로 무시합니다.","c":{"c0":"A","c1":"F","c2":"D","c3":"D","c4":"D","c5":"A","c6":"F","c19":"F"},"a":{"a0":"S","a1":"S"}},{"d":"VisitField(ctx) — 첫 번째 field 규칙 노드를 방문합니다.","c":{"c0":"D","c1":"F","c2":"D","c3":"D","c4":"D","c5":"D","c6":"F","c7":"A","c19":"F"},"a":{"a0":"S","a1":"S"}},{"d":"type_, fieldName, fieldNumber에서 값을 추출합니다. EQ(=)와 SEMI(;)는 의미 정보가 없으므로 폐기합니다.","c":{"c0":"D","c1":"F","c2":"D","c3":"D","c4":"D","c5":"D","c6":"F","c7":"A","c8":"E","c9":"E","c10":"F","c11":"E","c12":"F","c19":"F"},"a":{"a0":"S","a1":"S","a2":"S","a3":"G","a4":"G","a5":"G","a6":"G"}},{"d":"VisitField(ctx) — 두 번째 field 규칙 노드를 방문합니다.","c":{"c0":"D","c1":"F","c2":"D","c3":"D","c4":"D","c5":"D","c6":"F","c7":"D","c8":"D","c9":"D","c10":"F","c11":"D","c12":"F","c13":"A","c19":"F"},"a":{"a0":"S","a1":"S","a2":"S","a3":"S","a4":"S","a5":"S","a6":"S"}},{"d":"같은 방식으로 type, name, number를 추출하고 EQ, SEMI를 폐기합니다.","c":{"c0":"D","c1":"F","c2":"D","c3":"D","c4":"D","c5":"D","c6":"F","c7":"D","c8":"D","c9":"D","c10":"F","c11":"D","c12":"F","c13":"A","c14":"E","c15":"E","c16":"F","c17":"E","c18":"F","c19":"F"},"a":{"a0":"S","a1":"S","a2":"S","a3":"S","a4":"S","a5":"S","a6":"S","a7":"G","a8":"G","a9":"G","a10":"G"}},{"d":"변환 완료 — CST의 20개 노드가 AST의 3개 의미 노드(MessageNode + FieldNode×2)로 압축되었습니다.","c":{"c0":"D","c1":"F","c2":"D","c3":"D","c4":"D","c5":"D","c6":"F","c7":"D","c8":"D","c9":"D","c10":"F","c11":"D","c12":"F","c13":"D","c14":"D","c15":"D","c16":"F","c17":"D","c18":"F","c19":"F"},"a":{"a0":"G","a1":"G","a2":"G","a3":"G","a4":"G","a5":"G","a6":"G","a7":"G","a8":"G","a9":"G","a10":"G"}}];
+
+function el(id){return document.getElementById(P+"-"+id);}
+
+function ss(id,k){
+  var e=el(id);if(!e)return;
+  var st=S[k];
+  e.style.background=st.bg;
+  e.style.color=st.c;
+  e.style.opacity=st.o;
+  e.style.maxHeight="28px";
+  e.style.overflow="visible";
+}
+
+function sa(id,k){
+  var e=el(id);if(!e)return;
+  if(!k){
+    e.style.opacity="0";
+    e.style.maxHeight="0";
+    e.style.overflow="hidden";
+    return;
+  }
+  var st=S[k];
+  e.style.background=st.bg;
+  e.style.color=st.c;
+  e.style.opacity=st.o;
+  e.style.maxHeight="28px";
+  e.style.overflow="visible";
+}
+
+var cur=0;
+
+function apply(idx){
+  var step=steps[idx];
+  CI.forEach(function(id){ss(id,step.c[id]||"N");});
+  AI.forEach(function(id){sa(id,step.a[id]||null);});
+  document.getElementById("canvas2d-info-5").textContent=step.d;
+  document.getElementById("canvas2d-val-5").textContent="\uB2E8\uACC4 "+idx+" / "+(steps.length-1);
+  document.getElementById("stepper-prev-5").disabled=idx===0;
+  document.getElementById("stepper-next-5").disabled=idx===steps.length-1;
+}
+
+document.getElementById("stepper-prev-5").onclick=function(){
+  if(cur>0){cur--;apply(cur);}
+};
+document.getElementById("stepper-next-5").onclick=function(){
+  if(cur<steps.length-1){cur++;apply(cur);}
+};
+
+apply(0);
+
+})();
+</script>
+
 <div class="answer">
 <p>아래 proto 코드를 예시로 전 과정을 추적합니다.</p>
 <p><strong>입력:</strong></p>

@@ -28,7 +28,7 @@
   "5": {
     "svg": null,
     "png": null,
-    "svgCaption": null,
+    "svgCaption": "CST \u2192 AST \ubcc0\ud658 \uacfc\uc815 \uc2a4\ud14c\ud37c",
     "title": "변환 과정 단계별 추적",
     "canvas2d": "cst_ast_stepper"
   },

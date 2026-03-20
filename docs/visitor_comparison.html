@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visitor Pattern — SVG vs Mermaid vs Graphviz 비교</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+* { box-sizing: border-box; }
+body { font-family: 'Malgun Gothic','Segoe UI',sans-serif; max-width: 1400px; margin: 0 auto; padding: 2em; background: #fafafa; color: #222; line-height: 1.6; }
+h1 { text-align: center; color: #1a3a6e; border-bottom: 3px solid #2c5aa0; padding-bottom: 0.5em; }
+h2 { color: #2c5aa0; margin-top: 2em; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+@media (max-width: 1100px) { .grid3 { grid-template-columns: 1fr; } }
+.panel { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 16px; overflow: auto; }
+.panel h3 { margin-top: 0; text-align: center; color: #555; }
+.panel svg { max-width: 100%; height: auto; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.8em; font-weight: bold; margin-left: 8px; }
+.badge-svg { background: #e8f4fd; color: #2c5aa0; }
+.badge-mermaid { background: #f3e8fd; color: #6a2ca0; }
+.badge-graphviz { background: #e8fde8; color: #2a6a2c; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+th, td { border: 1px solid #ccc; padding: 8px 12px; text-align: left; }
+th { background: #f0f0f0; }
+.pros { color: #1a7a1a; }
+.cons { color: #c0392b; }
+.note { background: #fff8e1; border: 1px solid #ffe082; border-radius: 6px; padding: 12px 16px; margin: 1em 0; font-size: 0.95em; }
+.winner { background: #e8fde8; }
+</style>
+</head>
+<body>
+
+<h1>Visitor Pattern 다이어그램 — 3-way 비교</h1>
+<p>섹션 4 "Visitor 패턴으로 CST 순회하기" 다이어그램을 세 가지 방법으로 렌더링한 결과입니다.</p>
+
+<h2>1. 시각적 비교</h2>
+<div class="grid3">
+
+<div class="panel">
+<h3>수동 SVG <span class="badge badge-svg">좌표 수정</span></h3>
+<img src="images/visitor_pattern.svg" alt="수동 SVG" style="width:100%;background:#1e1e2e;border-radius:4px;">
+</div>
+
+<div class="panel">
+<h3>Mermaid <span class="badge badge-mermaid">자동 레이아웃</span></h3>
+<pre class="mermaid">
+%%{init: {'theme': 'default', 'flowchart': {'curve': 'basis'}}}%%
+flowchart LR
+  subgraph CST["CST 노드"]
+    A["messageDef"]
+    B["messageName"]
+    C["doMsgNameDef"]:::dim
+    D["messageBody"]
+    E["ID(Player)"]:::tok
+    F["field 0"]
+    G["field 1"]
+    A --> B
+    A -.-> C
+    A --> D
+    B --> E
+    D --> F
+    D --> G
+  end
+  subgraph VIS["AstBuilder : Visitor"]
+    H["VisitMessageDef(ctx)"]
+    I["VisitField(ctx)"]
+    J["return new MessageNode"]:::ast
+    H -.-> I
+    I -.-> J
+  end
+  subgraph OUT["AST 결과"]
+    K["MessageNode"]:::ast
+    L["name: Player"]:::leaf
+    M["fields"]:::leaf
+    N["FieldNode"]:::leaf
+    K --> L
+    K --> M
+    M --> N
+  end
+  A -- "Visit(messageDef)" --> H
+  F -- "Visit(field)" --> I
+  J -- "AST 반환" --> K
+  classDef default fill:#2c3e50,stroke:#f38ba8,color:#f38ba8
+  classDef tok fill:#1a2a3a,stroke:#5ba3d9,color:#7ec8e3
+  classDef dim fill:#2c3e50,stroke:#555,color:#555,stroke-dasharray:5 3
+  classDef ast fill:#1a3a2a,stroke:#a9dc76,color:#a9dc76,stroke-width:2px
+  classDef leaf fill:#1a3a2a,stroke:#a9dc76,color:#7ec8e3
+</pre>
+</div>
+
+<div class="panel">
+<h3>Graphviz <span class="badge badge-graphviz">DOT 자동 레이아웃</span></h3>
+<img src="images/visitor_graphviz.svg" alt="Graphviz" style="width:100%;background:#1e1e2e;border-radius:4px;">
+</div>
+
+</div>
+
+<h2>2. 비교 분석</h2>
+<table>
+<thead>
+<tr><th>항목</th><th>수동 SVG</th><th>Mermaid</th><th>Graphviz (DOT)</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>겹침 문제</strong></td><td>수작업 해결</td><td class="pros">자동 보장</td><td class="pros winner">자동 보장</td></tr>
+<tr><td><strong>화살표</strong></td><td class="cons">수동 좌표</td><td class="pros">자동</td><td class="pros winner">자동 spline</td></tr>
+<tr><td><strong>스타일링</strong></td><td class="pros">완전 제어</td><td class="cons">제한적</td><td class="pros winner">색상/폰트/선 모두 가능</td></tr>
+<tr><td><strong>코드 표시</strong></td><td class="pros">자유</td><td class="cons">monospace 불가</td><td class="pros winner">여러 줄 + 폰트 지정</td></tr>
+<tr><td><strong>다크 테마</strong></td><td class="pros">완전 제어</td><td class="cons">제한적</td><td class="pros winner">bgcolor/fillcolor 제어</td></tr>
+<tr><td><strong>빌드 크기</strong></td><td class="pros">0 KB</td><td class="cons">~1 MB</td><td class="pros winner">0 KB (빌드 타임)</td></tr>
+<tr><td><strong>유지보수</strong></td><td class="cons">좌표 재계산</td><td class="pros">텍스트 수정</td><td class="pros winner">DOT 수정, 자동 재배치</td></tr>
+<tr><td><strong>AI 생성 신뢰도</strong></td><td class="cons">좌표 실패 빈번</td><td>syntax 에러 가능</td><td class="pros winner">선언적 → 신뢰성 높음</td></tr>
+</tbody>
+</table>
+
+<div class="note">
+<strong>결론:</strong> Graphviz (DOT)가 최적. 수동 SVG의 스타일링 + Mermaid의 자동 레이아웃 장점을 모두 가지며, 빌드 타임 렌더링으로 client-side 0KB.
+</div>
+
+<script>
+mermaid.initialize({ startOnLoad: true, theme: 'default', flowchart: { curve: 'basis', useMaxWidth: true } });
+</script>
+</body>
+</html>

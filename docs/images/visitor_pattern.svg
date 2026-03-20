@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 360">
-  <rect width="820" height="360" fill="#1e1e2e" rx="10"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 370">
+  <rect width="860" height="370" fill="#1e1e2e" rx="10"/>
   <defs>
     <marker id="a" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
       <polygon points="0 0,7 3.5,0 7" fill="#5ba3d9"/>
@@ -9,105 +9,113 @@
     </marker>
   </defs>
 
-  <text x="410" y="24" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="14" font-weight="bold" fill="#89b4fa">Visitor 패턴 — CST 순회 &amp; AST 노드 생성</text>
+  <text x="430" y="24" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="14" font-weight="bold" fill="#89b4fa">Visitor 패턴 — CST 순회 &amp; AST 노드 생성</text>
 
   <!-- ─── CST side (left) ─── -->
-  <text x="130" y="50" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="11" fill="#f38ba8">CST 노드</text>
+  <text x="155" y="50" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="11" fill="#f38ba8">CST 노드</text>
 
-  <!-- messageDef root: x=130 -->
-  <rect x="60" y="58" width="140" height="28" rx="5" fill="#2c3e50" stroke="#f38ba8" stroke-width="1.5"/>
-  <text x="130" y="77" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#f38ba8">messageDef</text>
+  <!-- messageDef root: center=155 -->
+  <rect x="85" y="58" width="140" height="28" rx="5" fill="#2c3e50" stroke="#f38ba8" stroke-width="1.5"/>
+  <text x="155" y="77" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#f38ba8">messageDef</text>
 
-  <!-- 3 children: messageName(x=50), doMsgNameDef(x=150), messageBody(x=240) -->
-  <line x1="100" y1="86" x2="50"  y2="118" stroke="#f38ba8" stroke-width="1.2" marker-end="url(#a)"/>
-  <line x1="130" y1="86" x2="150" y2="118" stroke="#f38ba8" stroke-width="1.2" marker-end="url(#a)"/>
-  <line x1="160" y1="86" x2="240" y2="118" stroke="#f38ba8" stroke-width="1.2" marker-end="url(#a)"/>
+  <!-- 3 children: messageName(center=55), doMsgNameDef(center=155), messageBody(center=255) -->
+  <line x1="115" y1="86" x2="55"  y2="116" stroke="#f38ba8" stroke-width="1.2" marker-end="url(#a)"/>
+  <line x1="155" y1="86" x2="155" y2="116" stroke="#f38ba8" stroke-width="1.2" marker-end="url(#a)"/>
+  <line x1="195" y1="86" x2="255" y2="116" stroke="#f38ba8" stroke-width="1.2" marker-end="url(#a)"/>
 
-  <!-- messageName -->
-  <rect x="4"   y="118" width="92" height="24" rx="4" fill="#2c3e50" stroke="#f38ba8" stroke-width="1"/>
-  <text x="50"  y="135" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#f38ba8">messageName</text>
+  <!-- messageName: center=55 -->
+  <rect x="4"   y="118" width="102" height="24" rx="4" fill="#2c3e50" stroke="#f38ba8" stroke-width="1"/>
+  <text x="55"  y="135" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#f38ba8">messageName</text>
 
-  <!-- doMsgNameDef (점선, 의미없는 규칙) -->
-  <rect x="104" y="118" width="92" height="24" rx="4" fill="#2c3e50" stroke="#555" stroke-width="1" stroke-dasharray="3,2"/>
-  <text x="150" y="135" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#555">doMsgNameDef</text>
+  <!-- doMsgNameDef (점선, 의미없는 규칙): center=155 -->
+  <rect x="104" y="118" width="102" height="24" rx="4" fill="#2c3e50" stroke="#555" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="155" y="135" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#555">doMsgNameDef</text>
 
-  <!-- messageBody -->
-  <rect x="196" y="118" width="88" height="24" rx="4" fill="#2c3e50" stroke="#f38ba8" stroke-width="1"/>
-  <text x="240" y="135" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#f38ba8">messageBody</text>
+  <!-- messageBody: center=255 -->
+  <rect x="211" y="118" width="88" height="24" rx="4" fill="#2c3e50" stroke="#f38ba8" stroke-width="1"/>
+  <text x="255" y="135" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#f38ba8">messageBody</text>
 
   <!-- messageName → ID("Player") -->
-  <line x1="50" y1="142" x2="50" y2="168" stroke="#f38ba8" stroke-width="1.1" marker-end="url(#a)"/>
-  <rect x="4"  y="168" width="92" height="22" rx="4" fill="#1a2a3a" stroke="#5ba3d9" stroke-width="1"/>
-  <text x="50" y="184" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#7ec8e3">ID("Player")</text>
+  <line x1="55" y1="142" x2="55" y2="168" stroke="#f38ba8" stroke-width="1.1" marker-end="url(#a)"/>
+  <rect x="4"  y="170" width="102" height="22" rx="4" fill="#1a2a3a" stroke="#5ba3d9" stroke-width="1"/>
+  <text x="55" y="186" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#7ec8e3">ID("Player")</text>
 
-  <!-- messageBody → field[0], field[1] -->
-  <line x1="224" y1="142" x2="200" y2="168" stroke="#f38ba8" stroke-width="1.1" marker-end="url(#a)"/>
-  <line x1="256" y1="142" x2="270" y2="168" stroke="#f38ba8" stroke-width="1.1" marker-end="url(#a)"/>
+  <!-- messageBody → field[0], field[1] — NO OVERLAP -->
+  <line x1="237" y1="142" x2="206" y2="168" stroke="#f38ba8" stroke-width="1.1" marker-end="url(#a)"/>
+  <line x1="273" y1="142" x2="304" y2="168" stroke="#f38ba8" stroke-width="1.1" marker-end="url(#a)"/>
 
-  <rect x="150" y="168" width="100" height="22" rx="4" fill="#2c3e50" stroke="#f38ba8" stroke-width="1"/>
-  <text x="200" y="184" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#f38ba8">field[0]</text>
+  <!-- field[0]: center=206, rect 166-246 -->
+  <rect x="166" y="170" width="80" height="22" rx="4" fill="#2c3e50" stroke="#f38ba8" stroke-width="1"/>
+  <text x="206" y="186" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#f38ba8">field[0]</text>
 
-  <rect x="220" y="168" width="100" height="22" rx="4" fill="#2c3e50" stroke="#f38ba8" stroke-width="1"/>
-  <text x="270" y="184" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#f38ba8">field[1]</text>
+  <!-- field[1]: center=304, rect 264-344 -->
+  <rect x="264" y="170" width="80" height="22" rx="4" fill="#2c3e50" stroke="#f38ba8" stroke-width="1"/>
+  <text x="304" y="186" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#f38ba8">field[1]</text>
 
   <!-- ─── VISITOR center ─── -->
-  <rect x="320" y="58" width="200" height="260" rx="8" fill="#1a2535" stroke="#89b4fa" stroke-width="1.5"/>
-  <text x="420" y="80" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="12" font-weight="bold" fill="#89b4fa">AstBuilder : Visitor</text>
+  <rect x="360" y="58" width="200" height="260" rx="8" fill="#1a2535" stroke="#89b4fa" stroke-width="1.5"/>
+  <text x="460" y="80" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="12" font-weight="bold" fill="#89b4fa">AstBuilder : Visitor</text>
 
   <!-- method boxes -->
-  <rect x="338" y="92" width="164" height="52" rx="5" fill="#2c3e50" stroke="#89b4fa" stroke-width="1"/>
-  <text x="420" y="108" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#89b4fa">VisitMessageDef(ctx)</text>
-  <text x="420" y="122" text-anchor="middle" font-family="'Consolas',monospace" font-size="9" fill="#7ec8e3">name = ctx.messageName()</text>
-  <text x="420" y="135" text-anchor="middle" font-family="'Consolas',monospace" font-size="9" fill="#7ec8e3">  .GetText();</text>
+  <rect x="378" y="92" width="164" height="52" rx="5" fill="#2c3e50" stroke="#89b4fa" stroke-width="1"/>
+  <text x="460" y="108" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#89b4fa">VisitMessageDef(ctx)</text>
+  <text x="460" y="122" text-anchor="middle" font-family="'Consolas',monospace" font-size="9" fill="#7ec8e3">name = ctx.messageName()</text>
+  <text x="460" y="135" text-anchor="middle" font-family="'Consolas',monospace" font-size="9" fill="#7ec8e3">  .GetText();</text>
 
-  <line x1="420" y1="144" x2="420" y2="164" stroke="#89b4fa" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="460" y1="144" x2="460" y2="164" stroke="#89b4fa" stroke-width="1" stroke-dasharray="3,2"/>
 
-  <rect x="338" y="164" width="164" height="52" rx="5" fill="#2c3e50" stroke="#89b4fa" stroke-width="1"/>
-  <text x="420" y="180" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#89b4fa">VisitField(ctx)</text>
-  <text x="420" y="194" text-anchor="middle" font-family="'Consolas',monospace" font-size="9" fill="#7ec8e3">type = ctx.type_().GetText()</text>
-  <text x="420" y="207" text-anchor="middle" font-family="'Consolas',monospace" font-size="9" fill="#7ec8e3">name = ctx.fieldName()…</text>
+  <rect x="378" y="164" width="164" height="52" rx="5" fill="#2c3e50" stroke="#89b4fa" stroke-width="1"/>
+  <text x="460" y="180" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#89b4fa">VisitField(ctx)</text>
+  <text x="460" y="194" text-anchor="middle" font-family="'Consolas',monospace" font-size="9" fill="#7ec8e3">type = ctx.type_().GetText()</text>
+  <text x="460" y="207" text-anchor="middle" font-family="'Consolas',monospace" font-size="9" fill="#7ec8e3">name = ctx.fieldName()…</text>
 
-  <line x1="420" y1="216" x2="420" y2="236" stroke="#89b4fa" stroke-width="1" stroke-dasharray="3,2"/>
+  <line x1="460" y1="216" x2="460" y2="236" stroke="#89b4fa" stroke-width="1" stroke-dasharray="3,2"/>
 
-  <rect x="338" y="236" width="164" height="40" rx="5" fill="#1a3a2a" stroke="#a9dc76" stroke-width="1"/>
-  <text x="420" y="252" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#a9dc76">return new</text>
-  <text x="420" y="266" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#a9dc76">  MessageNode(...)</text>
+  <rect x="378" y="236" width="164" height="40" rx="5" fill="#1a3a2a" stroke="#a9dc76" stroke-width="1"/>
+  <text x="460" y="252" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#a9dc76">return new</text>
+  <text x="460" y="266" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#a9dc76">  MessageNode(...)</text>
 
   <!-- call arrows: CST → Visitor -->
-  <line x1="200" y1="72" x2="318" y2="112" stroke="#5ba3d9" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#a)"/>
-  <text x="262" y="90" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9" fill="#5ba3d9" transform="rotate(-18,262,90)">Visit(messageDef)</text>
+  <!-- messageDef right edge → VisitMessageDef left edge -->
+  <line x1="225" y1="72" x2="376" y2="110" stroke="#5ba3d9" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#a)"/>
+  <text x="300" y="82" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9" fill="#5ba3d9" transform="rotate(-6,300,82)">Visit(messageDef)</text>
 
-  <line x1="285" y1="177" x2="336" y2="185" stroke="#5ba3d9" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#a)"/>
-  <text x="310" y="172" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9" fill="#5ba3d9">Visit(field)</text>
+  <!-- field[1] right edge → VisitField left edge -->
+  <line x1="344" y1="181" x2="376" y2="188" stroke="#5ba3d9" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#a)"/>
+  <text x="348" y="172" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9" fill="#5ba3d9">Visit(field)</text>
 
   <!-- ─── AST side (right) ─── -->
-  <text x="670" y="50" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="11" fill="#a9dc76">AST 결과</text>
+  <text x="710" y="50" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="11" fill="#a9dc76">AST 결과</text>
 
   <!-- MessageNode root -->
-  <rect x="592" y="58" width="156" height="28" rx="5" fill="#1a3a2a" stroke="#a9dc76" stroke-width="2"/>
-  <text x="670" y="77" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#a9dc76">MessageNode</text>
+  <rect x="632" y="58" width="156" height="28" rx="5" fill="#1a3a2a" stroke="#a9dc76" stroke-width="2"/>
+  <text x="710" y="77" text-anchor="middle" font-family="'Consolas',monospace" font-size="11" fill="#a9dc76">MessageNode</text>
 
-  <line x1="650" y1="86" x2="615" y2="118" stroke="#a9dc76" stroke-width="1.5" marker-end="url(#b)"/>
-  <line x1="690" y1="86" x2="725" y2="118" stroke="#a9dc76" stroke-width="1.5" marker-end="url(#b)"/>
+  <line x1="690" y1="86" x2="655" y2="116" stroke="#a9dc76" stroke-width="1.5" marker-end="url(#b)"/>
+  <line x1="730" y1="86" x2="765" y2="116" stroke="#a9dc76" stroke-width="1.5" marker-end="url(#b)"/>
 
-  <rect x="564" y="118" width="102" height="24" rx="4" fill="#1a3a2a" stroke="#a9dc76" stroke-width="1"/>
-  <text x="615" y="135" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#7ec8e3">name:"Player"</text>
+  <!-- name:"Player" -->
+  <rect x="600" y="118" width="110" height="24" rx="4" fill="#1a3a2a" stroke="#a9dc76" stroke-width="1"/>
+  <text x="655" y="135" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#7ec8e3">name:"Player"</text>
 
-  <rect x="680" y="118" width="90" height="24" rx="4" fill="#1a3a2a" stroke="#a9dc76" stroke-width="1"/>
-  <text x="725" y="135" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#7ec8e3">fields[…]</text>
+  <!-- fields[…] -->
+  <rect x="720" y="118" width="90" height="24" rx="4" fill="#1a3a2a" stroke="#a9dc76" stroke-width="1"/>
+  <text x="765" y="135" text-anchor="middle" font-family="'Consolas',monospace" font-size="10" fill="#7ec8e3">fields[…]</text>
 
-  <line x1="695" y1="142" x2="670" y2="168" stroke="#a9dc76" stroke-width="1.2" marker-end="url(#b)"/>
-  <line x1="755" y1="142" x2="775" y2="168" stroke="#a9dc76" stroke-width="1.2" marker-end="url(#b)"/>
+  <line x1="745" y1="142" x2="710" y2="168" stroke="#a9dc76" stroke-width="1.2" marker-end="url(#b)"/>
+  <line x1="785" y1="142" x2="810" y2="168" stroke="#a9dc76" stroke-width="1.2" marker-end="url(#b)"/>
 
-  <rect x="596" y="168" width="148" height="46" rx="4" fill="#1a3a2a" stroke="#a9dc76" stroke-width="1"/>
-  <text x="670" y="184" text-anchor="middle" font-family="'Consolas',monospace" font-size="9" fill="#a9dc76">FieldNode</text>
-  <text x="670" y="198" text-anchor="middle" font-family="'Consolas',monospace" font-size="9" fill="#7ec8e3">type:"string" name:"name"</text>
-  <text x="670" y="210" text-anchor="middle" font-family="'Consolas',monospace" font-size="9" fill="#7ec8e3">number:1</text>
+  <!-- FieldNode -->
+  <rect x="636" y="170" width="148" height="46" rx="4" fill="#1a3a2a" stroke="#a9dc76" stroke-width="1"/>
+  <text x="710" y="186" text-anchor="middle" font-family="'Consolas',monospace" font-size="9" fill="#a9dc76">FieldNode</text>
+  <text x="710" y="200" text-anchor="middle" font-family="'Consolas',monospace" font-size="9" fill="#7ec8e3">type:"string" name:"name"</text>
+  <text x="710" y="212" text-anchor="middle" font-family="'Consolas',monospace" font-size="9" fill="#7ec8e3">number:1</text>
 
-  <rect x="752" y="168" width="56" height="46" rx="4" fill="#1a3a2a" stroke="#555" stroke-width="1" stroke-dasharray="3,2"/>
-  <text x="780" y="194" text-anchor="middle" font-family="'Consolas',monospace" font-size="9" fill="#555">…</text>
+  <!-- … placeholder -->
+  <rect x="792" y="170" width="56" height="46" rx="4" fill="#1a3a2a" stroke="#555" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="820" y="196" text-anchor="middle" font-family="'Consolas',monospace" font-size="9" fill="#555">…</text>
 
-  <!-- result arrow: Visitor → AST -->
-  <line x1="522" y1="256" x2="590" y2="130" stroke="#a9dc76" stroke-width="1.8" marker-end="url(#b)"/>
-  <text x="558" y="202" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9" fill="#a9dc76" transform="rotate(-63,558,202)">AST 노드 반환</text>
+  <!-- result arrow: Visitor → AST (from return box right → MessageNode left) -->
+  <line x1="542" y1="256" x2="630" y2="130" stroke="#a9dc76" stroke-width="1.8" marker-end="url(#b)"/>
+  <text x="592" y="202" text-anchor="middle" font-family="'Segoe UI',sans-serif" font-size="9" fill="#a9dc76" transform="rotate(-63,592,202)">AST 노드 반환</text>
 </svg>

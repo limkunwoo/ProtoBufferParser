@@ -19,10 +19,11 @@
     "title": "AST란 무엇인가"
   },
   "4": {
-    "svg": "visitor_pattern.svg",
+    "svg": null,
     "png": null,
     "svgCaption": "Visitor 패턴 동작 구조",
-    "title": "Visitor 패턴으로 CST 순회하기"
+    "title": "Visitor 패턴으로 CST 순회하기",
+    "graphviz": "visitor_pattern"
   },
   "5": {
     "svg": null,

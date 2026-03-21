@@ -1,0 +1,51 @@
+{
+  "1": {
+    "svg": null,
+    "png": null,
+    "svgCaption": "코드 생성 파이프라인 전체 흐름",
+    "title": "코드 생성 파이프라인 전체 흐름"
+  },
+  "2": {
+    "svg": null,
+    "png": null,
+    "svgCaption": null,
+    "title": "MessageFlattener — 중첩 타입 평탄화"
+  },
+  "3": {
+    "svg": null,
+    "png": null,
+    "svgCaption": null,
+    "title": "UnrealTypeMapper — 타입 변환 테이블"
+  },
+  "4": {
+    "svg": null,
+    "png": null,
+    "svgCaption": null,
+    "title": "EnumTemplate — UENUM 헤더 생성"
+  },
+  "5": {
+    "svg": null,
+    "png": null,
+    "svgCaption": null,
+    "title": "StructTemplate — USTRUCT 헤더 생성"
+  },
+  "6": {
+    "svg": null,
+    "png": null,
+    "svgCaption": "마샬링 생성자 필드 타입별 코드 패턴",
+    "title": "StructTemplate — 마샬링 생성자 생성",
+    "canvas2d": "marshaling_stepper"
+  },
+  "7": {
+    "svg": null,
+    "png": null,
+    "svgCaption": null,
+    "title": "의존성 해결과 #include 체인"
+  },
+  "8": {
+    "svg": null,
+    "png": null,
+    "svgCaption": null,
+    "title": "전체 입출력 예시 추적"
+  }
+}

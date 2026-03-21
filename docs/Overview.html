@@ -212,7 +212,7 @@
   <!-- ── 본문 ── -->
   <main class="content">
     <h1>ProtoBufferParser 문서 Overview</h1>
-    <p class="subtitle">.proto 파일을 Unreal Engine C++ 구조체로 변환하는 컴파일러의 내부 동작을 설명하는 4개 문서의 종합 안내서입니다.</p>
+    <p class="subtitle">.proto 파일을 Unreal Engine C++ 구조체로 변환하는 컴파일러의 내부 동작을 설명하는 5개 문서의 종합 안내서입니다.</p>
 
     <!-- ════════ 섹션 1: 프로젝트 소개 ════════ -->
     <div class="section" id="s1">
@@ -293,7 +293,7 @@
             <td><strong>4. 코드 생성</strong></td>
             <td>AST</td>
             <td>UE C++ 코드</td>
-            <td>타입 매핑 (<code>string</code>&rarr;<code>FString</code>, <code>repeated</code>&rarr;<code>TArray</code>), UE 매크로 삽입 → <a class="doc-link" href="CST_to_AST_설명.html#section-7">상세</a></td>
+            <td>타입 매핑 (<code>string</code>&rarr;<code>FString</code>, <code>repeated</code>&rarr;<code>TArray</code>), UE 매크로 삽입 &rarr; <a class="doc-link" href="AST_to_Unreal_설명.html">상세</a></td>
           </tr>
         </table>
 
@@ -313,7 +313,7 @@
     <div class="section" id="s3">
       <div class="section-header"><h2>3. 문서 가이드</h2></div>
       <div class="section-body">
-        <p>아래 4개 문서가 파이프라인의 전 과정을 커버합니다. 각 문서는 독립적으로 읽을 수 있지만, 순서대로 읽으면 전체 흐름이 자연스럽게 연결됩니다.</p>
+        <p>아래 5개 문서가 파이프라인의 전 과정을 커버합니다. 각 문서는 독립적으로 읽을 수 있지만, 순서대로 읽으면 전체 흐름이 자연스럽게 연결됩니다.</p>
 
         <!-- 문서 1 -->
         <div class="doc-card">
@@ -364,7 +364,7 @@
         <!-- 문서 4 -->
         <div class="doc-card orange">
           <h4><a href="CST_to_AST_설명.html">CST &rarr; AST 변환: Parse Tree에서 Abstract Syntax Tree까지</a> <span class="badge badge-qna">Q&amp;A 7섹션</span></h4>
-          <p>파이프라인 범위: <strong>3단계 AST 변환 + 4단계 코드 생성</strong> &mdash; CST에서 UE C++ 코드까지의 후반부입니다.</p>
+          <p>파이프라인 범위: <strong>3단계 AST 변환</strong> &mdash; CST에서 의미 있는 정보만 추출하여 AST를 생성합니다.</p>
           <ul>
             <li>파싱 파이프라인 전체 흐름 (5단계 조감도)</li>
             <li>CST vs AST: 구조적 차이와 노드 압축 (29 &rarr; 3)</li>
@@ -372,7 +372,23 @@
             <li>Visitor vs Listener 비교</li>
             <li>변환 과정 단계별 추적 (인터랙티브 스테퍼)</li>
             <li>타입 판별과 2-Pass 파싱의 역할</li>
-            <li>코드 생성: proto3 &rarr; UE 타입 매핑, <code>USTRUCT</code>/<code>UPROPERTY</code> 매크로</li>
+            <li>코드 생성 개요: AST &rarr; UE C++ (<a class="doc-link" href="AST_to_Unreal_설명.html">상세 문서</a>)</li>
+          </ul>
+        </div>
+
+        <!-- 문서 5 -->
+        <div class="doc-card" style="border-left-color: #a6e3a1;">
+          <h4><a href="AST_to_Unreal_설명.html">AST &rarr; Unreal C++ 코드 생성: 추상 구문 트리에서 USTRUCT/UENUM까지</a> <span class="badge badge-qna">Q&amp;A 8섹션</span></h4>
+          <p>파이프라인 범위: <strong>4단계 코드 생성</strong> &mdash; AST 노드를 Unreal Engine C++ 코드(<code>.h</code>/<code>.cpp</code>)로 변환하는 전 과정입니다.</p>
+          <ul>
+            <li>코드 생성 파이프라인 5단계 구조 (Graphviz 다이어그램)</li>
+            <li><code>MessageFlattener</code>: 중첩 타입 평탄화 (<code>FullName</code> vs <code>ProtocTypeName</code>)</li>
+            <li><code>UnrealTypeMapper</code>: proto3 &rarr; Unreal 타입 변환 테이블 (15개 스칼라 + 컨테이너)</li>
+            <li><code>EnumTemplate</code>: UENUM 헤더 생성</li>
+            <li><code>StructTemplate</code>: USTRUCT 헤더 + 마샬링 생성자 생성</li>
+            <li>마샬링 8가지 패턴 (인터랙티브 스테퍼): string, primitive, bytes, repeated, map, optional, enum, message</li>
+            <li>의존성 해결: <code>DependencyGraph</code> (Kahn 위상 정렬) + <code>#include</code> 체인</li>
+            <li>전체 입출력 예시 추적: <code>.proto</code> &rarr; <code>.h</code>/<code>.cpp</code> 완전 변환</li>
           </ul>
         </div>
 
@@ -398,6 +414,11 @@
             <td>CST_to_AST_설명</td>
             <td>Q&amp;A (빌드)</td>
             <td>라이트 테마, Graphviz 다이어그램, CST&rarr;AST 인터랙티브 스테퍼, D3 트리</td>
+          </tr>
+          <tr>
+            <td>AST_to_Unreal_설명</td>
+            <td>Q&amp;A (빌드)</td>
+            <td>라이트 테마, Graphviz DOT 다이어그램, 마샬링 패턴 인터랙티브 스테퍼</td>
           </tr>
         </table>
       </div>
@@ -431,7 +452,13 @@
           <div class="reading-step">
             <div class="step-num">4</div>
             <div class="step-content">
-              <strong><a class="doc-link" href="CST_to_AST_설명.html">CST_to_AST_설명</a></strong> &mdash; CST에서 불필요한 노드를 제거하고 AST를 만드는 <a class="doc-link" href="CST_to_AST_설명.html#section-3">Visitor 패턴</a>, 그리고 AST에서 최종 <a class="doc-link" href="CST_to_AST_설명.html#section-7">Unreal Engine C++ 코드를 생성</a>하는 과정까지. 파이프라인의 완성입니다.
+              <strong><a class="doc-link" href="CST_to_AST_설명.html">CST_to_AST_설명</a></strong> &mdash; CST에서 불필요한 노드를 제거하고 AST를 만드는 <a class="doc-link" href="CST_to_AST_설명.html#section-3">Visitor 패턴</a>을 이해합니다. AST가 완성되면 코드 생성의 입력이 됩니다.
+            </div>
+          </div>
+          <div class="reading-step">
+            <div class="step-num">5</div>
+            <div class="step-content">
+              <strong><a class="doc-link" href="AST_to_Unreal_설명.html">AST_to_Unreal_설명</a></strong> &mdash; AST에서 최종 Unreal Engine C++ 코드를 생성하는 전 과정. <a class="doc-link" href="AST_to_Unreal_설명.html#section-2">중첩 타입 평탄화</a>, <a class="doc-link" href="AST_to_Unreal_설명.html#section-6">8가지 마샬링 패턴</a>, <a class="doc-link" href="AST_to_Unreal_설명.html#section-7">의존성 위상 정렬</a>까지. 파이프라인의 완성입니다.
             </div>
           </div>
         </div>

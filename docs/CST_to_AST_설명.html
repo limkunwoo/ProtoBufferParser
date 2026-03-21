@@ -2177,95 +2177,190 @@ ANTLR은 <code>.g4</code> 파일의 규칙 구조를 <strong>기계적으로</st
 <div class="question">message 블록 전체가 CST에서 AST로 변환되는 과정을 단계별로 추적하면?</div>
 <h3>답변</h3>
 <div class="canvas2d-wrapper">
-<div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:12px;"><div style="flex:1 1 420px;min-width:320px;max-width:100%;"><div style="font-weight:bold;text-align:center;color:#2c5aa0;margin-bottom:6px;font-size:0.9em;">CST (Parse Tree) — 20개 노드</div><div style="background:#f8f9fa;border:1px solid #e0e0e0;border-radius:6px;padding:8px 10px;font-family:Consolas,'Courier New',monospace;font-size:0.76em;line-height:1.45;text-align:left;"><div id="canvas2d-5-c0" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">messageDef</div>
-<div id="canvas2d-5-c1" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;"> ├─ MESSAGE</div>
-<div id="canvas2d-5-c2" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;"> ├─ messageName</div>
-<div id="canvas2d-5-c3" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;"> │   └─ ident</div>
-<div id="canvas2d-5-c4" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;"> │       └─ ID("Player")</div>
-<div id="canvas2d-5-c5" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;"> └─ messageBody</div>
-<div id="canvas2d-5-c6" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">     ├─ LC</div>
-<div id="canvas2d-5-c7" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">     ├─ field[0]</div>
-<div id="canvas2d-5-c8" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">     │   ├─ type_ → STRING</div>
-<div id="canvas2d-5-c9" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">     │   ├─ fieldName → ID("name")</div>
-<div id="canvas2d-5-c10" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">     │   ├─ EQ</div>
-<div id="canvas2d-5-c11" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">     │   ├─ fieldNumber → INT_LIT("1")</div>
-<div id="canvas2d-5-c12" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">     │   └─ SEMI</div>
-<div id="canvas2d-5-c13" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">     ├─ field[1]</div>
-<div id="canvas2d-5-c14" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">     │   ├─ type_ → INT32</div>
-<div id="canvas2d-5-c15" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">     │   ├─ fieldName → ID("level")</div>
-<div id="canvas2d-5-c16" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">     │   ├─ EQ</div>
-<div id="canvas2d-5-c17" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">     │   ├─ fieldNumber → INT_LIT("2")</div>
-<div id="canvas2d-5-c18" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">     │   └─ SEMI</div>
-<div id="canvas2d-5-c19" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;">     └─ RC</div></div></div><div style="flex:1 1 300px;min-width:250px;max-width:100%;"><div style="font-weight:bold;text-align:center;color:#8b1a1a;margin-bottom:6px;font-size:0.9em;">AST — 3개 노드</div><div id="canvas2d-5-ast-box" style="background:#fdf8f8;border:1px solid #e0d0d0;border-radius:6px;padding:8px 10px;font-family:Consolas,'Courier New',monospace;font-size:0.8em;line-height:1.45;min-height:120px;text-align:left;"><div id="canvas2d-5-a0" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;opacity:0;max-height:0;overflow:hidden;transition:all 0.4s;">MessageNode</div>
-<div id="canvas2d-5-a1" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;opacity:0;max-height:0;overflow:hidden;transition:all 0.4s;"> ├─ name: "Player"</div>
-<div id="canvas2d-5-a2" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;opacity:0;max-height:0;overflow:hidden;transition:all 0.4s;"> └─ fields</div>
-<div id="canvas2d-5-a3" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;opacity:0;max-height:0;overflow:hidden;transition:all 0.4s;">     ├─ FieldNode</div>
-<div id="canvas2d-5-a4" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;opacity:0;max-height:0;overflow:hidden;transition:all 0.4s;">     │   ├─ type: "string"</div>
-<div id="canvas2d-5-a5" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;opacity:0;max-height:0;overflow:hidden;transition:all 0.4s;">     │   ├─ name: "name"</div>
-<div id="canvas2d-5-a6" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;opacity:0;max-height:0;overflow:hidden;transition:all 0.4s;">     │   └─ number: 1</div>
-<div id="canvas2d-5-a7" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;opacity:0;max-height:0;overflow:hidden;transition:all 0.4s;">     └─ FieldNode</div>
-<div id="canvas2d-5-a8" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;opacity:0;max-height:0;overflow:hidden;transition:all 0.4s;">         ├─ type: "int32"</div>
-<div id="canvas2d-5-a9" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;opacity:0;max-height:0;overflow:hidden;transition:all 0.4s;">         ├─ name: "level"</div>
-<div id="canvas2d-5-a10" style="padding:2px 6px;border-radius:3px;margin:1px 0;transition:background 0.3s,color 0.3s,opacity 0.3s;white-space:pre;opacity:0;max-height:0;overflow:hidden;transition:all 0.4s;">         └─ number: 2</div></div></div></div><div id="canvas2d-info-5" style="text-align:center;padding:10px 16px;background:#e8f4fd;border-left:4px solid #5ba3d9;border-radius:0 6px 6px 0;margin-bottom:10px;font-size:0.92em;color:#333;min-height:2.5em;display:flex;align-items:center;justify-content:center;">초기 상태 — CST 전체 구조가 표시됩니다</div><div class="stepper-controls"><button class="stepper-btn" id="stepper-prev-5" disabled>← 이전</button><span class="stepper-label" id="canvas2d-val-5">단계 0 / 8</span><button class="stepper-btn" id="stepper-next-5">다음 →</button></div><div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;font-size:0.78em;color:#555;margin-top:8px;padding-top:8px;border-top:1px solid #eee;"><span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#cce5ff;border:1px solid #004085;vertical-align:middle;margin-right:3px;"></span>방문 중</span><span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#d4edda;border:1px solid #155724;vertical-align:middle;margin-right:3px;"></span>값 추출</span><span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#f0f0f0;border:1px solid #ccc;vertical-align:middle;margin-right:3px;"></span>처리 완료</span><span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#fff;border:1px solid #ddd;vertical-align:middle;margin-right:3px;opacity:0.4;"></span>무시/폐기</span></div>
+<style>
+.s5-tabs{display:flex;gap:0;margin-bottom:0;}
+.s5-tab{padding:8px 20px;border:1px solid #ddd;border-bottom:none;border-radius:6px 6px 0 0;background:#f5f5f5;color:#666;cursor:pointer;font-size:0.88em;font-weight:bold;transition:all 0.2s;}
+.s5-tab.active{background:#fff;color:#2c5aa0;border-color:#ccc;position:relative;z-index:1;margin-bottom:-1px;padding-bottom:9px;}
+.s5-tab:not(.active):hover{background:#eef3fa;color:#2c5aa0;}
+.s5-view{border:1px solid #ccc;border-radius:0 6px 6px 6px;padding:16px;background:#fff;margin-bottom:12px;}
+.s5-tree,.s5-tree ul{list-style:none;margin:0;padding-left:0;}
+.s5-tree ul{padding-left:22px;}
+.s5-tree li{position:relative;padding:1px 0;}
+.s5-tree li::before{content:'';position:absolute;left:-14px;top:0;height:100%;border-left:1.5px solid #bbb;}
+.s5-tree li::after{content:'';position:absolute;left:-14px;top:14px;width:12px;border-top:1.5px solid #bbb;}
+.s5-tree li:last-child::before{height:14px;}
+.s5-tree>li::before,.s5-tree>li::after{display:none;}
+.s5-node{display:inline-block;padding:2px 8px;border-radius:4px;font-family:Consolas,'Courier New',monospace;font-size:0.78em;transition:background 0.3s,color 0.3s,opacity 0.3s;}
+.s5-d3-box{border:1px solid #e0e0e0;border-radius:6px;overflow:hidden;min-height:120px;}
+.s5-d3-box svg{display:block;width:100%;height:auto;min-height:300px;max-height:700px;cursor:grab;}
+.s5-css-ast{background:#fdf8f8;border:1px solid #e0d0d0;border-radius:6px;padding:8px 10px;min-height:120px;}
+</style>
+<div class="s5-tabs"><button class="s5-tab active" id="canvas2d-5-tab-d3">D3.js 트리 (SVG)</button><button class="s5-tab" id="canvas2d-5-tab-css">CSS 트리 (HTML)</button></div><div class="s5-view" id="canvas2d-5-view-d3"><div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;"><div style="flex:1 1 420px;min-width:300px;max-width:100%;"><div style="font-weight:bold;text-align:center;color:#2c5aa0;margin-bottom:6px;font-size:0.9em;">CST (Parse Tree) — 20개 노드</div><div class="s5-d3-box" id="canvas2d-5-d3-cst"></div></div><div style="flex:1 1 300px;min-width:250px;max-width:100%;"><div style="font-weight:bold;text-align:center;color:#8b1a1a;margin-bottom:6px;font-size:0.9em;">AST — 3개 노드</div><div class="s5-d3-box" id="canvas2d-5-d3-ast"></div></div></div></div><div class="s5-view" id="canvas2d-5-view-css" style="display:none;"><div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;"><div style="flex:1 1 420px;min-width:300px;max-width:100%;text-align:left;"><div style="font-weight:bold;text-align:center;color:#2c5aa0;margin-bottom:6px;font-size:0.9em;">CST (Parse Tree) — 20개 노드</div><div style="background:#f8f9fa;border:1px solid #e0e0e0;border-radius:6px;padding:8px 12px;"><ul class="s5-tree"><li><span class="s5-node" id="canvas2d-5-css-c0">messageDef</span><ul><li><span class="s5-node" id="canvas2d-5-css-c1">MESSAGE</span></li><li><span class="s5-node" id="canvas2d-5-css-c2">messageName</span><ul><li><span class="s5-node" id="canvas2d-5-css-c3">ident</span><ul><li><span class="s5-node" id="canvas2d-5-css-c4">ID("Player")</span></li></ul></li></ul></li><li><span class="s5-node" id="canvas2d-5-css-c5">messageBody</span><ul><li><span class="s5-node" id="canvas2d-5-css-c6">LC</span></li><li><span class="s5-node" id="canvas2d-5-css-c7">field[0]</span><ul><li><span class="s5-node" id="canvas2d-5-css-c8">type_: STRING</span></li><li><span class="s5-node" id="canvas2d-5-css-c9">fieldName: ID("name")</span></li><li><span class="s5-node" id="canvas2d-5-css-c10">EQ</span></li><li><span class="s5-node" id="canvas2d-5-css-c11">fieldNumber: INT_LIT("1")</span></li><li><span class="s5-node" id="canvas2d-5-css-c12">SEMI</span></li></ul></li><li><span class="s5-node" id="canvas2d-5-css-c13">field[1]</span><ul><li><span class="s5-node" id="canvas2d-5-css-c14">type_: INT32</span></li><li><span class="s5-node" id="canvas2d-5-css-c15">fieldName: ID("level")</span></li><li><span class="s5-node" id="canvas2d-5-css-c16">EQ</span></li><li><span class="s5-node" id="canvas2d-5-css-c17">fieldNumber: INT_LIT("2")</span></li><li><span class="s5-node" id="canvas2d-5-css-c18">SEMI</span></li></ul></li><li><span class="s5-node" id="canvas2d-5-css-c19">RC</span></li></ul></li></ul></li></ul></div></div><div style="flex:1 1 300px;min-width:250px;max-width:100%;text-align:left;"><div style="font-weight:bold;text-align:center;color:#8b1a1a;margin-bottom:6px;font-size:0.9em;">AST — 3개 노드</div><div class="s5-css-ast" id="canvas2d-5-css-ast-box"><ul class="s5-tree"><li><span class="s5-node" id="canvas2d-5-css-a0">MessageNode</span><ul><li><span class="s5-node" id="canvas2d-5-css-a1">name: "Player"</span></li><li><span class="s5-node" id="canvas2d-5-css-a2">fields</span><ul><li><span class="s5-node" id="canvas2d-5-css-a3">FieldNode</span><ul><li><span class="s5-node" id="canvas2d-5-css-a4">type: "string"</span></li><li><span class="s5-node" id="canvas2d-5-css-a5">name: "name"</span></li><li><span class="s5-node" id="canvas2d-5-css-a6">number: 1</span></li></ul></li><li><span class="s5-node" id="canvas2d-5-css-a7">FieldNode</span><ul><li><span class="s5-node" id="canvas2d-5-css-a8">type: "int32"</span></li><li><span class="s5-node" id="canvas2d-5-css-a9">name: "level"</span></li><li><span class="s5-node" id="canvas2d-5-css-a10">number: 2</span></li></ul></li></ul></li></ul></li></ul></div></div></div></div><div id="canvas2d-info-5" style="text-align:center;padding:10px 16px;background:#e8f4fd;border-left:4px solid #5ba3d9;border-radius:0 6px 6px 0;margin-bottom:10px;font-size:0.92em;color:#333;min-height:2.5em;display:flex;align-items:center;justify-content:center;">초기 상태</div><div class="stepper-controls"><button class="stepper-btn" id="stepper-prev-5" disabled>← 이전</button><span class="stepper-label" id="canvas2d-val-5">단계 0 / 8</span><button class="stepper-btn" id="stepper-next-5">다음 →</button></div><div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;font-size:0.78em;color:#555;margin-top:8px;padding-top:8px;border-top:1px solid #eee;"><span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#cce5ff;border:1px solid #004085;vertical-align:middle;margin-right:3px;"></span>방문 중</span><span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#d4edda;border:1px solid #155724;vertical-align:middle;margin-right:3px;"></span>값 추출</span><span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#f0f0f0;border:1px solid #ccc;vertical-align:middle;margin-right:3px;"></span>처리 완료</span><span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#fff;border:1px solid #ddd;vertical-align:middle;margin-right:3px;opacity:0.4;"></span>무시/폐기</span></div>
   <figcaption>인터랙티브 2D 뷰 — CST → AST 변환 과정 스테퍼</figcaption>
 </div>
 <script>
 (function() {
-var P="canvas2d-5";
-var CI=["c0","c1","c2","c3","c4","c5","c6","c7","c8","c9","c10","c11","c12","c13","c14","c15","c16","c17","c18","c19"];
-var AI=["a0","a1","a2","a3","a4","a5","a6","a7","a8","a9","a10"];
-var S={"N":{"bg":"transparent","c":"#333","o":"1"},"A":{"bg":"#cce5ff","c":"#004085","o":"1"},"E":{"bg":"#d4edda","c":"#155724","o":"1"},"F":{"bg":"transparent","c":"#ccc","o":"0.4"},"D":{"bg":"#f0f0f0","c":"#888","o":"0.7"},"S":{"bg":"#fde8e8","c":"#8b1a1a","o":"1"},"G":{"bg":"#d4edda","c":"#155724","o":"1"}};
-var steps=[{"d":"초기 상태 — CST(Parse Tree) 전체 구조가 표시됩니다.","c":{},"a":{}},{"d":"VisitMessageDef(ctx) 호출 — 최상위 규칙 노드 방문을 시작합니다.","c":{"c0":"A"},"a":{}},{"d":"ctx.messageName().GetText() → \"Player\" 추출. 래퍼 규칙(messageName → ident)을 통과하여 값을 얻습니다.","c":{"c0":"A","c1":"F","c2":"E","c3":"E","c4":"E"},"a":{"a0":"G","a1":"G"}},{"d":"messageBody 진입. LC({)와 RC(}) 구두점 토큰은 구조 정보가 없으므로 무시합니다.","c":{"c0":"A","c1":"F","c2":"D","c3":"D","c4":"D","c5":"A","c6":"F","c19":"F"},"a":{"a0":"S","a1":"S"}},{"d":"VisitField(ctx) — 첫 번째 field 규칙 노드를 방문합니다.","c":{"c0":"D","c1":"F","c2":"D","c3":"D","c4":"D","c5":"D","c6":"F","c7":"A","c19":"F"},"a":{"a0":"S","a1":"S"}},{"d":"type_, fieldName, fieldNumber에서 값을 추출합니다. EQ(=)와 SEMI(;)는 의미 정보가 없으므로 폐기합니다.","c":{"c0":"D","c1":"F","c2":"D","c3":"D","c4":"D","c5":"D","c6":"F","c7":"A","c8":"E","c9":"E","c10":"F","c11":"E","c12":"F","c19":"F"},"a":{"a0":"S","a1":"S","a2":"S","a3":"G","a4":"G","a5":"G","a6":"G"}},{"d":"VisitField(ctx) — 두 번째 field 규칙 노드를 방문합니다.","c":{"c0":"D","c1":"F","c2":"D","c3":"D","c4":"D","c5":"D","c6":"F","c7":"D","c8":"D","c9":"D","c10":"F","c11":"D","c12":"F","c13":"A","c19":"F"},"a":{"a0":"S","a1":"S","a2":"S","a3":"S","a4":"S","a5":"S","a6":"S"}},{"d":"같은 방식으로 type, name, number를 추출하고 EQ, SEMI를 폐기합니다.","c":{"c0":"D","c1":"F","c2":"D","c3":"D","c4":"D","c5":"D","c6":"F","c7":"D","c8":"D","c9":"D","c10":"F","c11":"D","c12":"F","c13":"A","c14":"E","c15":"E","c16":"F","c17":"E","c18":"F","c19":"F"},"a":{"a0":"S","a1":"S","a2":"S","a3":"S","a4":"S","a5":"S","a6":"S","a7":"G","a8":"G","a9":"G","a10":"G"}},{"d":"변환 완료 — CST의 20개 노드가 AST의 3개 의미 노드(MessageNode + FieldNode×2)로 압축되었습니다.","c":{"c0":"D","c1":"F","c2":"D","c3":"D","c4":"D","c5":"D","c6":"F","c7":"D","c8":"D","c9":"D","c10":"F","c11":"D","c12":"F","c13":"D","c14":"D","c15":"D","c16":"F","c17":"D","c18":"F","c19":"F"},"a":{"a0":"G","a1":"G","a2":"G","a3":"G","a4":"G","a5":"G","a6":"G","a7":"G","a8":"G","a9":"G","a10":"G"}}];
+(function runtime(o) {
+      var P=o.P, S=o.S, steps=o.steps, CI=o.CI, AI=o.AI;
 
-function el(id){return document.getElementById(P+"-"+id);}
+      // ===== D3.js Horizontal Tree =====
+      function textWidth(l) { return l.length * 7.2 + 20; }
 
-function ss(id,k){
-  var e=el(id);if(!e)return;
-  var st=S[k];
-  e.style.background=st.bg;
-  e.style.color=st.c;
-  e.style.opacity=st.o;
-  e.style.maxHeight="28px";
-  e.style.overflow="visible";
-}
+      function renderD3Tree(containerId, treeData, isAST) {
+        var container = document.getElementById(containerId);
+        var root = d3.hierarchy(treeData);
+        var layout = d3.tree().nodeSize([30, 180])
+          .separation(function(a, b) { return a.parent === b.parent ? 1 : 1.3; });
+        layout(root);
+        /* Swap x/y for horizontal layout */
+        root.each(function(nd) { var t = nd.x; nd.x = nd.y; nd.y = t; });
 
-function sa(id,k){
-  var e=el(id);if(!e)return;
-  if(!k){
-    e.style.opacity="0";
-    e.style.maxHeight="0";
-    e.style.overflow="hidden";
-    return;
-  }
-  var st=S[k];
-  e.style.background=st.bg;
-  e.style.color=st.c;
-  e.style.opacity=st.o;
-  e.style.maxHeight="28px";
-  e.style.overflow="visible";
-}
+        var x0=Infinity, x1=-Infinity, y0=Infinity, y1=-Infinity;
+        root.each(function(nd) {
+          var rw = textWidth(nd.data.name);
+          if (nd.x < x0) x0 = nd.x;
+          if (nd.x + rw > x1) x1 = nd.x + rw;
+          if (nd.y - 16 < y0) y0 = nd.y - 16;
+          if (nd.y + 16 > y1) y1 = nd.y + 16;
+        });
+        var pad = 24; x0 -= pad; y0 -= pad; x1 += pad; y1 += pad;
+        var vw = x1 - x0, vh = y1 - y0;
 
-var cur=0;
+        var svg = d3.select(container).append('svg')
+          .attr('viewBox', x0+' '+y0+' '+vw+' '+vh)
+          .style('width','100%').style('height','auto')
+          .style('min-height','300px').style('max-height','700px')
+          .style('cursor','grab');
 
-function apply(idx){
-  var step=steps[idx];
-  CI.forEach(function(id){ss(id,step.c[id]||"N");});
-  AI.forEach(function(id){sa(id,step.a[id]||null);});
-  document.getElementById("canvas2d-info-5").textContent=step.d;
-  document.getElementById("canvas2d-val-5").textContent="\uB2E8\uACC4 "+idx+" / "+(steps.length-1);
-  document.getElementById("stepper-prev-5").disabled=idx===0;
-  document.getElementById("stepper-next-5").disabled=idx===steps.length-1;
-}
+        var g = svg.append('g');
+        var zoom = d3.zoom().scaleExtent([0.3, 3])
+          .on('zoom', function(ev) { g.attr('transform', ev.transform); svg.style('cursor','grabbing'); })
+          .on('end', function() { svg.style('cursor','grab'); });
+        svg.call(zoom);
 
-document.getElementById("stepper-prev-5").onclick=function(){
-  if(cur>0){cur--;apply(cur);}
-};
-document.getElementById("stepper-next-5").onclick=function(){
-  if(cur<steps.length-1){cur++;apply(cur);}
-};
+        /* Horizontal bezier: parent right edge -> child left edge */
+        g.selectAll('.link').data(root.links()).join('path')
+          .attr('fill','none').attr('stroke','#aaa').attr('stroke-width', 1.5)
+          .attr('d', function(d) {
+            var sx = d.source.x + textWidth(d.source.data.name), sy = d.source.y;
+            var tx = d.target.x, ty = d.target.y;
+            var mx = (sx + tx) / 2;
+            return 'M'+sx+','+sy+'C'+mx+','+sy+' '+mx+','+ty+' '+tx+','+ty;
+          });
 
-apply(0);
+        var nodeMap = {};
+        var node = g.selectAll('.node').data(root.descendants()).join('g')
+          .attr('transform', function(nd) { return 'translate('+nd.x+','+nd.y+')'; });
 
+        node.append('rect').attr('rx',5).attr('ry',5)
+          .attr('x', 0).attr('y', -13)
+          .attr('width', function(nd) { return textWidth(nd.data.name); })
+          .attr('height', 26)
+          .attr('fill', isAST ? '#fde8e8' : '#e8f0fd')
+          .attr('stroke', isAST ? '#8b1a1a' : '#2c5aa0')
+          .attr('stroke-width', 1.5)
+          .style('filter','drop-shadow(0 1px 2px rgba(0,0,0,0.08))');
+
+        node.append('text')
+          .attr('x', 10).attr('dy','0.35em').attr('text-anchor','start')
+          .attr('font-size','10px').attr('font-family','Consolas,monospace')
+          .attr('fill', isAST ? '#8b1a1a' : '#333')
+          .text(function(nd) { return nd.data.name; });
+
+        node.each(function(nd) { nodeMap[nd.data.id] = d3.select(this); });
+        return nodeMap;
+      }
+
+      var d3Cst = renderD3Tree(P+'-d3-cst', o.cstData, false);
+      var d3Ast = renderD3Tree(P+'-d3-ast', o.astData, true);
+
+      /* Hide D3 AST initially */
+      AI.forEach(function(id) { if (d3Ast[id]) d3Ast[id].attr('opacity', 0); });
+      d3.select('#'+P+'-d3-ast').selectAll('path').attr('opacity', 0);
+
+      // ===== CSS Tree init =====
+      AI.forEach(function(id) {
+        var el = document.getElementById(P+'-css-'+id);
+        if (el) {
+          el.style.opacity = '0';
+          el.parentElement.style.maxHeight = '0';
+          el.parentElement.style.overflow = 'hidden';
+          el.parentElement.style.transition = 'all 0.4s';
+        }
+      });
+
+      // ===== Tab switching =====
+      var tabD3 = document.getElementById(P+'-tab-d3');
+      var tabCSS = document.getElementById(P+'-tab-css');
+      var viewD3 = document.getElementById(P+'-view-d3');
+      var viewCSS = document.getElementById(P+'-view-css');
+      tabD3.onclick = function() {
+        tabD3.classList.add('active'); tabCSS.classList.remove('active');
+        viewD3.style.display = ''; viewCSS.style.display = 'none';
+      };
+      tabCSS.onclick = function() {
+        tabCSS.classList.add('active'); tabD3.classList.remove('active');
+        viewCSS.style.display = ''; viewD3.style.display = 'none';
+      };
+
+      // ===== Apply functions =====
+      function applyD3(idx) {
+        var step = steps[idx];
+        CI.forEach(function(id) {
+          var g = d3Cst[id]; if (!g) return;
+          var s = S[step.c[id] || 'N'];
+          g.select('rect').attr('fill', s.bg === 'transparent' ? '#fff' : s.bg).attr('stroke', s.c);
+          g.select('text').attr('fill', s.c);
+          g.attr('opacity', s.o);
+        });
+        var astG = d3.select('#'+P+'-d3-ast').select('svg g');
+        astG.selectAll('path').attr('opacity', function(d) {
+          var tgt = d.target && d.target.data ? d.target.data.id : null;
+          return (tgt && step.a[tgt]) ? 1 : 0;
+        });
+        AI.forEach(function(id) {
+          var g = d3Ast[id]; if (!g) return;
+          var k = step.a[id];
+          if (!k) { g.attr('opacity', 0); return; }
+          var s = S[k];
+          g.attr('opacity', s.o);
+          g.select('rect').attr('fill', s.bg === 'transparent' ? '#fff' : s.bg).attr('stroke', s.c);
+          g.select('text').attr('fill', s.c);
+        });
+      }
+
+      function applyCSS(idx) {
+        var step = steps[idx];
+        CI.forEach(function(id) {
+          var el = document.getElementById(P+'-css-'+id); if (!el) return;
+          var s = S[step.c[id] || 'N'];
+          el.style.background = s.bg; el.style.color = s.c; el.style.opacity = s.o;
+        });
+        AI.forEach(function(id) {
+          var el = document.getElementById(P+'-css-'+id); if (!el) return;
+          var li = el.parentElement;
+          var k = step.a[id];
+          if (!k) { el.style.opacity='0'; li.style.maxHeight='0'; li.style.overflow='hidden'; return; }
+          var s = S[k];
+          el.style.background = s.bg; el.style.color = s.c; el.style.opacity = s.o;
+          li.style.maxHeight = '30px'; li.style.overflow = 'visible';
+        });
+      }
+
+      // ===== Stepper =====
+      var cur = 0;
+      function apply(idx) {
+        applyD3(idx);
+        applyCSS(idx);
+        document.getElementById(o.info).textContent = steps[idx].d;
+        document.getElementById(o.val).textContent = '\uB2E8\uACC4 ' + idx + ' / ' + (steps.length - 1);
+        document.getElementById(o.prev).disabled = idx === 0;
+        document.getElementById(o.next).disabled = idx === steps.length - 1;
+      }
+      document.getElementById(o.prev).onclick = function() { if (cur > 0) { cur--; apply(cur); } };
+      document.getElementById(o.next).onclick = function() { if (cur < steps.length - 1) { cur++; apply(cur); } };
+      apply(0);
+    })({"P":"canvas2d-5","info":"canvas2d-info-5","val":"canvas2d-val-5","prev":"stepper-prev-5","next":"stepper-next-5","S":{"N":{"bg":"transparent","c":"#333","o":1},"A":{"bg":"#cce5ff","c":"#004085","o":1},"E":{"bg":"#d4edda","c":"#155724","o":1},"F":{"bg":"transparent","c":"#ccc","o":0.4},"D":{"bg":"#f0f0f0","c":"#888","o":0.7},"S":{"bg":"#fde8e8","c":"#8b1a1a","o":1},"G":{"bg":"#d4edda","c":"#155724","o":1}},"steps":[{"d":"초기 상태 — CST(Parse Tree) 전체 구조가 표시됩니다.","c":{},"a":{}},{"d":"VisitMessageDef(ctx) 호출 — 최상위 규칙 노드 방문 시작.","c":{"c0":"A"},"a":{}},{"d":"ctx.messageName().GetText() → \"Player\" 추출.","c":{"c0":"A","c1":"F","c2":"E","c3":"E","c4":"E"},"a":{"a0":"G","a1":"G"}},{"d":"messageBody 진입. LC, RC 구두점 토큰 무시.","c":{"c0":"A","c1":"F","c2":"D","c3":"D","c4":"D","c5":"A","c6":"F","c19":"F"},"a":{"a0":"S","a1":"S"}},{"d":"VisitField — 첫 번째 field 방문.","c":{"c0":"D","c1":"F","c2":"D","c3":"D","c4":"D","c5":"D","c6":"F","c7":"A","c19":"F"},"a":{"a0":"S","a1":"S"}},{"d":"type_, fieldName, fieldNumber 값 추출. EQ, SEMI 폐기.","c":{"c0":"D","c1":"F","c2":"D","c3":"D","c4":"D","c5":"D","c6":"F","c7":"A","c8":"E","c9":"E","c10":"F","c11":"E","c12":"F","c19":"F"},"a":{"a0":"S","a1":"S","a2":"S","a3":"G","a4":"G","a5":"G","a6":"G"}},{"d":"VisitField — 두 번째 field 방문.","c":{"c0":"D","c1":"F","c2":"D","c3":"D","c4":"D","c5":"D","c6":"F","c7":"D","c8":"D","c9":"D","c10":"F","c11":"D","c12":"F","c13":"A","c19":"F"},"a":{"a0":"S","a1":"S","a2":"S","a3":"S","a4":"S","a5":"S","a6":"S"}},{"d":"type, name, number 추출, EQ/SEMI 폐기.","c":{"c0":"D","c1":"F","c2":"D","c3":"D","c4":"D","c5":"D","c6":"F","c7":"D","c8":"D","c9":"D","c10":"F","c11":"D","c12":"F","c13":"A","c14":"E","c15":"E","c16":"F","c17":"E","c18":"F","c19":"F"},"a":{"a0":"S","a1":"S","a2":"S","a3":"S","a4":"S","a5":"S","a6":"S","a7":"G","a8":"G","a9":"G","a10":"G"}},{"d":"변환 완료 — 20개 CST 노드 → 3개 AST 의미 노드로 압축.","c":{"c0":"D","c1":"F","c2":"D","c3":"D","c4":"D","c5":"D","c6":"F","c7":"D","c8":"D","c9":"D","c10":"F","c11":"D","c12":"F","c13":"D","c14":"D","c15":"D","c16":"F","c17":"D","c18":"F","c19":"F"},"a":{"a0":"G","a1":"G","a2":"G","a3":"G","a4":"G","a5":"G","a6":"G","a7":"G","a8":"G","a9":"G","a10":"G"}}],"CI":["c0","c1","c2","c3","c4","c5","c6","c7","c8","c9","c10","c11","c12","c13","c14","c15","c16","c17","c18","c19"],"AI":["a0","a1","a2","a3","a4","a5","a6","a7","a8","a9","a10"],"cstData":{"id":"c0","name":"messageDef","children":[{"id":"c1","name":"MESSAGE"},{"id":"c2","name":"messageName","children":[{"id":"c3","name":"ident","children":[{"id":"c4","name":"ID(\"Player\")"}]}]},{"id":"c5","name":"messageBody","children":[{"id":"c6","name":"LC"},{"id":"c7","name":"field[0]","children":[{"id":"c8","name":"type_: STRING"},{"id":"c9","name":"fieldName: ID(\"name\")"},{"id":"c10","name":"EQ"},{"id":"c11","name":"fieldNumber: INT_LIT(\"1\")"},{"id":"c12","name":"SEMI"}]},{"id":"c13","name":"field[1]","children":[{"id":"c14","name":"type_: INT32"},{"id":"c15","name":"fieldName: ID(\"level\")"},{"id":"c16","name":"EQ"},{"id":"c17","name":"fieldNumber: INT_LIT(\"2\")"},{"id":"c18","name":"SEMI"}]},{"id":"c19","name":"RC"}]}]},"astData":{"id":"a0","name":"MessageNode","children":[{"id":"a1","name":"name: \"Player\""},{"id":"a2","name":"fields","children":[{"id":"a3","name":"FieldNode","children":[{"id":"a4","name":"type: \"string\""},{"id":"a5","name":"name: \"name\""},{"id":"a6","name":"number: 1"}]},{"id":"a7","name":"FieldNode","children":[{"id":"a8","name":"type: \"int32\""},{"id":"a9","name":"name: \"level\""},{"id":"a10","name":"number: 2"}]}]}]}});
 })();
 </script>
 

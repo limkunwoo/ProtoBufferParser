@@ -54,7 +54,7 @@ th { background: #f0f0f0; }
 
 /* === Panel A: D3 tree === */
 .d3-tree-box { border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; min-height: 120px; }
-.d3-tree-box svg { display: block; width: 100%; height: auto; min-height: 180px; max-height: 500px; cursor: grab; }
+.d3-tree-box svg { display: block; width: 100%; height: auto; min-height: 300px; max-height: 800px; cursor: grab; }
 </style>
 </head>
 <body>
@@ -345,28 +345,33 @@ makeLegend(document.getElementById('d3-legend'));
     var container = document.getElementById(containerId);
     var root = d3.hierarchy(treeData);
 
+    /* Horizontal tree: nodeSize([verticalSiblingGap, horizontalDepthGap]) */
     var layout = d3.tree()
-      .nodeSize([110, 56])
+      .nodeSize([30, 180])
       .separation(function(a, b) {
-        var wA = textWidth(a.data.name), wB = textWidth(b.data.name);
-        var base = a.parent === b.parent ? 1 : 1.2;
-        return Math.max(base, (wA + wB) / 2 / 110 + 0.15);
+        return a.parent === b.parent ? 1 : 1.3;
       });
     layout(root);
 
+    /* Swap x↔y: depth→horizontal, sibling→vertical */
+    root.each(function(d) { var t = d.x; d.x = d.y; d.y = t; });
+
+    /* viewBox: d.x = left edge of rect, rect width = textWidth */
     var x0=Infinity, x1=-Infinity, y0=Infinity, y1=-Infinity;
     root.each(function(d) {
-      var hw = textWidth(d.data.name)/2;
-      if(d.x-hw<x0) x0=d.x-hw; if(d.x+hw>x1) x1=d.x+hw;
-      if(d.y-16<y0) y0=d.y-16; if(d.y+16>y1) y1=d.y+16;
+      var rw = textWidth(d.data.name);
+      if(d.x < x0) x0 = d.x;
+      if(d.x + rw > x1) x1 = d.x + rw;
+      if(d.y - 16 < y0) y0 = d.y - 16;
+      if(d.y + 16 > y1) y1 = d.y + 16;
     });
-    var pad=20; x0-=pad; y0-=pad; x1+=pad; y1+=pad;
+    var pad=24; x0-=pad; y0-=pad; x1+=pad; y1+=pad;
     var vw=x1-x0, vh=y1-y0;
 
     var svg = d3.select(container).append('svg')
       .attr('viewBox', x0+' '+y0+' '+vw+' '+vh)
       .style('width','100%').style('height','auto')
-      .style('min-height','120px').style('max-height','500px')
+      .style('min-height','300px').style('max-height','800px')
       .style('cursor','grab');
 
     var g = svg.append('g');
@@ -375,13 +380,19 @@ makeLegend(document.getElementById('d3-legend'));
       .on('end', function(){ svg.style('cursor','grab'); });
     svg.call(zoom);
 
+    /* Horizontal bezier: parent right edge → child left edge */
     g.selectAll('.link').data(root.links()).join('path')
       .attr('fill','none').attr('stroke','#aaa').attr('stroke-width',1.5)
       .attr('d', function(d){
-        return 'M'+d.source.x+','+d.source.y+
-          'C'+d.source.x+','+(d.source.y+d.target.y)/2+
-          ' '+d.target.x+','+(d.source.y+d.target.y)/2+
-          ' '+d.target.x+','+d.target.y;
+        var sx = d.source.x + textWidth(d.source.data.name);
+        var sy = d.source.y;
+        var tx = d.target.x;
+        var ty = d.target.y;
+        var mx = (sx + tx) / 2;
+        return 'M'+sx+','+sy+
+          'C'+mx+','+sy+
+          ' '+mx+','+ty+
+          ' '+tx+','+ty;
       });
 
     var nodeMap = {};
@@ -390,7 +401,7 @@ makeLegend(document.getElementById('d3-legend'));
 
     node.append('rect')
       .attr('rx',5).attr('ry',5)
-      .attr('x', function(d){ return -textWidth(d.data.name)/2; })
+      .attr('x', 0)
       .attr('y',-13)
       .attr('width', function(d){ return textWidth(d.data.name); })
       .attr('height',26)
@@ -400,7 +411,7 @@ makeLegend(document.getElementById('d3-legend'));
       .style('filter','drop-shadow(0 1px 2px rgba(0,0,0,0.08))');
 
     node.append('text')
-      .attr('dy','0.35em').attr('text-anchor','middle')
+      .attr('x', 10).attr('dy','0.35em').attr('text-anchor','start')
       .attr('font-size','10px').attr('font-family','Consolas,monospace')
       .attr('fill', isAST ? '#8b1a1a' : '#333')
       .text(function(d){ return d.data.name; });

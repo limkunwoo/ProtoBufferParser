@@ -1,0 +1,47 @@
+{
+  "1": {
+    "svg": null,
+    "png": null,
+    "svgCaption": "렉싱 파이프라인 — 소스 텍스트에서 토큰 스트림까지",
+    "title": "소스 텍스트에서 토큰 스트림까지 — 렉싱이란?",
+    "graphviz": "token_pipeline"
+  },
+  "2": {
+    "svg": null,
+    "png": null,
+    "svgCaption": null,
+    "title": "토큰의 분류 — 키워드·심볼·리터럴·히든 채널"
+  },
+  "3": {
+    "svg": null,
+    "png": null,
+    "svgCaption": null,
+    "title": "파서의 CST 조립 원리 — 규칙 진입과 퇴장"
+  },
+  "4": {
+    "svg": null,
+    "png": null,
+    "svgCaption": null,
+    "title": "Context 클래스 — CST 노드의 정체"
+  },
+  "5": {
+    "svg": null,
+    "png": null,
+    "svgCaption": "2-Pass 파싱 흐름 — 전방 참조 해결",
+    "title": "2-Pass 파싱 — 전방 참조 해결",
+    "graphviz": "two_pass_flow"
+  },
+  "6": {
+    "svg": null,
+    "png": null,
+    "svgCaption": null,
+    "title": "시맨틱 프레디킷 — type_ 규칙의 분기 판단"
+  },
+  "7": {
+    "svg": null,
+    "png": null,
+    "svgCaption": "토큰 스트림 → CST 조립 과정 스테퍼",
+    "title": "단계별 추적 — 14개 토큰이 CST가 되기까지",
+    "canvas2d": "token_to_cst_stepper"
+  }
+}

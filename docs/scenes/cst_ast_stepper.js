@@ -64,7 +64,7 @@ module.exports = {
       ".s5-node{display:inline-block;padding:2px 8px;border-radius:4px;font-family:Consolas,'Courier New',monospace;" +
         'font-size:0.78em;transition:background 0.3s,color 0.3s,opacity 0.3s;}\n' +
       '.s5-d3-box{border:1px solid #e0e0e0;border-radius:6px;overflow:hidden;min-height:120px;}\n' +
-      '.s5-d3-box svg{display:block;width:100%;height:auto;min-height:300px;max-height:700px;cursor:grab;}\n' +
+      '.s5-d3-box svg{display:block;width:100%;height:auto;min-height:400px;max-height:800px;cursor:grab;}\n' +
       '.s5-css-ast{background:#fdf8f8;border:1px solid #e0d0d0;border-radius:6px;padding:8px 10px;min-height:120px;}\n' +
       '</style>\n';
 
@@ -239,12 +239,12 @@ module.exports = {
       var P=o.P, S=o.S, steps=o.steps, CI=o.CI, AI=o.AI;
 
       // ===== D3.js Horizontal Tree =====
-      function textWidth(l) { return l.length * 8.4 + 24; }
+      function textWidth(l) { return l.length * 9.6 + 28; }
 
       function renderD3Tree(containerId, treeData, isAST) {
         var container = document.getElementById(containerId);
         var root = d3.hierarchy(treeData);
-        var layout = d3.tree().nodeSize([38, 200])
+        var layout = d3.tree().nodeSize([46, 240])
           .separation(function(a, b) { return a.parent === b.parent ? 1 : 1.3; });
         layout(root);
         /* Swap x/y for horizontal layout */
@@ -255,8 +255,8 @@ module.exports = {
           var rw = textWidth(nd.data.name);
           if (nd.x < x0) x0 = nd.x;
           if (nd.x + rw > x1) x1 = nd.x + rw;
-          if (nd.y - 19 < y0) y0 = nd.y - 19;
-          if (nd.y + 19 > y1) y1 = nd.y + 19;
+          if (nd.y - 21 < y0) y0 = nd.y - 21;
+          if (nd.y + 21 > y1) y1 = nd.y + 21;
         });
         var pad = 24; x0 -= pad; y0 -= pad; x1 += pad; y1 += pad;
         var vw = x1 - x0, vh = y1 - y0;
@@ -264,7 +264,7 @@ module.exports = {
         var svg = d3.select(container).append('svg')
           .attr('viewBox', x0+' '+y0+' '+vw+' '+vh)
           .style('width','100%').style('height','auto')
-          .style('min-height','300px').style('max-height','700px')
+          .style('min-height','400px').style('max-height','800px')
           .style('cursor','grab');
 
         var g = svg.append('g');
@@ -288,9 +288,9 @@ module.exports = {
           .attr('transform', function(nd) { return 'translate('+nd.x+','+nd.y+')'; });
 
         node.append('rect').attr('rx',5).attr('ry',5)
-          .attr('x', 0).attr('y', -15)
+          .attr('x', 0).attr('y', -17)
           .attr('width', function(nd) { return textWidth(nd.data.name); })
-          .attr('height', 30)
+          .attr('height', 34)
           .attr('fill', isAST ? '#fde8e8' : '#e8f0fd')
           .attr('stroke', isAST ? '#8b1a1a' : '#2c5aa0')
           .attr('stroke-width', 1.5)
@@ -298,7 +298,7 @@ module.exports = {
 
         node.append('text')
           .attr('x', 10).attr('dy','0.35em').attr('text-anchor','start')
-          .attr('font-size','13px').attr('font-family','Consolas,monospace')
+          .attr('font-size','15px').attr('font-family','Consolas,monospace')
           .attr('fill', isAST ? '#8b1a1a' : '#333')
           .text(function(nd) { return nd.data.name; });
 

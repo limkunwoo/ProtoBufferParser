@@ -2192,7 +2192,7 @@ ANTLR은 <code>.g4</code> 파일의 규칙 구조를 <strong>기계적으로</st
 .s5-tree>li::before,.s5-tree>li::after{display:none;}
 .s5-node{display:inline-block;padding:2px 8px;border-radius:4px;font-family:Consolas,'Courier New',monospace;font-size:0.78em;transition:background 0.3s,color 0.3s,opacity 0.3s;}
 .s5-d3-box{border:1px solid #e0e0e0;border-radius:6px;overflow:hidden;min-height:120px;}
-.s5-d3-box svg{display:block;width:100%;height:auto;min-height:300px;max-height:700px;cursor:grab;}
+.s5-d3-box svg{display:block;width:100%;height:auto;min-height:400px;max-height:800px;cursor:grab;}
 .s5-css-ast{background:#fdf8f8;border:1px solid #e0d0d0;border-radius:6px;padding:8px 10px;min-height:120px;}
 </style>
 <div class="s5-tabs"><button class="s5-tab active" id="canvas2d-5-tab-d3">D3.js 트리 (SVG)</button><button class="s5-tab" id="canvas2d-5-tab-css">CSS 트리 (HTML)</button></div><div class="s5-view" id="canvas2d-5-view-d3"><div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;"><div style="flex:1 1 420px;min-width:300px;max-width:100%;"><div style="font-weight:bold;text-align:center;color:#2c5aa0;margin-bottom:6px;font-size:0.9em;">CST (Parse Tree) — 20개 노드</div><div class="s5-d3-box" id="canvas2d-5-d3-cst"></div></div><div style="flex:1 1 300px;min-width:250px;max-width:100%;"><div style="font-weight:bold;text-align:center;color:#8b1a1a;margin-bottom:6px;font-size:0.9em;">AST — 3개 노드</div><div class="s5-d3-box" id="canvas2d-5-d3-ast"></div></div></div></div><div class="s5-view" id="canvas2d-5-view-css" style="display:none;"><div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;"><div style="flex:1 1 420px;min-width:300px;max-width:100%;text-align:left;"><div style="font-weight:bold;text-align:center;color:#2c5aa0;margin-bottom:6px;font-size:0.9em;">CST (Parse Tree) — 20개 노드</div><div style="background:#f8f9fa;border:1px solid #e0e0e0;border-radius:6px;padding:8px 12px;"><ul class="s5-tree"><li><span class="s5-node" id="canvas2d-5-css-c0">messageDef</span><ul><li><span class="s5-node" id="canvas2d-5-css-c1">MESSAGE</span></li><li><span class="s5-node" id="canvas2d-5-css-c2">messageName</span><ul><li><span class="s5-node" id="canvas2d-5-css-c3">ident</span><ul><li><span class="s5-node" id="canvas2d-5-css-c4">ID("Player")</span></li></ul></li></ul></li><li><span class="s5-node" id="canvas2d-5-css-c5">messageBody</span><ul><li><span class="s5-node" id="canvas2d-5-css-c6">LC</span></li><li><span class="s5-node" id="canvas2d-5-css-c7">field[0]</span><ul><li><span class="s5-node" id="canvas2d-5-css-c8">type_: STRING</span></li><li><span class="s5-node" id="canvas2d-5-css-c9">fieldName: ID("name")</span></li><li><span class="s5-node" id="canvas2d-5-css-c10">EQ</span></li><li><span class="s5-node" id="canvas2d-5-css-c11">fieldNumber: INT_LIT("1")</span></li><li><span class="s5-node" id="canvas2d-5-css-c12">SEMI</span></li></ul></li><li><span class="s5-node" id="canvas2d-5-css-c13">field[1]</span><ul><li><span class="s5-node" id="canvas2d-5-css-c14">type_: INT32</span></li><li><span class="s5-node" id="canvas2d-5-css-c15">fieldName: ID("level")</span></li><li><span class="s5-node" id="canvas2d-5-css-c16">EQ</span></li><li><span class="s5-node" id="canvas2d-5-css-c17">fieldNumber: INT_LIT("2")</span></li><li><span class="s5-node" id="canvas2d-5-css-c18">SEMI</span></li></ul></li><li><span class="s5-node" id="canvas2d-5-css-c19">RC</span></li></ul></li></ul></li></ul></div></div><div style="flex:1 1 300px;min-width:250px;max-width:100%;text-align:left;"><div style="font-weight:bold;text-align:center;color:#8b1a1a;margin-bottom:6px;font-size:0.9em;">AST — 3개 노드</div><div class="s5-css-ast" id="canvas2d-5-css-ast-box"><ul class="s5-tree"><li><span class="s5-node" id="canvas2d-5-css-a0">MessageNode</span><ul><li><span class="s5-node" id="canvas2d-5-css-a1">name: "Player"</span></li><li><span class="s5-node" id="canvas2d-5-css-a2">fields</span><ul><li><span class="s5-node" id="canvas2d-5-css-a3">FieldNode</span><ul><li><span class="s5-node" id="canvas2d-5-css-a4">type: "string"</span></li><li><span class="s5-node" id="canvas2d-5-css-a5">name: "name"</span></li><li><span class="s5-node" id="canvas2d-5-css-a6">number: 1</span></li></ul></li><li><span class="s5-node" id="canvas2d-5-css-a7">FieldNode</span><ul><li><span class="s5-node" id="canvas2d-5-css-a8">type: "int32"</span></li><li><span class="s5-node" id="canvas2d-5-css-a9">name: "level"</span></li><li><span class="s5-node" id="canvas2d-5-css-a10">number: 2</span></li></ul></li></ul></li></ul></li></ul></div></div></div></div><div id="canvas2d-info-5" style="text-align:center;padding:10px 16px;background:#e8f4fd;border-left:4px solid #5ba3d9;border-radius:0 6px 6px 0;margin-bottom:10px;font-size:0.92em;color:#333;min-height:2.5em;display:flex;align-items:center;justify-content:center;">초기 상태</div><div class="stepper-controls"><button class="stepper-btn" id="stepper-prev-5" disabled>← 이전</button><span class="stepper-label" id="canvas2d-val-5">단계 0 / 8</span><button class="stepper-btn" id="stepper-next-5">다음 →</button></div><div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;font-size:0.78em;color:#555;margin-top:8px;padding-top:8px;border-top:1px solid #eee;"><span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#cce5ff;border:1px solid #004085;vertical-align:middle;margin-right:3px;"></span>방문 중</span><span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#d4edda;border:1px solid #155724;vertical-align:middle;margin-right:3px;"></span>값 추출</span><span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#f0f0f0;border:1px solid #ccc;vertical-align:middle;margin-right:3px;"></span>처리 완료</span><span><span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#fff;border:1px solid #ddd;vertical-align:middle;margin-right:3px;opacity:0.4;"></span>무시/폐기</span></div>
@@ -2204,12 +2204,12 @@ ANTLR은 <code>.g4</code> 파일의 규칙 구조를 <strong>기계적으로</st
       var P=o.P, S=o.S, steps=o.steps, CI=o.CI, AI=o.AI;
 
       // ===== D3.js Horizontal Tree =====
-      function textWidth(l) { return l.length * 8.4 + 24; }
+      function textWidth(l) { return l.length * 9.6 + 28; }
 
       function renderD3Tree(containerId, treeData, isAST) {
         var container = document.getElementById(containerId);
         var root = d3.hierarchy(treeData);
-        var layout = d3.tree().nodeSize([38, 200])
+        var layout = d3.tree().nodeSize([46, 240])
           .separation(function(a, b) { return a.parent === b.parent ? 1 : 1.3; });
         layout(root);
         /* Swap x/y for horizontal layout */
@@ -2220,8 +2220,8 @@ ANTLR은 <code>.g4</code> 파일의 규칙 구조를 <strong>기계적으로</st
           var rw = textWidth(nd.data.name);
           if (nd.x < x0) x0 = nd.x;
           if (nd.x + rw > x1) x1 = nd.x + rw;
-          if (nd.y - 19 < y0) y0 = nd.y - 19;
-          if (nd.y + 19 > y1) y1 = nd.y + 19;
+          if (nd.y - 21 < y0) y0 = nd.y - 21;
+          if (nd.y + 21 > y1) y1 = nd.y + 21;
         });
         var pad = 24; x0 -= pad; y0 -= pad; x1 += pad; y1 += pad;
         var vw = x1 - x0, vh = y1 - y0;
@@ -2229,7 +2229,7 @@ ANTLR은 <code>.g4</code> 파일의 규칙 구조를 <strong>기계적으로</st
         var svg = d3.select(container).append('svg')
           .attr('viewBox', x0+' '+y0+' '+vw+' '+vh)
           .style('width','100%').style('height','auto')
-          .style('min-height','300px').style('max-height','700px')
+          .style('min-height','400px').style('max-height','800px')
           .style('cursor','grab');
 
         var g = svg.append('g');
@@ -2253,9 +2253,9 @@ ANTLR은 <code>.g4</code> 파일의 규칙 구조를 <strong>기계적으로</st
           .attr('transform', function(nd) { return 'translate('+nd.x+','+nd.y+')'; });
 
         node.append('rect').attr('rx',5).attr('ry',5)
-          .attr('x', 0).attr('y', -15)
+          .attr('x', 0).attr('y', -17)
           .attr('width', function(nd) { return textWidth(nd.data.name); })
-          .attr('height', 30)
+          .attr('height', 34)
           .attr('fill', isAST ? '#fde8e8' : '#e8f0fd')
           .attr('stroke', isAST ? '#8b1a1a' : '#2c5aa0')
           .attr('stroke-width', 1.5)
@@ -2263,7 +2263,7 @@ ANTLR은 <code>.g4</code> 파일의 규칙 구조를 <strong>기계적으로</st
 
         node.append('text')
           .attr('x', 10).attr('dy','0.35em').attr('text-anchor','start')
-          .attr('font-size','13px').attr('font-family','Consolas,monospace')
+          .attr('font-size','15px').attr('font-family','Consolas,monospace')
           .attr('fill', isAST ? '#8b1a1a' : '#333')
           .text(function(nd) { return nd.data.name; });
 

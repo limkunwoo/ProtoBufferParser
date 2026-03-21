@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ProtoBufferParser 문서 Overview</title>
+  <style>
+    :root {
+      --bg-page:        #1e1e2e;
+      --bg-section:     #252537;
+      --bg-code:        #0d1117;
+      --bg-desc:        #1f3040;
+      --bg-table-head:  #2d4a63;
+      --bg-table-row:   #1a2a38;
+      --bg-table-alt:   #1e3248;
+      --bg-toc:         #1a2535;
+      --border-code:    #3a7bd5;
+      --border-desc:    #27ae60;
+      --border-section: #3d3d5c;
+      --text-main:      #cdd6f4;
+      --text-muted:     #a6adc8;
+      --text-code:      #a9dc76;
+      --text-heading:   #89b4fa;
+      --text-subhead:   #74c7ec;
+      --text-accent:    #f38ba8;
+      --text-inline:    #fab387;
+      --text-table:     #cdd6f4;
+      --label-code:     #3a7bd5;
+      --label-desc:     #27ae60;
+      --scrollbar:      #3d3d5c;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
+      background: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.75;
+    }
+
+    .layout { display: flex; min-height: 100vh; }
+
+    /* ── 사이드바 TOC ── */
+    .toc {
+      width: 280px; min-width: 280px;
+      background: var(--bg-toc);
+      border-right: 1px solid var(--border-section);
+      padding: 24px 16px;
+      position: sticky; top: 0; height: 100vh;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--scrollbar) transparent;
+    }
+    .toc h2 {
+      font-size: 13px; text-transform: uppercase; letter-spacing: 1px;
+      color: var(--text-muted); margin-bottom: 12px; padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-section);
+    }
+    .toc ol { padding-left: 16px; }
+    .toc li { margin: 4px 0; }
+    .toc a {
+      color: var(--text-muted); text-decoration: none; font-size: 13px;
+      line-height: 1.5; display: block; padding: 2px 4px; border-radius: 4px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .toc a:hover { background: rgba(137,180,250,0.1); color: var(--text-heading); }
+
+    /* ── 본문 ── */
+    .content {
+      flex: 1; max-width: 940px; padding: 48px 48px 80px 48px; overflow-x: hidden;
+    }
+
+    h1 {
+      font-size: 28px; color: var(--text-heading); margin-bottom: 8px;
+      padding-bottom: 12px; border-bottom: 2px solid var(--border-section);
+    }
+    .subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 40px; }
+
+    /* ── 섹션 ── */
+    .section {
+      background: var(--bg-section); border: 1px solid var(--border-section);
+      border-radius: 10px; margin-bottom: 32px; overflow: hidden;
+    }
+    .section-header {
+      padding: 14px 20px; background: rgba(137,180,250,0.07);
+      border-bottom: 1px solid var(--border-section);
+      display: flex; align-items: baseline; gap: 12px;
+    }
+    .section-header h2 { font-size: 18px; color: var(--text-heading); }
+    .section-body { padding: 20px 24px; }
+    .section-body p { font-size: 14px; margin: 8px 0; }
+    .section-body ul, .section-body ol { padding-left: 20px; font-size: 14px; }
+    .section-body li { margin: 5px 0; }
+    .section-body h3 {
+      font-size: 15px; color: var(--text-subhead); margin: 20px 0 8px 0;
+      padding-bottom: 4px; border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .section-body h3:first-child { margin-top: 0; }
+
+    /* ── 인라인 코드 ── */
+    code {
+      font-family: 'Cascadia Code', 'Consolas', monospace;
+      background: rgba(250,179,135,0.12); color: var(--text-inline);
+      padding: 1px 5px; border-radius: 3px; font-size: 13px;
+    }
+
+    /* ── 테이블 ── */
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13.5px; }
+    th {
+      background: var(--bg-table-head); color: var(--text-table);
+      padding: 8px 12px; text-align: left; font-weight: 600;
+      border-bottom: 2px solid var(--border-code);
+    }
+    td {
+      padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.06);
+      color: var(--text-main);
+    }
+    tr:nth-child(odd) td { background: var(--bg-table-row); }
+    tr:nth-child(even) td { background: var(--bg-table-alt); }
+
+    /* ── 파이프라인 다이어그램 ── */
+    .pipeline {
+      display: flex; align-items: center; justify-content: center;
+      gap: 0; margin: 24px 0; flex-wrap: wrap;
+    }
+    .pipe-node {
+      border-radius: 8px; padding: 12px 18px; text-align: center;
+      font-size: 13px; font-weight: 600; min-width: 120px;
+    }
+    .pipe-arrow {
+      color: var(--text-muted); font-size: 22px; padding: 0 6px;
+      user-select: none;
+    }
+    .pipe-data { background: #2a3a4a; border: 1.5px solid #5ba3d9; color: #b8d4f0; }
+    .pipe-engine { background: #3a7bd5; border: 1.5px solid #5ba3d9; color: #fff; }
+    .pipe-output { background: #1e8449; border: 1.5px solid #27ae60; color: #d5f5e3; }
+
+    /* ── 문서 카드 ── */
+    .doc-card {
+      background: var(--bg-desc); border-left: 4px solid var(--border-code);
+      border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 16px 0;
+    }
+    .doc-card.green { border-left-color: var(--border-desc); }
+    .doc-card.accent { border-left-color: var(--text-accent); }
+    .doc-card.orange { border-left-color: var(--text-inline); }
+    .doc-card h4 {
+      font-size: 15px; margin-bottom: 6px;
+    }
+    .doc-card h4 a {
+      color: var(--text-heading); text-decoration: none;
+      border-bottom: 1px dashed rgba(137,180,250,0.4);
+    }
+    .doc-card h4 a:hover { color: #b4d0ff; border-bottom-color: #b4d0ff; }
+    .doc-card .badge {
+      display: inline-block; font-size: 11px; padding: 1px 8px;
+      border-radius: 10px; margin-left: 8px; vertical-align: middle;
+    }
+    .doc-card .badge-qna { background: rgba(58,123,213,0.2); color: var(--text-subhead); }
+    .doc-card .badge-ref { background: rgba(243,139,168,0.2); color: var(--text-accent); }
+    .doc-card p { font-size: 13.5px; color: var(--text-muted); margin: 4px 0; }
+    .doc-card ul { padding-left: 18px; font-size: 13px; color: var(--text-main); }
+    .doc-card li { margin: 3px 0; }
+
+    /* ── 읽기 순서 ── */
+    .reading-order {
+      display: flex; flex-direction: column; gap: 12px; margin: 16px 0;
+    }
+    .reading-step {
+      display: flex; align-items: flex-start; gap: 14px;
+    }
+    .step-num {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--border-code); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; font-weight: 700; flex-shrink: 0;
+    }
+    .step-content { font-size: 14px; padding-top: 4px; }
+    .step-content strong { color: var(--text-heading); }
+
+    /* ── 인라인 문서 링크 ── */
+    a.doc-link {
+      color: var(--text-subhead); text-decoration: none;
+      border-bottom: 1px dashed rgba(116,199,236,0.4);
+      transition: color 0.15s, border-color 0.15s;
+    }
+    a.doc-link:hover { color: #a8e0ff; border-bottom-color: #a8e0ff; }
+
+    /* ── 반응형 ── */
+    @media (max-width: 900px) {
+      .toc { display: none; }
+      .content { padding: 24px 16px 60px 16px; }
+      .pipeline { flex-direction: column; align-items: stretch; }
+      .pipe-arrow { transform: rotate(90deg); text-align: center; padding: 4px 0; }
+    }
+  </style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ── 사이드바 TOC ── -->
+  <nav class="toc">
+    <h2>목차</h2>
+    <ol>
+      <li><a href="#s1">프로젝트 소개</a></li>
+      <li><a href="#s2">파싱 파이프라인</a></li>
+      <li><a href="#s3">문서 가이드</a></li>
+      <li><a href="#s4">읽는 순서</a></li>
+    </ol>
+  </nav>
+
+  <!-- ── 본문 ── -->
+  <main class="content">
+    <h1>ProtoBufferParser 문서 Overview</h1>
+    <p class="subtitle">.proto 파일을 Unreal Engine C++ 구조체로 변환하는 컴파일러의 내부 동작을 설명하는 4개 문서의 종합 안내서입니다.</p>
+
+    <!-- ════════ 섹션 1: 프로젝트 소개 ════════ -->
+    <div class="section" id="s1">
+      <div class="section-header"><h2>1. 프로젝트 소개</h2></div>
+      <div class="section-body">
+        <p><strong>ProtoBufferParser</strong>는 Google Protocol Buffer IDL 파일(<code>.proto</code>)을 읽어 Unreal Engine 호환 C++ 구조체(<code>.h</code> / <code>.cpp</code>)를 생성하는 <strong>소스-to-소스 컴파일러</strong>입니다.</p>
+
+        <h3>입력과 출력</h3>
+        <table>
+          <tr><th>항목</th><th>내용</th></tr>
+          <tr><td>입력</td><td><code>.proto</code> 파일 (Protocol Buffer 3 IDL)</td></tr>
+          <tr><td>출력</td><td><code>.h</code> / <code>.cpp</code> 파일 (Unreal Engine C++ 구조체)</td></tr>
+          <tr>        <td>파서 기술</td><td><a class="doc-link" href="g4_EBNF_설명.html">ANTLR4</a> (렉서 + 파서 자동 생성)</td></tr>
+          <tr><td>언어</td><td>C# 12 / .NET 8.0</td></tr>
+        </table>
+
+        <h3>네이밍 규칙</h3>
+        <table>
+          <tr><th>종류</th><th>패턴</th><th>예시</th></tr>
+          <tr><td>Struct</td><td><code>F{MessageName}Proto</code></td><td><code>FPlayerProto</code></td></tr>
+          <tr><td>Enum</td><td><code>E{EnumName}Proto</code></td><td><code>EStatusProto</code></td></tr>
+          <tr><td>파일</td><td><code>ME{MessageName}Proto.h/.cpp</code></td><td><code>MEPlayerProto.h</code></td></tr>
+          <tr><td>중첩</td><td><code>F{Outer}{Inner}Proto</code></td><td><code>FPlayerInventoryProto</code></td></tr>
+        </table>
+
+        <h3>핵심 아이디어</h3>
+        <p>이 프로젝트는 단순한 텍스트 변환이 아닙니다. <code>.proto</code> 파일의 문법 구조를 완전히 이해하고, 타입 간 관계(<a class="doc-link" href="TokenStream_to_CST_설명.html#s5">전방 참조</a>, 중첩 메시지, 스코프)를 해석한 뒤, Unreal Engine의 리플렉션 시스템(<code>USTRUCT</code>, <code>UPROPERTY</code>)에 맞는 코드를 생성합니다.</p>
+        <p>이 과정은 크게 <strong>5단계 파이프라인</strong>으로 이루어집니다.</p>
+      </div>
+    </div>
+
+    <!-- ════════ 섹션 2: 파싱 파이프라인 ════════ -->
+    <div class="section" id="s2">
+      <div class="section-header"><h2>2. 파싱 파이프라인 전체 흐름</h2></div>
+      <div class="section-body">
+        <p><code>.proto</code> 소스 파일이 최종 C++ 코드가 되기까지 5단계를 거칩니다:</p>
+
+        <div class="pipeline">
+          <div class="pipe-node pipe-data">.proto<br>소스 텍스트</div>
+          <span class="pipe-arrow">&rarr;</span>
+          <div class="pipe-node pipe-engine">Lexer<br><span style="font-size:11px;font-weight:400;opacity:0.8">문자 &rarr; 토큰</span></div>
+          <span class="pipe-arrow">&rarr;</span>
+          <div class="pipe-node pipe-data">토큰<br>스트림</div>
+          <span class="pipe-arrow">&rarr;</span>
+          <div class="pipe-node pipe-engine">Parser<br><span style="font-size:11px;font-weight:400;opacity:0.8">토큰 &rarr; 트리</span></div>
+          <span class="pipe-arrow">&rarr;</span>
+          <div class="pipe-node pipe-data">CST<br><span style="font-size:11px;opacity:0.8">Parse Tree</span></div>
+          <span class="pipe-arrow">&rarr;</span>
+          <div class="pipe-node pipe-engine">Visitor<br><span style="font-size:11px;font-weight:400;opacity:0.8">CST &rarr; AST</span></div>
+          <span class="pipe-arrow">&rarr;</span>
+          <div class="pipe-node pipe-data">AST</div>
+          <span class="pipe-arrow">&rarr;</span>
+          <div class="pipe-node pipe-output">Code<br>Generator<br><span style="font-size:11px;font-weight:400;opacity:0.8">UE C++</span></div>
+        </div>
+
+        <h3>각 단계 요약</h3>
+        <table>
+          <tr><th>단계</th><th>입력</th><th>출력</th><th>핵심 동작</th></tr>
+          <tr>
+            <td><strong>1. 렉싱</strong></td>
+            <td>소스 문자열</td>
+            <td>토큰 스트림</td>
+            <td>공백/주석 제거, 키워드·심볼·리터럴·식별자로 분류 → <a class="doc-link" href="TokenStream_to_CST_설명.html#s1">상세</a></td>
+          </tr>
+          <tr>
+            <td><strong>2. 파싱</strong></td>
+            <td>토큰 스트림</td>
+            <td>CST (Parse Tree)</td>
+            <td><a class="doc-link" href="TokenStream_to_CST_설명.html#s3">재귀 하강 파싱</a>, <a class="doc-link" href="TokenStream_to_CST_설명.html#s5">2-Pass로 전방 참조 해결</a>, <a class="doc-link" href="TokenStream_to_CST_설명.html#s6">시맨틱 프레디킷</a>으로 타입 판별</td>
+          </tr>
+          <tr>
+            <td><strong>3. CST &rarr; AST</strong></td>
+            <td>CST</td>
+            <td>AST</td>
+            <td><a class="doc-link" href="CST_to_AST_설명.html#s3">Visitor 패턴</a>으로 순회, 구두점·래퍼 규칙 제거, 의미 정보만 추출 → <a class="doc-link" href="CST_to_AST_설명.html#s2">상세</a></td>
+          </tr>
+          <tr>
+            <td><strong>4. 코드 생성</strong></td>
+            <td>AST</td>
+            <td>UE C++ 코드</td>
+            <td>타입 매핑 (<code>string</code>&rarr;<code>FString</code>, <code>repeated</code>&rarr;<code>TArray</code>), UE 매크로 삽입 → <a class="doc-link" href="CST_to_AST_설명.html#s7">상세</a></td>
+          </tr>
+        </table>
+
+        <h3>핵심 특징: 2-Pass 파싱</h3>
+        <p>Proto3는 아직 선언되지 않은 타입을 참조할 수 있습니다 (<a class="doc-link" href="TokenStream_to_CST_설명.html#s5">전방 참조</a>). 이를 해결하기 위해 파서는 <strong>2번</strong> 토큰 스트림을 순회합니다:</p>
+        <ul>
+          <li><strong>Pass 1</strong> — 모든 <code>message</code>와 <code>enum</code> 이름을 심볼 테이블에 수집 (파싱 결과는 버림)</li>
+          <li><strong>Pass 2</strong> — 심볼 테이블을 참조하여 정확한 CST 생성</li>
+        </ul>
+
+        <h3>핵심 특징: 노드 압축</h3>
+        <p>CST는 문법 규칙을 그대로 반영하므로 구두점(<code>=</code>, <code>;</code>, <code>{</code>)과 래퍼 규칙(<code>fieldName &rarr; ident &rarr; IDENTIFIER</code>) 같은 불필요한 노드가 많습니다. <a class="doc-link" href="CST_to_AST_설명.html#s2">AST 변환</a> 시 이들을 제거하여 <strong>~29개 CST 노드 &rarr; ~3개 AST 노드</strong>로 극적으로 압축합니다.</p>
+      </div>
+    </div>
+
+    <!-- ════════ 섹션 3: 문서 가이드 ════════ -->
+    <div class="section" id="s3">
+      <div class="section-header"><h2>3. 문서 가이드</h2></div>
+      <div class="section-body">
+        <p>아래 4개 문서가 파이프라인의 전 과정을 커버합니다. 각 문서는 독립적으로 읽을 수 있지만, 순서대로 읽으면 전체 흐름이 자연스럽게 연결됩니다.</p>
+
+        <!-- 문서 1 -->
+        <div class="doc-card">
+          <h4><a href="g4_EBNF_설명.html">ANTLR4 g4 문법 파일: 구조와 작성법</a> <span class="badge badge-qna">Q&amp;A 8섹션</span></h4>
+          <p>파이프라인 범위: <strong>문법 정의</strong> &mdash; Lexer와 Parser가 따르는 규칙 자체를 이해합니다.</p>
+          <ul>
+            <li>형식 문법(Formal Grammar)과 EBNF의 개념</li>
+            <li>EBNF 핵심 연산자 (<code>|</code>, <code>?</code>, <code>*</code>, <code>+</code>)</li>
+            <li><code>.g4</code> 파일 구조: <code>grammar</code> 선언, Parser Rules, Lexer Rules</li>
+            <li>Parser Rule vs Lexer Rule의 근본적 차이</li>
+            <li>반복 패턴: 쉼표 리스트, 블록 감싸기, 재귀, 래퍼 규칙</li>
+            <li>Protobuf3.g4 규칙 계층 분석 (<code>proto</code> &rarr; <code>messageDef</code> &rarr; <code>field</code>)</li>
+            <li>시맨틱 프레디킷과 액션</li>
+            <li>문법 작성 팁: 좌재귀, 렉서 우선순위, 최장 매치, <code>skip</code> vs <code>channel(HIDDEN)</code></li>
+          </ul>
+        </div>
+
+        <!-- 문서 2 -->
+        <div class="doc-card accent">
+          <h4><a href="Protobuf3_g4_설명.html">Protobuf3.g4 문법 파일 상세 설명</a> <span class="badge badge-ref">레퍼런스 26섹션</span></h4>
+          <p>파이프라인 범위: <strong>문법 레퍼런스</strong> &mdash; <code>Protobuf3.g4</code>의 모든 규칙을 한 줄씩 해설합니다.</p>
+          <ul>
+            <li>헤더/옵션, 2-Pass 진입점, 최상위 구조</li>
+            <li><code>syntax</code>, <code>import</code>, <code>package</code>, <code>option</code> 선언</li>
+            <li>필드 레이블, <code>oneof</code>, <code>map</code>, 타입 참조</li>
+            <li><code>message</code>, <code>enum</code>, <code>extend</code>, <code>service</code> 정의</li>
+            <li>Lexer 규칙: 키워드 27개, 심볼 15개, 리터럴, 공백/주석</li>
+            <li>시맨틱 액션 전용 규칙 (<code>doEnterBlock</code>, <code>doMessageNameDef</code> 등)</li>
+            <li>접이식 원본 전문 (685줄) 포함</li>
+          </ul>
+        </div>
+
+        <!-- 문서 3 -->
+        <div class="doc-card green">
+          <h4><a href="TokenStream_to_CST_설명.html">토큰 스트림 &rarr; CST 구축: 렉싱에서 Parse Tree까지</a> <span class="badge badge-qna">Q&amp;A 7섹션</span></h4>
+          <p>파이프라인 범위: <strong>1단계 렉싱 + 2단계 파싱</strong> &mdash; 소스 텍스트가 CST가 되는 전 과정입니다.</p>
+          <ul>
+            <li>렉싱 파이프라인: <code>AntlrInputStream</code> &rarr; <code>Lexer</code> &rarr; <code>CommonTokenStream</code></li>
+            <li>토큰 분류: 키워드 27개, 심볼 15개, 리터럴 5개, 히든 채널</li>
+            <li>재귀 하강 파싱: <code>EnterRule</code> &rarr; <code>Match</code> &rarr; <code>ExitRule</code></li>
+            <li>Context 클래스: 단수/복수 접근자, <code>TerminalNode</code> vs <code>Context</code></li>
+            <li>2-Pass 파싱과 <code>DoRewind()</code> 내부 동작</li>
+            <li>시맨틱 프레디킷: <code>IsMessageType_()</code>, <code>IsEnumType_()</code></li>
+            <li>단계별 추적: 14개 토큰 &rarr; 19개 CST 노드 (인터랙티브 스테퍼)</li>
+          </ul>
+        </div>
+
+        <!-- 문서 4 -->
+        <div class="doc-card orange">
+          <h4><a href="CST_to_AST_설명.html">CST &rarr; AST 변환: Parse Tree에서 Abstract Syntax Tree까지</a> <span class="badge badge-qna">Q&amp;A 7섹션</span></h4>
+          <p>파이프라인 범위: <strong>3단계 AST 변환 + 4단계 코드 생성</strong> &mdash; CST에서 UE C++ 코드까지의 후반부입니다.</p>
+          <ul>
+            <li>파싱 파이프라인 전체 흐름 (5단계 조감도)</li>
+            <li>CST vs AST: 구조적 차이와 노드 압축 (29 &rarr; 3)</li>
+            <li>Visitor 패턴: <code>AstBuilder</code>, <code>VisitField</code>, <code>VisitMessageDef</code></li>
+            <li>Visitor vs Listener 비교</li>
+            <li>변환 과정 단계별 추적 (인터랙티브 스테퍼)</li>
+            <li>타입 판별과 2-Pass 파싱의 역할</li>
+            <li>코드 생성: proto3 &rarr; UE 타입 매핑, <code>USTRUCT</code>/<code>UPROPERTY</code> 매크로</li>
+          </ul>
+        </div>
+
+        <h3>문서 형식</h3>
+        <table>
+          <tr><th>문서</th><th>형식</th><th>특징</th></tr>
+          <tr>
+            <td>g4_EBNF_설명</td>
+            <td>Q&amp;A (빌드)</td>
+            <td>라이트 테마, MathJax 수식, Graphviz DOT 다이어그램, 인터랙티브 D3 트리</td>
+          </tr>
+          <tr>
+            <td>Protobuf3_g4_설명</td>
+            <td>코드 레퍼런스 (수작업)</td>
+            <td>다크 테마, 코드/설명 교차, 접이식 원본, 사이드바 TOC</td>
+          </tr>
+          <tr>
+            <td>TokenStream_to_CST_설명</td>
+            <td>Q&amp;A (빌드)</td>
+            <td>라이트 테마, rawhtml 다이어그램, 토큰&rarr;CST 인터랙티브 스테퍼</td>
+          </tr>
+          <tr>
+            <td>CST_to_AST_설명</td>
+            <td>Q&amp;A (빌드)</td>
+            <td>라이트 테마, Graphviz 다이어그램, CST&rarr;AST 인터랙티브 스테퍼, D3 트리</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ════════ 섹션 4: 읽는 순서 ════════ -->
+    <div class="section" id="s4">
+      <div class="section-header"><h2>4. 읽는 순서 권장</h2></div>
+      <div class="section-body">
+        <p>파이프라인의 흐름을 따라가는 순서로 읽으면 가장 자연스럽습니다:</p>
+
+        <div class="reading-order">
+          <div class="reading-step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <strong><a class="doc-link" href="g4_EBNF_설명.html">g4_EBNF_설명</a></strong> &mdash; 먼저 ANTLR4 문법 파일이 무엇인지, 어떻게 읽는지를 이해합니다. EBNF 연산자, Parser Rule과 Lexer Rule의 차이, 핵심 패턴을 익힙니다.
+            </div>
+          </div>
+          <div class="reading-step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <strong><a class="doc-link" href="Protobuf3_g4_설명.html">Protobuf3_g4_설명</a></strong> &mdash; 실제 <code>Protobuf3.g4</code> 파일의 모든 규칙을 한 줄씩 확인합니다. 1번 문서에서 배운 개념이 실전에서 어떻게 쓰이는지 볼 수 있습니다. 레퍼런스 용도로 필요할 때마다 돌아와서 참고하세요.
+            </div>
+          </div>
+          <div class="reading-step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <strong><a class="doc-link" href="TokenStream_to_CST_설명.html">TokenStream_to_CST_설명</a></strong> &mdash; 소스 텍스트가 토큰으로 분해되고, 파서가 토큰을 하나씩 소비하면서 CST를 조립하는 과정을 추적합니다. <a class="doc-link" href="TokenStream_to_CST_설명.html#s5">2-Pass 파싱</a>과 <a class="doc-link" href="TokenStream_to_CST_설명.html#s6">시맨틱 프레디킷</a>의 실제 동작을 이해합니다.
+            </div>
+          </div>
+          <div class="reading-step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <strong><a class="doc-link" href="CST_to_AST_설명.html">CST_to_AST_설명</a></strong> &mdash; CST에서 불필요한 노드를 제거하고 AST를 만드는 <a class="doc-link" href="CST_to_AST_설명.html#s3">Visitor 패턴</a>, 그리고 AST에서 최종 <a class="doc-link" href="CST_to_AST_설명.html#s7">Unreal Engine C++ 코드를 생성</a>하는 과정까지. 파이프라인의 완성입니다.
+            </div>
+          </div>
+        </div>
+
+        <p style="margin-top: 20px; color: var(--text-muted); font-size: 13px;">
+          각 문서는 독립적으로도 읽을 수 있습니다. 특정 단계만 궁금하다면 해당 문서로 바로 이동해도 됩니다.
+        </p>
+      </div>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

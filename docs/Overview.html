@@ -239,7 +239,7 @@
         </table>
 
         <h3>핵심 아이디어</h3>
-        <p>이 프로젝트는 단순한 텍스트 변환이 아닙니다. <code>.proto</code> 파일의 문법 구조를 완전히 이해하고, 타입 간 관계(<a class="doc-link" href="TokenStream_to_CST_설명.html#s5">전방 참조</a>, 중첩 메시지, 스코프)를 해석한 뒤, Unreal Engine의 리플렉션 시스템(<code>USTRUCT</code>, <code>UPROPERTY</code>)에 맞는 코드를 생성합니다.</p>
+        <p>이 프로젝트는 단순한 텍스트 변환이 아닙니다. <code>.proto</code> 파일의 문법 구조를 완전히 이해하고, 타입 간 관계(<a class="doc-link" href="TokenStream_to_CST_설명.html#section-5">전방 참조</a>, 중첩 메시지, 스코프)를 해석한 뒤, Unreal Engine의 리플렉션 시스템(<code>USTRUCT</code>, <code>UPROPERTY</code>)에 맞는 코드를 생성합니다.</p>
         <p>이 과정은 크게 <strong>5단계 파이프라인</strong>으로 이루어집니다.</p>
       </div>
     </div>
@@ -275,37 +275,37 @@
             <td><strong>1. 렉싱</strong></td>
             <td>소스 문자열</td>
             <td>토큰 스트림</td>
-            <td>공백/주석 제거, 키워드·심볼·리터럴·식별자로 분류 → <a class="doc-link" href="TokenStream_to_CST_설명.html#s1">상세</a></td>
+            <td>공백/주석 제거, 키워드·심볼·리터럴·식별자로 분류 → <a class="doc-link" href="TokenStream_to_CST_설명.html#section-1">상세</a></td>
           </tr>
           <tr>
             <td><strong>2. 파싱</strong></td>
             <td>토큰 스트림</td>
             <td>CST (Parse Tree)</td>
-            <td><a class="doc-link" href="TokenStream_to_CST_설명.html#s3">재귀 하강 파싱</a>, <a class="doc-link" href="TokenStream_to_CST_설명.html#s5">2-Pass로 전방 참조 해결</a>, <a class="doc-link" href="TokenStream_to_CST_설명.html#s6">시맨틱 프레디킷</a>으로 타입 판별</td>
+            <td><a class="doc-link" href="TokenStream_to_CST_설명.html#section-3">재귀 하강 파싱</a>, <a class="doc-link" href="TokenStream_to_CST_설명.html#section-5">2-Pass로 전방 참조 해결</a>, <a class="doc-link" href="TokenStream_to_CST_설명.html#section-6">시맨틱 프레디킷</a>으로 타입 판별</td>
           </tr>
           <tr>
             <td><strong>3. CST &rarr; AST</strong></td>
             <td>CST</td>
             <td>AST</td>
-            <td><a class="doc-link" href="CST_to_AST_설명.html#s3">Visitor 패턴</a>으로 순회, 구두점·래퍼 규칙 제거, 의미 정보만 추출 → <a class="doc-link" href="CST_to_AST_설명.html#s2">상세</a></td>
+            <td><a class="doc-link" href="CST_to_AST_설명.html#section-3">Visitor 패턴</a>으로 순회, 구두점·래퍼 규칙 제거, 의미 정보만 추출 → <a class="doc-link" href="CST_to_AST_설명.html#section-2">상세</a></td>
           </tr>
           <tr>
             <td><strong>4. 코드 생성</strong></td>
             <td>AST</td>
             <td>UE C++ 코드</td>
-            <td>타입 매핑 (<code>string</code>&rarr;<code>FString</code>, <code>repeated</code>&rarr;<code>TArray</code>), UE 매크로 삽입 → <a class="doc-link" href="CST_to_AST_설명.html#s7">상세</a></td>
+            <td>타입 매핑 (<code>string</code>&rarr;<code>FString</code>, <code>repeated</code>&rarr;<code>TArray</code>), UE 매크로 삽입 → <a class="doc-link" href="CST_to_AST_설명.html#section-7">상세</a></td>
           </tr>
         </table>
 
         <h3>핵심 특징: 2-Pass 파싱</h3>
-        <p>Proto3는 아직 선언되지 않은 타입을 참조할 수 있습니다 (<a class="doc-link" href="TokenStream_to_CST_설명.html#s5">전방 참조</a>). 이를 해결하기 위해 파서는 <strong>2번</strong> 토큰 스트림을 순회합니다:</p>
+        <p>Proto3는 아직 선언되지 않은 타입을 참조할 수 있습니다 (<a class="doc-link" href="TokenStream_to_CST_설명.html#section-5">전방 참조</a>). 이를 해결하기 위해 파서는 <strong>2번</strong> 토큰 스트림을 순회합니다:</p>
         <ul>
           <li><strong>Pass 1</strong> — 모든 <code>message</code>와 <code>enum</code> 이름을 심볼 테이블에 수집 (파싱 결과는 버림)</li>
           <li><strong>Pass 2</strong> — 심볼 테이블을 참조하여 정확한 CST 생성</li>
         </ul>
 
         <h3>핵심 특징: 노드 압축</h3>
-        <p>CST는 문법 규칙을 그대로 반영하므로 구두점(<code>=</code>, <code>;</code>, <code>{</code>)과 래퍼 규칙(<code>fieldName &rarr; ident &rarr; IDENTIFIER</code>) 같은 불필요한 노드가 많습니다. <a class="doc-link" href="CST_to_AST_설명.html#s2">AST 변환</a> 시 이들을 제거하여 <strong>~29개 CST 노드 &rarr; ~3개 AST 노드</strong>로 극적으로 압축합니다.</p>
+        <p>CST는 문법 규칙을 그대로 반영하므로 구두점(<code>=</code>, <code>;</code>, <code>{</code>)과 래퍼 규칙(<code>fieldName &rarr; ident &rarr; IDENTIFIER</code>) 같은 불필요한 노드가 많습니다. <a class="doc-link" href="CST_to_AST_설명.html#section-2">AST 변환</a> 시 이들을 제거하여 <strong>~29개 CST 노드 &rarr; ~3개 AST 노드</strong>로 극적으로 압축합니다.</p>
       </div>
     </div>
 
@@ -425,13 +425,13 @@
           <div class="reading-step">
             <div class="step-num">3</div>
             <div class="step-content">
-              <strong><a class="doc-link" href="TokenStream_to_CST_설명.html">TokenStream_to_CST_설명</a></strong> &mdash; 소스 텍스트가 토큰으로 분해되고, 파서가 토큰을 하나씩 소비하면서 CST를 조립하는 과정을 추적합니다. <a class="doc-link" href="TokenStream_to_CST_설명.html#s5">2-Pass 파싱</a>과 <a class="doc-link" href="TokenStream_to_CST_설명.html#s6">시맨틱 프레디킷</a>의 실제 동작을 이해합니다.
+              <strong><a class="doc-link" href="TokenStream_to_CST_설명.html">TokenStream_to_CST_설명</a></strong> &mdash; 소스 텍스트가 토큰으로 분해되고, 파서가 토큰을 하나씩 소비하면서 CST를 조립하는 과정을 추적합니다. <a class="doc-link" href="TokenStream_to_CST_설명.html#section-5">2-Pass 파싱</a>과 <a class="doc-link" href="TokenStream_to_CST_설명.html#section-6">시맨틱 프레디킷</a>의 실제 동작을 이해합니다.
             </div>
           </div>
           <div class="reading-step">
             <div class="step-num">4</div>
             <div class="step-content">
-              <strong><a class="doc-link" href="CST_to_AST_설명.html">CST_to_AST_설명</a></strong> &mdash; CST에서 불필요한 노드를 제거하고 AST를 만드는 <a class="doc-link" href="CST_to_AST_설명.html#s3">Visitor 패턴</a>, 그리고 AST에서 최종 <a class="doc-link" href="CST_to_AST_설명.html#s7">Unreal Engine C++ 코드를 생성</a>하는 과정까지. 파이프라인의 완성입니다.
+              <strong><a class="doc-link" href="CST_to_AST_설명.html">CST_to_AST_설명</a></strong> &mdash; CST에서 불필요한 노드를 제거하고 AST를 만드는 <a class="doc-link" href="CST_to_AST_설명.html#section-3">Visitor 패턴</a>, 그리고 AST에서 최종 <a class="doc-link" href="CST_to_AST_설명.html#section-7">Unreal Engine C++ 코드를 생성</a>하는 과정까지. 파이프라인의 완성입니다.
             </div>
           </div>
         </div>

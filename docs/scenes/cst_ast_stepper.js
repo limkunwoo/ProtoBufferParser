@@ -239,12 +239,12 @@ module.exports = {
       var P=o.P, S=o.S, steps=o.steps, CI=o.CI, AI=o.AI;
 
       // ===== D3.js Horizontal Tree =====
-      function textWidth(l) { return l.length * 9.6 + 28; }
+      function textWidth(l) { return l.length * 11 + 32; }
 
       function renderD3Tree(containerId, treeData, isAST) {
         var container = document.getElementById(containerId);
         var root = d3.hierarchy(treeData);
-        var layout = d3.tree().nodeSize([46, 240])
+        var layout = d3.tree().nodeSize([52, 280])
           .separation(function(a, b) { return a.parent === b.parent ? 1 : 1.3; });
         layout(root);
         /* Swap x/y for horizontal layout */
@@ -255,8 +255,8 @@ module.exports = {
           var rw = textWidth(nd.data.name);
           if (nd.x < x0) x0 = nd.x;
           if (nd.x + rw > x1) x1 = nd.x + rw;
-          if (nd.y - 21 < y0) y0 = nd.y - 21;
-          if (nd.y + 21 > y1) y1 = nd.y + 21;
+          if (nd.y - 24 < y0) y0 = nd.y - 24;
+          if (nd.y + 24 > y1) y1 = nd.y + 24;
         });
         var pad = 24; x0 -= pad; y0 -= pad; x1 += pad; y1 += pad;
         var vw = x1 - x0, vh = y1 - y0;
@@ -288,9 +288,9 @@ module.exports = {
           .attr('transform', function(nd) { return 'translate('+nd.x+','+nd.y+')'; });
 
         node.append('rect').attr('rx',5).attr('ry',5)
-          .attr('x', 0).attr('y', -17)
+          .attr('x', 0).attr('y', -19)
           .attr('width', function(nd) { return textWidth(nd.data.name); })
-          .attr('height', 34)
+          .attr('height', 38)
           .attr('fill', isAST ? '#fde8e8' : '#e8f0fd')
           .attr('stroke', isAST ? '#8b1a1a' : '#2c5aa0')
           .attr('stroke-width', 1.5)
@@ -298,7 +298,7 @@ module.exports = {
 
         node.append('text')
           .attr('x', 10).attr('dy','0.35em').attr('text-anchor','start')
-          .attr('font-size','15px').attr('font-family','Consolas,monospace')
+          .attr('font-size','18px').attr('font-family','Consolas,monospace')
           .attr('fill', isAST ? '#8b1a1a' : '#333')
           .text(function(nd) { return nd.data.name; });
 

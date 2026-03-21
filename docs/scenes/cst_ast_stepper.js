@@ -94,7 +94,7 @@ module.exports = {
           'font-size:0.9em;">CST (Parse Tree) \u2014 20\uAC1C \uB178\uB4DC</div>' +
           '<div style="background:#f8f9fa;border:1px solid #e0e0e0;border-radius:6px;' +
           'padding:8px 10px;font-family:Consolas,\'Courier New\',monospace;' +
-          'font-size:0.76em;line-height:1.45;">' +
+          'font-size:0.76em;line-height:1.45;text-align:left;">' +
             cstHtml +
           '</div>' +
         '</div>' +
@@ -104,7 +104,7 @@ module.exports = {
           'font-size:0.9em;">AST \u2014 3\uAC1C \uB178\uB4DC</div>' +
           '<div id="' + P + '-ast-box" style="background:#fdf8f8;border:1px solid #e0d0d0;' +
           'border-radius:6px;padding:8px 10px;font-family:Consolas,\'Courier New\',monospace;' +
-          'font-size:0.8em;line-height:1.45;min-height:120px;">' +
+          'font-size:0.8em;line-height:1.45;min-height:120px;text-align:left;">' +
             astHtml +
           '</div>' +
         '</div>' +

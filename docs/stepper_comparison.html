@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CST→AST Stepper — 렌더링 방식 비교</title>
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<style>
+* { box-sizing: border-box; }
+body { font-family: 'Malgun Gothic','Segoe UI',sans-serif; max-width: 1400px; margin: 0 auto; padding: 2em; background: #fafafa; color: #222; line-height: 1.6; }
+h1 { text-align: center; color: #1a3a6e; border-bottom: 3px solid #2c5aa0; padding-bottom: 0.5em; }
+h2 { color: #2c5aa0; margin-top: 2em; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.8em; font-weight: bold; margin-left: 8px; }
+.badge-d3 { background: #e8fde8; color: #2a6a2c; }
+.badge-text { background: #e8f4fd; color: #2c5aa0; }
+.badge-css { background: #f3e8fd; color: #6a2ca0; }
+.panel { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin-bottom: 1em; }
+.two-col { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin-bottom: 12px; }
+.col-cst { flex: 1 1 420px; min-width: 300px; max-width: 100%; }
+.col-ast { flex: 1 1 300px; min-width: 250px; max-width: 100%; }
+.col-title { font-weight: bold; text-align: center; margin-bottom: 6px; font-size: 0.9em; }
+.col-title-cst { color: #2c5aa0; }
+.col-title-ast { color: #8b1a1a; }
+.info-box { text-align: center; padding: 10px 16px; background: #e8f4fd; border-left: 4px solid #5ba3d9; border-radius: 0 6px 6px 0; margin-bottom: 10px; font-size: 0.92em; color: #333; min-height: 2.5em; display: flex; align-items: center; justify-content: center; }
+.s-controls { display: flex; align-items: center; justify-content: center; gap: 1em; margin: 0.6em 0 0.8em; }
+.s-btn { background: #2c5aa0; color: white; border: none; border-radius: 6px; padding: 0.45em 1.4em; cursor: pointer; font-size: 1em; font-weight: bold; transition: background 0.2s; }
+.s-btn:hover:not(:disabled) { background: #1a3a6e; }
+.s-btn:disabled { background: #aaa; cursor: not-allowed; }
+.s-label { display: inline-block; min-width: 9em; text-align: center; font-weight: bold; color: #2c5aa0; font-size: 1.05em; }
+.legend { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; font-size: 0.78em; color: #555; margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee; }
+.legend-dot { display: inline-block; width: 12px; height: 12px; border-radius: 2px; vertical-align: middle; margin-right: 3px; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+th, td { border: 1px solid #ccc; padding: 8px 12px; text-align: left; }
+th { background: #f0f0f0; }
+.pros { color: #1a7a1a; }
+.cons { color: #c0392b; }
+.winner { background: #e8fde8; }
+
+/* === Panel B: monospace text === */
+.mono-box { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 6px; padding: 8px 10px; font-family: Consolas,'Courier New',monospace; font-size: 0.76em; line-height: 1.45; text-align: left; }
+.ast-box { background: #fdf8f8; border: 1px solid #e0d0d0; border-radius: 6px; padding: 8px 10px; font-family: Consolas,'Courier New',monospace; font-size: 0.8em; line-height: 1.45; min-height: 120px; text-align: left; }
+.mono-line { padding: 2px 6px; border-radius: 3px; margin: 1px 0; transition: background 0.3s, color 0.3s, opacity 0.3s; white-space: pre; }
+
+/* === Panel C: CSS tree === */
+.css-tree, .css-tree ul { list-style: none; margin: 0; padding-left: 0; }
+.css-tree ul { padding-left: 22px; }
+.css-tree li { position: relative; padding: 1px 0; }
+.css-tree li::before { content: ''; position: absolute; left: -14px; top: 0; height: 100%; border-left: 1.5px solid #bbb; }
+.css-tree li::after { content: ''; position: absolute; left: -14px; top: 14px; width: 12px; border-top: 1.5px solid #bbb; }
+.css-tree li:last-child::before { height: 14px; }
+.css-tree > li::before, .css-tree > li::after { display: none; }
+.css-tree .node-label { display: inline-block; padding: 2px 8px; border-radius: 4px; font-family: Consolas,'Courier New',monospace; font-size: 0.78em; transition: background 0.3s, color 0.3s, opacity 0.3s; }
+.css-ast-box { background: #fdf8f8; border: 1px solid #e0d0d0; border-radius: 6px; padding: 8px 10px; min-height: 120px; }
+
+/* === Panel A: D3 tree === */
+.d3-tree-box { border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; min-height: 120px; }
+.d3-tree-box svg { display: block; width: 100%; height: auto; min-height: 180px; max-height: 500px; cursor: grab; }
+</style>
+</head>
+<body>
+
+<h1>CST→AST Stepper — 3-way 비교</h1>
+<p>섹션 5 "변환 과정 단계별 추적" 스테퍼 시각화를 세 가지 렌더링 방식으로 비교합니다. 동일한 9단계(0~8) 데이터를 사용합니다.</p>
+
+<!-- ============================================================ -->
+<!-- PANEL A: D3.js Tree + Stepper -->
+<!-- ============================================================ -->
+<h2>A. D3.js 트리 + 스테퍼 <span class="badge badge-d3">자동 레이아웃</span></h2>
+<div class="panel" id="panel-a">
+<div class="two-col">
+  <div class="col-cst"><div class="col-title col-title-cst">CST (Parse Tree) — 20개 노드</div><div class="d3-tree-box" id="d3-cst"></div></div>
+  <div class="col-ast"><div class="col-title col-title-ast">AST — 3개 노드</div><div class="d3-tree-box" id="d3-ast"></div></div>
+</div>
+<div class="info-box" id="d3-info">초기 상태</div>
+<div class="s-controls"><button class="s-btn" id="d3-prev" disabled>← 이전</button><span class="s-label" id="d3-val">단계 0 / 8</span><button class="s-btn" id="d3-next">다음 →</button></div>
+<div class="legend" id="d3-legend"></div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PANEL B: Monospace Text -->
+<!-- ============================================================ -->
+<h2>B. Monospace 텍스트 (현재 방식) <span class="badge badge-text">박스드로잉 문자</span></h2>
+<div class="panel" id="panel-b"></div>
+
+<!-- ============================================================ -->
+<!-- PANEL C: CSS Tree -->
+<!-- ============================================================ -->
+<h2>C. CSS 트리 <span class="badge badge-css">중첩 리스트</span></h2>
+<div class="panel" id="panel-c"></div>
+
+<!-- ============================================================ -->
+<!-- COMPARISON TABLE -->
+<!-- ============================================================ -->
+<h2>비교 요약</h2>
+<table>
+<tr><th>기준</th><th>A. D3.js 트리</th><th>B. Monospace 텍스트</th><th>C. CSS 트리</th></tr>
+<tr><td>자동 레이아웃</td><td class="winner">Reingold-Tilford 겹침 방지</td><td>수동 (Unicode 의존)</td><td>브라우저 CSS 레이아웃</td></tr>
+<tr><td>텍스트 정렬</td><td class="winner">SVG — 폰트 무관</td><td class="cons">monospace 폴백 시 깨짐</td><td>HTML flow — 안정적</td></tr>
+<tr><td>하이라이팅 균일성</td><td class="winner">rect 크기 = 텍스트 폭</td><td class="cons">라인 길이에 따라 불균일</td><td class="winner">inline-block 자동 맞춤</td></tr>
+<tr><td>Pan/Zoom</td><td class="winner">d3.zoom() 내장</td><td>없음</td><td>없음</td></tr>
+<tr><td>연결선</td><td class="winner">SVG path (곡선)</td><td>Unicode ├─│ (근사)</td><td>CSS ::before/::after</td></tr>
+<tr><td>외부 의존성</td><td class="cons">D3.js (~273KB)</td><td class="winner">없음</td><td class="winner">없음</td></tr>
+<tr><td>구현 복잡도</td><td class="cons">높음 (D3 API)</td><td class="winner">낮음</td><td>중간</td></tr>
+</table>
+
+<!-- SCRIPTS: injected in parts below -->
+<script id="shared-data">
+/* ---- Shared step definitions ---- */
+var STYLES = {
+  N: { bg: 'transparent', c: '#333',    o: 1   },
+  A: { bg: '#cce5ff',     c: '#004085', o: 1   },
+  E: { bg: '#d4edda',     c: '#155724', o: 1   },
+  F: { bg: 'transparent', c: '#ccc',    o: 0.4 },
+  D: { bg: '#f0f0f0',     c: '#888',    o: 0.7 },
+  S: { bg: '#fde8e8',     c: '#8b1a1a', o: 1   },
+  G: { bg: '#d4edda',     c: '#155724', o: 1   }
+};
+
+var STEPS = [
+  { d: '초기 상태 — CST(Parse Tree) 전체 구조가 표시됩니다.', c: {}, a: {} },
+  { d: 'VisitMessageDef(ctx) 호출 — 최상위 규칙 노드 방문 시작.', c: {c0:'A'}, a: {} },
+  { d: 'ctx.messageName().GetText() → "Player" 추출.', c: {c0:'A',c1:'F',c2:'E',c3:'E',c4:'E'}, a: {a0:'G',a1:'G'} },
+  { d: 'messageBody 진입. LC, RC 구두점 토큰 무시.', c: {c0:'A',c1:'F',c2:'D',c3:'D',c4:'D',c5:'A',c6:'F',c19:'F'}, a: {a0:'S',a1:'S'} },
+  { d: 'VisitField — 첫 번째 field 방문.', c: {c0:'D',c1:'F',c2:'D',c3:'D',c4:'D',c5:'D',c6:'F',c7:'A',c19:'F'}, a: {a0:'S',a1:'S'} },
+  { d: 'type_, fieldName, fieldNumber 값 추출. EQ, SEMI 폐기.', c: {c0:'D',c1:'F',c2:'D',c3:'D',c4:'D',c5:'D',c6:'F',c7:'A',c8:'E',c9:'E',c10:'F',c11:'E',c12:'F',c19:'F'}, a: {a0:'S',a1:'S',a2:'S',a3:'G',a4:'G',a5:'G',a6:'G'} },
+  { d: 'VisitField — 두 번째 field 방문.', c: {c0:'D',c1:'F',c2:'D',c3:'D',c4:'D',c5:'D',c6:'F',c7:'D',c8:'D',c9:'D',c10:'F',c11:'D',c12:'F',c13:'A',c19:'F'}, a: {a0:'S',a1:'S',a2:'S',a3:'S',a4:'S',a5:'S',a6:'S'} },
+  { d: 'type, name, number 추출, EQ/SEMI 폐기.', c: {c0:'D',c1:'F',c2:'D',c3:'D',c4:'D',c5:'D',c6:'F',c7:'D',c8:'D',c9:'D',c10:'F',c11:'D',c12:'F',c13:'A',c14:'E',c15:'E',c16:'F',c17:'E',c18:'F',c19:'F'}, a: {a0:'S',a1:'S',a2:'S',a3:'S',a4:'S',a5:'S',a6:'S',a7:'G',a8:'G',a9:'G',a10:'G'} },
+  { d: '변환 완료 — 20개 CST 노드 → 3개 AST 의미 노드로 압축.', c: {c0:'D',c1:'F',c2:'D',c3:'D',c4:'D',c5:'D',c6:'F',c7:'D',c8:'D',c9:'D',c10:'F',c11:'D',c12:'F',c13:'D',c14:'D',c15:'D',c16:'F',c17:'D',c18:'F',c19:'F'}, a: {a0:'G',a1:'G',a2:'G',a3:'G',a4:'G',a5:'G',a6:'G',a7:'G',a8:'G',a9:'G',a10:'G'} }
+];
+
+var CST_IDS = ['c0','c1','c2','c3','c4','c5','c6','c7','c8','c9','c10','c11','c12','c13','c14','c15','c16','c17','c18','c19'];
+var AST_IDS = ['a0','a1','a2','a3','a4','a5','a6','a7','a8','a9','a10'];
+
+function makeLegend(el) {
+  var items = [
+    ['#cce5ff','#004085','방문 중'],['#d4edda','#155724','값 추출'],
+    ['#f0f0f0','#ccc','처리 완료'],['#fff','#ddd','무시/폐기','opacity:0.4']
+  ];
+  el.innerHTML = items.map(function(it) {
+    return '<span><span class="legend-dot" style="background:'+it[0]+';border:1px solid '+it[1]+';'+(it[3]||'')+'"></span>'+it[2]+'</span>';
+  }).join('');
+}
+
+function makeStepper(prefix, infoId, valId, prevId, nextId, applyFn) {
+  var cur = 0;
+  function go(idx) { cur = idx; applyFn(idx); upd(); }
+  function upd() {
+    document.getElementById(infoId).textContent = STEPS[cur].d;
+    document.getElementById(valId).textContent = '단계 ' + cur + ' / ' + (STEPS.length - 1);
+    document.getElementById(prevId).disabled = cur === 0;
+    document.getElementById(nextId).disabled = cur === STEPS.length - 1;
+  }
+  document.getElementById(prevId).onclick = function() { if (cur > 0) go(cur - 1); };
+  document.getElementById(nextId).onclick = function() { if (cur < STEPS.length - 1) go(cur + 1); };
+  go(0);
+}
+
+/* Legend for all panels */
+makeLegend(document.getElementById('d3-legend'));
+</script>
+
+<!-- Panel B & C HTML + JS will be appended below -->
+<script id="panel-b-script">
+/* ==== PANEL B: Monospace Text ==== */
+(function() {
+  var P = 'pb';
+  var cst = [
+    ['c0','messageDef'],['c1',' \u251C\u2500 MESSAGE'],['c2',' \u251C\u2500 messageName'],
+    ['c3',' \u2502   \u2514\u2500 ident'],['c4',' \u2502       \u2514\u2500 ID("Player")'],
+    ['c5',' \u2514\u2500 messageBody'],['c6','     \u251C\u2500 LC'],['c7','     \u251C\u2500 field[0]'],
+    ['c8','     \u2502   \u251C\u2500 type_ \u2192 STRING'],['c9','     \u2502   \u251C\u2500 fieldName \u2192 ID("name")'],
+    ['c10','     \u2502   \u251C\u2500 EQ'],['c11','     \u2502   \u251C\u2500 fieldNumber \u2192 INT_LIT("1")'],
+    ['c12','     \u2502   \u2514\u2500 SEMI'],['c13','     \u251C\u2500 field[1]'],
+    ['c14','     \u2502   \u251C\u2500 type_ \u2192 INT32'],['c15','     \u2502   \u251C\u2500 fieldName \u2192 ID("level")'],
+    ['c16','     \u2502   \u251C\u2500 EQ'],['c17','     \u2502   \u251C\u2500 fieldNumber \u2192 INT_LIT("2")'],
+    ['c18','     \u2502   \u2514\u2500 SEMI'],['c19','     \u2514\u2500 RC']
+  ];
+  var ast = [
+    ['a0','MessageNode'],['a1',' \u251C\u2500 name: "Player"'],['a2',' \u2514\u2500 fields'],
+    ['a3','     \u251C\u2500 FieldNode'],['a4','     \u2502   \u251C\u2500 type: "string"'],
+    ['a5','     \u2502   \u251C\u2500 name: "name"'],['a6','     \u2502   \u2514\u2500 number: 1'],
+    ['a7','     \u2514\u2500 FieldNode'],['a8','         \u251C\u2500 type: "int32"'],
+    ['a9','         \u251C\u2500 name: "level"'],['a10','         \u2514\u2500 number: 2']
+  ];
+
+  var html = '<div class="two-col">' +
+    '<div class="col-cst"><div class="col-title col-title-cst">CST (Parse Tree) — 20개 노드</div><div class="mono-box">' +
+    cst.map(function(n){ return '<div class="mono-line" id="'+P+'-'+n[0]+'">'+n[1]+'</div>'; }).join('') +
+    '</div></div>' +
+    '<div class="col-ast"><div class="col-title col-title-ast">AST — 3개 노드</div><div class="ast-box">' +
+    ast.map(function(n){ return '<div class="mono-line" id="'+P+'-'+n[0]+'" style="opacity:0;max-height:0;overflow:hidden;transition:all 0.4s;">'+n[1]+'</div>'; }).join('') +
+    '</div></div></div>' +
+    '<div class="info-box" id="pb-info">초기 상태</div>' +
+    '<div class="s-controls"><button class="s-btn" id="pb-prev" disabled>← 이전</button><span class="s-label" id="pb-val">단계 0 / 8</span><button class="s-btn" id="pb-next">다음 →</button></div>' +
+    '<div class="legend" id="pb-legend"></div>';
+  document.getElementById('panel-b').innerHTML = html;
+  makeLegend(document.getElementById('pb-legend'));
+
+  function apply(idx) {
+    var step = STEPS[idx];
+    CST_IDS.forEach(function(id) {
+      var el = document.getElementById(P+'-'+id); if(!el) return;
+      var s = STYLES[step.c[id]||'N'];
+      el.style.background = s.bg; el.style.color = s.c; el.style.opacity = s.o;
+    });
+    AST_IDS.forEach(function(id) {
+      var el = document.getElementById(P+'-'+id); if(!el) return;
+      var k = step.a[id];
+      if (!k) { el.style.opacity=0; el.style.maxHeight='0'; el.style.overflow='hidden'; return; }
+      var s = STYLES[k];
+      el.style.background = s.bg; el.style.color = s.c; el.style.opacity = s.o;
+      el.style.maxHeight = '28px'; el.style.overflow = 'visible';
+    });
+  }
+  makeStepper('pb','pb-info','pb-val','pb-prev','pb-next', apply);
+})();
+</script>
+
+<script id="panel-c-script">
+/* ==== PANEL C: CSS Tree ==== */
+(function() {
+  function li(id, label, children) {
+    var ch = children ? '<ul>' + children.join('') + '</ul>' : '';
+    return '<li><span class="node-label" id="pc-'+id+'">'+label+'</span>'+ch+'</li>';
+  }
+  var cstHtml = '<ul class="css-tree">' + li('c0','messageDef',
+    [ li('c1','MESSAGE'),
+      li('c2','messageName', [ li('c3','ident', [ li('c4','ID("Player")') ]) ]),
+      li('c5','messageBody', [
+        li('c6','LC'),
+        li('c7','field[0]', [
+          li('c8','type_: STRING'), li('c9','fieldName: ID("name")'),
+          li('c10','EQ'), li('c11','fieldNumber: INT_LIT("1")'), li('c12','SEMI')
+        ]),
+        li('c13','field[1]', [
+          li('c14','type_: INT32'), li('c15','fieldName: ID("level")'),
+          li('c16','EQ'), li('c17','fieldNumber: INT_LIT("2")'), li('c18','SEMI')
+        ]),
+        li('c19','RC')
+      ])
+    ]) + '</ul>';
+
+  var astHtml = '<ul class="css-tree">' + li('a0','MessageNode',
+    [ li('a1','name: "Player"'),
+      li('a2','fields', [
+        li('a3','FieldNode', [
+          li('a4','type: "string"'), li('a5','name: "name"'), li('a6','number: 1')
+        ]),
+        li('a7','FieldNode', [
+          li('a8','type: "int32"'), li('a9','name: "level"'), li('a10','number: 2')
+        ])
+      ])
+    ]) + '</ul>';
+
+  var html = '<div class="two-col">' +
+    '<div class="col-cst"><div class="col-title col-title-cst">CST (Parse Tree) — 20개 노드</div>' +
+    '<div style="background:#f8f9fa;border:1px solid #e0e0e0;border-radius:6px;padding:8px 12px;">' + cstHtml + '</div></div>' +
+    '<div class="col-ast"><div class="col-title col-title-ast">AST — 3개 노드</div>' +
+    '<div class="css-ast-box" id="pc-ast-box">' + astHtml + '</div></div></div>' +
+    '<div class="info-box" id="pc-info">초기 상태</div>' +
+    '<div class="s-controls"><button class="s-btn" id="pc-prev" disabled>← 이전</button><span class="s-label" id="pc-val">단계 0 / 8</span><button class="s-btn" id="pc-next">다음 →</button></div>' +
+    '<div class="legend" id="pc-legend"></div>';
+  document.getElementById('panel-c').innerHTML = html;
+  makeLegend(document.getElementById('pc-legend'));
+
+  /* Hide all AST nodes initially */
+  AST_IDS.forEach(function(id) {
+    var el = document.getElementById('pc-'+id);
+    if (el) { el.style.opacity = 0; el.parentElement.style.maxHeight = '0'; el.parentElement.style.overflow = 'hidden'; el.parentElement.style.transition = 'all 0.4s'; }
+  });
+
+  function apply(idx) {
+    var step = STEPS[idx];
+    CST_IDS.forEach(function(id) {
+      var el = document.getElementById('pc-'+id); if(!el) return;
+      var s = STYLES[step.c[id]||'N'];
+      el.style.background = s.bg; el.style.color = s.c; el.style.opacity = s.o;
+    });
+    AST_IDS.forEach(function(id) {
+      var el = document.getElementById('pc-'+id); if(!el) return;
+      var li = el.parentElement;
+      var k = step.a[id];
+      if (!k) { el.style.opacity=0; li.style.maxHeight='0'; li.style.overflow='hidden'; return; }
+      var s = STYLES[k];
+      el.style.background = s.bg; el.style.color = s.c; el.style.opacity = s.o;
+      li.style.maxHeight = '30px'; li.style.overflow = 'visible';
+    });
+  }
+  makeStepper('pc','pc-info','pc-val','pc-prev','pc-next', apply);
+})();
+</script>
+
+<script id="panel-a-script">
+/* ==== PANEL A: D3.js Tree + Stepper ==== */
+(function() {
+  var cstData = {
+    id:'c0', name:'messageDef', children:[
+      {id:'c1', name:'MESSAGE'},
+      {id:'c2', name:'messageName', children:[
+        {id:'c3', name:'ident', children:[
+          {id:'c4', name:'ID("Player")'}
+        ]}
+      ]},
+      {id:'c5', name:'messageBody', children:[
+        {id:'c6', name:'LC'},
+        {id:'c7', name:'field[0]', children:[
+          {id:'c8', name:'type_: STRING'},
+          {id:'c9', name:'fieldName: ID("name")'},
+          {id:'c10', name:'EQ'},
+          {id:'c11', name:'fieldNumber: INT_LIT("1")'},
+          {id:'c12', name:'SEMI'}
+        ]},
+        {id:'c13', name:'field[1]', children:[
+          {id:'c14', name:'type_: INT32'},
+          {id:'c15', name:'fieldName: ID("level")'},
+          {id:'c16', name:'EQ'},
+          {id:'c17', name:'fieldNumber: INT_LIT("2")'},
+          {id:'c18', name:'SEMI'}
+        ]},
+        {id:'c19', name:'RC'}
+      ]}
+    ]
+  };
+  var astData = {
+    id:'a0', name:'MessageNode', children:[
+      {id:'a1', name:'name: "Player"'},
+      {id:'a2', name:'fields', children:[
+        {id:'a3', name:'FieldNode', children:[
+          {id:'a4', name:'type: "string"'},
+          {id:'a5', name:'name: "name"'},
+          {id:'a6', name:'number: 1'}
+        ]},
+        {id:'a7', name:'FieldNode', children:[
+          {id:'a8', name:'type: "int32"'},
+          {id:'a9', name:'name: "level"'},
+          {id:'a10', name:'number: 2'}
+        ]}
+      ]}
+    ]
+  };
+
+  function textWidth(label) { return label.length * 7.2 + 20; }
+
+  function renderTree(containerId, treeData, isAST) {
+    var container = document.getElementById(containerId);
+    var root = d3.hierarchy(treeData);
+
+    var layout = d3.tree()
+      .nodeSize([110, 56])
+      .separation(function(a, b) {
+        var wA = textWidth(a.data.name), wB = textWidth(b.data.name);
+        var base = a.parent === b.parent ? 1 : 1.2;
+        return Math.max(base, (wA + wB) / 2 / 110 + 0.15);
+      });
+    layout(root);
+
+    var x0=Infinity, x1=-Infinity, y0=Infinity, y1=-Infinity;
+    root.each(function(d) {
+      var hw = textWidth(d.data.name)/2;
+      if(d.x-hw<x0) x0=d.x-hw; if(d.x+hw>x1) x1=d.x+hw;
+      if(d.y-16<y0) y0=d.y-16; if(d.y+16>y1) y1=d.y+16;
+    });
+    var pad=20; x0-=pad; y0-=pad; x1+=pad; y1+=pad;
+    var vw=x1-x0, vh=y1-y0;
+
+    var svg = d3.select(container).append('svg')
+      .attr('viewBox', x0+' '+y0+' '+vw+' '+vh)
+      .style('width','100%').style('height','auto')
+      .style('min-height','120px').style('max-height','500px')
+      .style('cursor','grab');
+
+    var g = svg.append('g');
+    var zoom = d3.zoom().scaleExtent([0.3,3])
+      .on('zoom', function(ev){ g.attr('transform',ev.transform); svg.style('cursor','grabbing'); })
+      .on('end', function(){ svg.style('cursor','grab'); });
+    svg.call(zoom);
+
+    g.selectAll('.link').data(root.links()).join('path')
+      .attr('fill','none').attr('stroke','#aaa').attr('stroke-width',1.5)
+      .attr('d', function(d){
+        return 'M'+d.source.x+','+d.source.y+
+          'C'+d.source.x+','+(d.source.y+d.target.y)/2+
+          ' '+d.target.x+','+(d.source.y+d.target.y)/2+
+          ' '+d.target.x+','+d.target.y;
+      });
+
+    var nodeMap = {};
+    var node = g.selectAll('.node').data(root.descendants()).join('g')
+      .attr('transform', function(d){ return 'translate('+d.x+','+d.y+')'; });
+
+    node.append('rect')
+      .attr('rx',5).attr('ry',5)
+      .attr('x', function(d){ return -textWidth(d.data.name)/2; })
+      .attr('y',-13)
+      .attr('width', function(d){ return textWidth(d.data.name); })
+      .attr('height',26)
+      .attr('fill', isAST ? '#fde8e8' : '#e8f0fd')
+      .attr('stroke', isAST ? '#8b1a1a' : '#2c5aa0')
+      .attr('stroke-width',1.5)
+      .style('filter','drop-shadow(0 1px 2px rgba(0,0,0,0.08))');
+
+    node.append('text')
+      .attr('dy','0.35em').attr('text-anchor','middle')
+      .attr('font-size','10px').attr('font-family','Consolas,monospace')
+      .attr('fill', isAST ? '#8b1a1a' : '#333')
+      .text(function(d){ return d.data.name; });
+
+    node.each(function(d) {
+      nodeMap[d.data.id] = d3.select(this);
+    });
+
+    return nodeMap;
+  }
+
+  var cstMap = renderTree('d3-cst', cstData, false);
+  var astMap = renderTree('d3-ast', astData, true);
+
+  /* Initially hide all AST nodes */
+  AST_IDS.forEach(function(id) {
+    if (astMap[id]) astMap[id].attr('opacity', 0);
+  });
+  /* Also hide AST links initially */
+  d3.select('#d3-ast').selectAll('path').attr('opacity', 0);
+
+  function apply(idx) {
+    var step = STEPS[idx];
+    CST_IDS.forEach(function(id) {
+      var g = cstMap[id]; if(!g) return;
+      var s = STYLES[step.c[id]||'N'];
+      g.select('rect').attr('fill', s.bg === 'transparent' ? '#fff' : s.bg).attr('stroke', s.c);
+      g.select('text').attr('fill', s.c);
+      g.attr('opacity', s.o);
+    });
+
+    /* For AST: show/hide nodes + their incoming links */
+    var astSvgG = d3.select('#d3-ast').select('svg g');
+    var links = astSvgG.selectAll('path').data();
+    astSvgG.selectAll('path').attr('opacity', function(d,i) {
+      /* link target id */
+      var tgt = d.target && d.target.data ? d.target.data.id : null;
+      return (tgt && step.a[tgt]) ? 1 : 0;
+    });
+
+    AST_IDS.forEach(function(id) {
+      var g = astMap[id]; if(!g) return;
+      var k = step.a[id];
+      if (!k) { g.attr('opacity', 0); return; }
+      var s = STYLES[k];
+      g.attr('opacity', s.o);
+      g.select('rect').attr('fill', s.bg === 'transparent' ? '#fff' : s.bg).attr('stroke', s.c);
+      g.select('text').attr('fill', s.c);
+    });
+  }
+  makeStepper('d3','d3-info','d3-val','d3-prev','d3-next', apply);
+})();
+</script>
+
+</body>
+</html>

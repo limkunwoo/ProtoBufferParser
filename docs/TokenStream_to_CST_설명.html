@@ -48,13 +48,17 @@ h3 { color: #555; }
 
 /* ---- Code ---- */
 .code-block {
-  background: #fafbfc; border-left: 4px solid #3a7bd5;
-  border-radius: 0 6px 6px 0; padding: 1em 1.2em; overflow-x: auto;
-  font-family: 'Cascadia Code', 'Consolas', 'Fira Code', 'Courier New', monospace;
-  font-size: 0.88em; margin: 1em 0; white-space: pre;
-  color: #1e293b; line-height: 1.6;
+  background: #0d1117; border-left: 4px solid #3a7bd5;
+  border-radius: 0 6px 6px 0; padding: 16px 20px; overflow-x: auto;
+  font-family: 'Cascadia Code', 'Consolas', 'Fira Code', monospace;
+  font-size: 13.5px; margin: 1em 0; white-space: pre;
+  color: #a9dc76; line-height: 1.6; font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
-.code-block pre { margin: 0; white-space: pre; color: inherit; }
+.code-block pre { margin: 0; white-space: pre; color: inherit;
+  -webkit-font-smoothing: antialiased;
+}
 
 /* ---- Math block (MathJax-rendered, no <pre>) ---- */
 .math-block {
@@ -85,7 +89,7 @@ tr:nth-child(even) { background: #fafafa; }
   overflow: hidden; position: relative;
   border-radius: 4px;
 }
-.svg-pz-wrap svg { display: block; max-width: 100%; height: auto; }
+.svg-pz-wrap svg { display: block; max-width: 100%; height: auto; margin: 0 auto; }
 figcaption {
   font-size: 0.9em; color: #666;
   margin-top: 0.5em; font-style: italic;
@@ -2193,30 +2197,45 @@ message Inventory {           // 여기서 정의됨
 }</pre></div>
 <p>파서가 <code>Inventory</code>를 처음 만났을 때, 이것이 <strong>메시지 타입인지 열거형인지 알 수 없습니다.</strong> <code>type_</code> 규칙의 <code>messageType</code> / <code>enumType</code> 분기를 선택할 수 없습니다.</p>
 <p><strong>해결: 2-Pass 파싱</strong></p>
-<div class="code-block"><pre> ┌─────────────────────────────────────────────────┐
- │         DoRewind() 내부 동작                      │
- │                                                   │
- │  ┌─── Pass 1: 심볼 수집 ───┐                      │
- │  │ • Seek(0) — 토큰 스트림 처음으로               │
- │  │ • 별도 파서 인스턴스 생성                       │
- │  │ • _isFirstPass = true                          │
- │  │   → 모든 시맨틱 프레디킷 무조건 true            │
- │  │ • 에러 리스너 제거 (조용히)                     │
- │  │ • proto() 호출 → 전체 문법 순회                │
- │  │ • doMessageNameDef 액션 →                      │
- │  │   _messageTypes에 등록                         │
- │  │ • doEnumNameDef 액션 →                         │
- │  │   _enumTypes에 등록                            │
- │  └─────────────────────────┘                      │
- │           │ CopySymbolTableFrom()                  │
- │           ▼                                        │
- │  ┌─── Pass 2: 실제 파싱 ───┐                      │
- │  │ • Seek(0) — 토큰 스트림 다시 처음으로           │
- │  │ • _isFirstPass = false                         │
- │  │   → 시맨틱 프레디킷이 심볼 테이블 검사          │
- │  │ • proto() 호출 → CST 생성                      │
- │  └─────────────────────────┘                      │
- └─────────────────────────────────────────────────┘</pre></div>
+<div style="border: 2px solid #3a7bd5; border-radius: 12px; padding: 20px 24px; background: #f8fbff; max-width: 520px; margin: 0 auto; font-family: 'Malgun Gothic', sans-serif;">
+  <div style="font-size: 15px; font-weight: 700; color: #2c3e50; margin-bottom: 16px;">DoRewind() 내부 동작</div>
+
+  <div style="border: 1.5px solid #5ba3d9; border-radius: 8px; background: #e8f4fd; padding: 14px 16px; margin-bottom: 12px;">
+    <div style="font-size: 13px; font-weight: 600; color: #2c6fac; margin-bottom: 8px;">Pass 1: 심볼 수집</div>
+    <ul style="margin: 0; padding-left: 18px; font-size: 13px; color: #1a1a1a; line-height: 1.7; list-style: disc;">
+      <li>Seek(0) — 토큰 스트림 처음으로</li>
+      <li>별도 파서 인스턴스 생성</li>
+      <li><code style="background:#d0e8f7;padding:1px 4px;border-radius:3px;font-size:12px;">_isFirstPass = true</code><br>
+        <span style="color:#555; padding-left:4px;">→ 모든 시맨틱 프레디킷 무조건 true</span></li>
+      <li>에러 리스너 제거 (조용히)</li>
+      <li><code style="background:#d0e8f7;padding:1px 4px;border-radius:3px;font-size:12px;">proto()</code> 호출 → 전체 문법 순회</li>
+      <li><code style="background:#d0e8f7;padding:1px 4px;border-radius:3px;font-size:12px;">doMessageNameDef</code> → _messageTypes에 등록</li>
+      <li><code style="background:#d0e8f7;padding:1px 4px;border-radius:3px;font-size:12px;">doEnumNameDef</code> → _enumTypes에 등록</li>
+    </ul>
+  </div>
+
+  <div style="text-align: center; margin: 8px 0;">
+    <span style="font-size: 20px; color: #888;">▼</span>
+  </div>
+
+  <div style="background: #ffeeba; border-radius: 6px; padding: 8px 14px; text-align: center; font-size: 13px; font-weight: 600; color: #856404; margin-bottom: 8px;">
+    CopySymbolTableFrom()
+  </div>
+
+  <div style="text-align: center; margin: 8px 0;">
+    <span style="font-size: 20px; color: #888;">▼</span>
+  </div>
+
+  <div style="border: 1.5px solid #27ae60; border-radius: 8px; background: #e8f8ef; padding: 14px 16px;">
+    <div style="font-size: 13px; font-weight: 600; color: #1e8449; margin-bottom: 8px;">Pass 2: 실제 파싱</div>
+    <ul style="margin: 0; padding-left: 18px; font-size: 13px; color: #1a1a1a; line-height: 1.7; list-style: disc;">
+      <li>Seek(0) — 토큰 스트림 다시 처음으로</li>
+      <li><code style="background:#c8f0d4;padding:1px 4px;border-radius:3px;font-size:12px;">_isFirstPass = false</code><br>
+        <span style="color:#555; padding-left:4px;">→ 시맨틱 프레디킷이 심볼 테이블 검사</span></li>
+      <li><code style="background:#c8f0d4;padding:1px 4px;border-radius:3px;font-size:12px;">proto()</code> 호출 → CST 생성</li>
+    </ul>
+  </div>
+</div>
 <p><strong>왜 별도 파서 인스턴스를 만드는가?</strong></p>
 <p><code>Reset()</code>을 현재 파서에 호출하면 <code>_ctx</code>가 <code>null</code>이 되어 <code>ExitRule()</code>에서 <code>NullReferenceException</code>이 발생합니다. 별도 인스턴스로 Pass 1을 수행하면 현재 파서의 상태를 보존할 수 있습니다.</p>
 <p><strong>심볼 등록 메커니즘:</strong></p>

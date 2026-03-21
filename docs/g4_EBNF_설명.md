@@ -178,21 +178,12 @@ fragment DECIMAL_LIT
 
 **g4 파일의 전체 구조:**
 
-```
-┌─────────────────────────────┐
-│  grammar 선언                │  grammar Protobuf3;
-├─────────────────────────────┤
-│  options / header            │  options { superClass = ... }
-├─────────────────────────────┤
-│  Parser Rules (소문자)       │  proto, messageDef, field, ...
-│  - 문법의 구조 정의          │
-│  - 토큰을 조합하여 트리 생성  │
-├─────────────────────────────┤
-│  Lexer Rules (대문자)        │  MESSAGE, SEMI, INT_LIT, ...
-│  - 문자→토큰 변환            │
-│  - fragment: 내부 헬퍼        │
-└─────────────────────────────┘
-```
+| 구성 요소 | 예시 |
+|-----------|------|
+| **grammar 선언** | grammar Protobuf3; |
+| **options / header** | options { superClass = ... } |
+| **Parser Rules (소문자)** — 문법의 구조 정의, 토큰을 조합하여 트리 생성 | proto, messageDef, field, ... |
+| **Lexer Rules (대문자)** — 문자→토큰 변환, fragment: 내부 헬퍼 | MESSAGE, SEMI, INT_LIT, ... |
 
 ## 4. Parser Rule vs Lexer Rule
 
@@ -212,24 +203,39 @@ fragment DECIMAL_LIT
 
 **처리 흐름:**
 
-```
-소스 코드 문자열
-  "repeated string name = 1;"
-         │
-         ▼
-    ┌─────────┐
-    │  Lexer  │  ← Lexer Rules 적용
-    └────┬────┘
-         │
-  토큰 스트림
-  [REPEATED] [STRING] [IDENTIFIER] [EQ] [INT_LIT] [SEMI]
-         │
-         ▼
-    ┌─────────┐
-    │  Parser │  ← Parser Rules 적용
-    └────┬────┘
-         │
-  Parse Tree (CST)
+```dot
+digraph {
+  rankdir=TB
+  bgcolor="transparent"
+  node [fontname="Malgun Gothic", fontsize=12, margin="0.15,0.08"]
+  edge [fontname="Malgun Gothic", fontsize=10, color="#7f8c8d", penwidth=1.5]
+
+  source [shape=box, style="rounded,filled", fillcolor="#fef9e7", color="#f0c040", penwidth=1.5, label=<
+    <TABLE BORDER="0" CELLSPACING="0" CELLPADDING="2">
+      <TR><TD><FONT FACE="Malgun Gothic" POINT-SIZE="12"><B>소스 코드 문자열</B></FONT></TD></TR>
+      <TR><TD><FONT FACE="Consolas" POINT-SIZE="11" COLOR="#6c3483">"repeated string name = 1;"</FONT></TD></TR>
+    </TABLE>>]
+
+  lexer [shape=box, style="rounded,filled", fillcolor="#3a7bd5", color="#2c5fa1", fontcolor="white", fontsize=13, penwidth=1.5, label=<
+    <FONT FACE="Malgun Gothic" POINT-SIZE="13"><B>Lexer</B></FONT>>]
+
+  tokens [shape=box, style="rounded,filled", fillcolor="#e8f4fd", color="#5ba3d9", penwidth=1.5, label=<
+    <TABLE BORDER="0" CELLSPACING="0" CELLPADDING="2">
+      <TR><TD><FONT FACE="Malgun Gothic" POINT-SIZE="12"><B>토큰 스트림</B></FONT></TD></TR>
+      <TR><TD><FONT FACE="Consolas" POINT-SIZE="10" COLOR="#2c3e50">[REPEATED] [STRING] [IDENTIFIER] [EQ] [INT_LIT] [SEMI]</FONT></TD></TR>
+    </TABLE>>]
+
+  parser [shape=box, style="rounded,filled", fillcolor="#27ae60", color="#1e8449", fontcolor="white", fontsize=13, penwidth=1.5, label=<
+    <FONT FACE="Malgun Gothic" POINT-SIZE="13"><B>Parser</B></FONT>>]
+
+  cst [shape=box, style="rounded,filled", fillcolor="#e8f8ef", color="#27ae60", penwidth=1.5, label=<
+    <FONT FACE="Malgun Gothic" POINT-SIZE="12"><B>Parse Tree (CST)</B></FONT>>]
+
+  source -> lexer [label=<  <FONT COLOR="#3a7bd5">Lexer Rules 적용</FONT>  >, arrowhead=vee, arrowsize=0.9]
+  lexer -> tokens [arrowhead=vee, arrowsize=0.9]
+  tokens -> parser [label=<  <FONT COLOR="#27ae60">Parser Rules 적용</FONT>  >, arrowhead=vee, arrowsize=0.9]
+  parser -> cst [arrowhead=vee, arrowsize=0.9]
+}
 ```
 
 **fragment 규칙 — 렉서 전용 헬퍼:**

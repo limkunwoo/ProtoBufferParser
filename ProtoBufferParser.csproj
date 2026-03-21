@@ -15,7 +15,7 @@
     <EmbeddedResource Remove="ProtoBufferParser.Tests\**" />
   </ItemGroup>
 
-  <!-- ANTLR4 parser files are manually managed in Parsers/ folder -->
+  <!-- ANTLR4 parser files are manually managed in Parsers/Generated/ folder -->
   <ItemGroup>
     <None Include="Parsers\Protobuf3.g4" />
   </ItemGroup>
